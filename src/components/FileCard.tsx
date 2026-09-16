@@ -1,0 +1,51 @@
+import type { FileItem } from "@/lib/files";
+
+interface FileCardProps {
+  file: FileItem;
+}
+
+export default function FileCard({ file }: FileCardProps) {
+  return (
+    <article className="content-card">
+      <span className={`content-card__badge content-card__badge--${file.color}`}>
+        {file.category}
+      </span>
+
+      <h3 className="content-card__title">{file.title}</h3>
+
+      <p className="content-card__desc">{file.desc}</p>
+
+      <div className="content-card__meta">
+        <span>📎 {file.type}</span>
+        {file.author && <span>✍️ {file.author}</span>}
+      </div>
+
+      <div className="content-card__footer">
+        {file.viewUrl ? (
+          <a
+            href={file.viewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn--primary btn--sm"
+          >
+            مشاهده
+          </a>
+        ) : null}
+
+        {file.downloadUrl ? (
+          <a
+            href={file.downloadUrl}
+            download={file.downloadName}
+            className="btn btn--outline btn--sm"
+          >
+            دانلود
+          </a>
+        ) : null}
+
+        {!file.viewUrl && !file.downloadUrl ? (
+          <span style={{ color: "#999", fontSize: "13px" }}>به‌زودی...</span>
+        ) : null}
+      </div>
+    </article>
+  );
+}
