@@ -1854,8 +1854,28 @@ html[data-theme="dark"] .filter-bar {
     .features {
         grid-template-columns: 1fr;
     }
+        .header__actions {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
 
-    .header__actions { display: none; }
+    .header__actions .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .header__actions .theme-toggle {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .logo__text {
+        display: none;
+    }
 
     .hero__title { font-size: 26px; }
     .hero__subtitle { font-size: 14px; }

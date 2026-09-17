@@ -43,7 +43,7 @@ export default function Header() {
         <div className="container header__inner">
           <Link href="/" className="logo">
             <span className="logo__icon">📚</span>
-            <span>برگ دانش</span>
+            <span className="logo__text">برگ دانش</span>
           </Link>
 
           <nav className={`nav ${menuOpen ? "nav--open" : ""}`}>
@@ -57,43 +57,48 @@ export default function Header() {
           </nav>
 
           <div className="header__actions">
-            <button className="theme-toggle" onClick={toggleTheme}>
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label="تغییر تم"
+            >
               <span className="theme-toggle__icon">
                 {theme === "dark" ? "☀️" : "🌙"}
               </span>
             </button>
 
             {status === "loading" ? (
-              <span style={{ fontSize: "14px", color: "var(--text-muted)" }}>
-                ...
-              </span>
+              <span className="header__loading">...</span>
             ) : session?.user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className="btn btn--ghost"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-                >
-                  👤 {session.user.name?.split(" ")[0]}
+                <Link href="/dashboard" className="btn btn--ghost btn--sm">
+                  👤 {session.user.name?.split(" ")[0] || "پنل"}
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="btn btn--primary"
+                  className="btn btn--primary btn--sm"
                 >
                   خروج
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="btn btn--ghost">ورود</Link>
-                <Link href="/signup" className="btn btn--primary">ثبت‌نام</Link>
+                <Link href="/login" className="btn btn--ghost btn--sm">
+                  ورود
+                </Link>
+                <Link href="/signup" className="btn btn--primary btn--sm">
+                  ثبت‌نام
+                </Link>
               </>
             )}
           </div>
 
-          <button className="menu-toggle" onClick={toggleMenu}>
+          <button
+            className="menu-toggle"
+            onClick={toggleMenu}
+            aria-label="منو"
+          >
             <span className="menu-toggle__icon">{menuOpen ? "✕" : "☰"}</span>
-            <span className="menu-toggle__text">دسته‌بندی</span>
           </button>
         </div>
       </header>
