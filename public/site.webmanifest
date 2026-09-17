@@ -1,0 +1,23 @@
+{
+    "name": "برگ دانش | دانش، یک برگ فاصله دارد",
+    "short_name": "برگ دانش",
+    "description": "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی",
+    "icons": [
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#2563eb",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/",
+    "lang": "fa",
+    "dir": "rtl"
+}
