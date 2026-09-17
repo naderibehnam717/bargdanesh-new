@@ -1,5 +1,6 @@
 import { allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
+import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
 export default function PsychologyPage() {
@@ -9,9 +10,10 @@ export default function PsychologyPage() {
     <>
       <section className="subject-hero" data-subject="psychology">
         <div className="container">
-          <h1 className="subject-hero__title" data-text="PSYCHOLOGY">
-            PSYCHOLOGY
-          </h1>
+          <AnimatedTitle
+            text="PSYCHOLOGY"
+            emojis={["🧠", "💭", "💡", "🎭", "❤️", "🔍", "📊", "🧩"]}
+          />
           <p className="subject-hero__subtitle">روانشناسی</p>
         </div>
       </section>
@@ -45,7 +47,14 @@ export default function PsychologyPage() {
 
               <div className="cards-grid">
                 {files.length === 0 ? (
-                  <p style={{ textAlign: "center", padding: "40px", color: "#999", gridColumn: "1 / -1" }}>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "#999",
+                      gridColumn: "1 / -1",
+                    }}
+                  >
                     فایلی موجود نیست
                   </p>
                 ) : (

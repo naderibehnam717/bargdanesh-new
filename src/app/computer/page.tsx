@@ -1,5 +1,6 @@
 import { allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
+import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
 export default function ComputerPage() {
@@ -9,9 +10,10 @@ export default function ComputerPage() {
     <>
       <section className="subject-hero" data-subject="computer">
         <div className="container">
-          <h1 className="subject-hero__title" data-text="COMPUTER">
-            COMPUTER
-          </h1>
+          <AnimatedTitle
+            text="COMPUTER"
+            emojis={["💻", "⌨️", "🖥️", "🖱️", "📱", "🤖", "⚙️", "🔌"]}
+          />
           <p className="subject-hero__subtitle">کامپیوتر</p>
         </div>
       </section>
@@ -34,14 +36,24 @@ export default function ComputerPage() {
 
           <div className="layout-with-sidebar">
             <div>
-              <div className="section__header" style={{ textAlign: "right", marginLeft: 0, maxWidth: "100%" }}>
+              <div
+                className="section__header"
+                style={{ textAlign: "right", marginLeft: 0, maxWidth: "100%" }}
+              >
                 <h2 className="section__title">📚 جزوه‌های کامپیوتر</h2>
                 <p className="section__subtitle">جزوات اختصاصی برگ دانش</p>
               </div>
 
               <div className="cards-grid">
                 {files.length === 0 ? (
-                  <p style={{ textAlign: "center", padding: "40px", color: "#999", gridColumn: "1 / -1" }}>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "#999",
+                      gridColumn: "1 / -1",
+                    }}
+                  >
                     فایلی موجود نیست
                   </p>
                 ) : (
@@ -54,10 +66,14 @@ export default function ComputerPage() {
               <h3 className="sidebar__title">🔗 موضوعات مرتبط</h3>
               <ul className="sidebar__list">
                 <li>
-                  <Link href="/physics" className="sidebar__link">⚛️ فیزیک</Link>
+                  <Link href="/physics" className="sidebar__link">
+                    ⚛️ فیزیک
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/university" className="sidebar__link">🎓 همه‌ی موضوعات دانشگاهی</Link>
+                  <Link href="/university" className="sidebar__link">
+                    🎓 همه‌ی موضوعات دانشگاهی
+                  </Link>
                 </li>
               </ul>
             </aside>

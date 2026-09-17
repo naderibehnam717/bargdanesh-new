@@ -1,5 +1,6 @@
 import { allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
+import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
 export default function EnglishPage() {
@@ -9,9 +10,10 @@ export default function EnglishPage() {
     <>
       <section className="subject-hero" data-subject="english">
         <div className="container">
-          <h1 className="subject-hero__title" data-text="ENGLISH">
-            ENGLISH
-          </h1>
+          <AnimatedTitle
+            text="ENGLISH"
+            emojis={["🌍", "📖", "✏️", "🔤", "💬", "🗣️", "📝", "🎯"]}
+          />
           <p className="subject-hero__subtitle">زبان انگلیسی</p>
         </div>
       </section>
@@ -35,14 +37,24 @@ export default function EnglishPage() {
 
           <div className="layout-with-sidebar">
             <div>
-              <div className="section__header" style={{ textAlign: "right", marginLeft: 0, maxWidth: "100%" }}>
+              <div
+                className="section__header"
+                style={{ textAlign: "right", marginLeft: 0, maxWidth: "100%" }}
+              >
                 <h2 className="section__title">📚 جزوه‌های زبان انگلیسی</h2>
                 <p className="section__subtitle">جزوات اختصاصی برگ دانش</p>
               </div>
 
               <div className="cards-grid">
                 {files.length === 0 ? (
-                  <p style={{ textAlign: "center", padding: "40px", color: "#999", gridColumn: "1 / -1" }}>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "#999",
+                      gridColumn: "1 / -1",
+                    }}
+                  >
                     فایلی موجود نیست
                   </p>
                 ) : (
@@ -55,13 +67,19 @@ export default function EnglishPage() {
               <h3 className="sidebar__title">🔗 موضوعات مرتبط</h3>
               <ul className="sidebar__list">
                 <li>
-                  <Link href="/psychology" className="sidebar__link">🧠 روانشناسی</Link>
+                  <Link href="/psychology" className="sidebar__link">
+                    🧠 روانشناسی
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/sociology" className="sidebar__link">👥 جامعه‌شناسی</Link>
+                  <Link href="/sociology" className="sidebar__link">
+                    👥 جامعه‌شناسی
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/university" className="sidebar__link">🎓 همه‌ی موضوعات دانشگاهی</Link>
+                  <Link href="/university" className="sidebar__link">
+                    🎓 همه‌ی موضوعات دانشگاهی
+                  </Link>
                 </li>
               </ul>
             </aside>

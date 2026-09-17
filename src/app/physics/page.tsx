@@ -1,5 +1,6 @@
 import { allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
+import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
 export default function PhysicsPage() {
@@ -9,9 +10,10 @@ export default function PhysicsPage() {
     <>
       <section className="subject-hero" data-subject="physics">
         <div className="container">
-          <h1 className="subject-hero__title" data-text="PHYSICS">
-            PHYSICS
-          </h1>
+          <AnimatedTitle
+  text="PHYSICS"
+  emojis={["⚛️", "🔬", "🧲", "⚡", "🌌", "🔭", "💡", "🧪"]}
+/>
           <p className="subject-hero__subtitle">فیزیک</p>
         </div>
       </section>
