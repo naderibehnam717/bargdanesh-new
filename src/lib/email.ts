@@ -15,7 +15,7 @@ export async function sendPasswordResetEmail(
   )}`;
 
   const { data, error } = await resend.emails.send({
-    from: "برگ دانش <onboarding@resend.dev>",
+    from: "برگ دانش <noreply@bargdanesh.ir>",
     to: [to],
     subject: "🔑 بازیابی رمز عبور - برگ دانش",
     html: `
