@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Header() {
+  const { data: session, status } = useSession();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -60,8 +62,33 @@ export default function Header() {
                 {theme === "dark" ? "☀️" : "🌙"}
               </span>
             </button>
-            <a href="#" className="btn btn--ghost">ورود</a>
-            <a href="#" className="btn btn--primary">ثبت‌نام</a>
+
+            {status === "loading" ? (
+              <span style={{ fontSize: "14px", color: "var(--text-muted)" }}>
+                ...
+              </span>
+            ) : session?.user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="btn btn--ghost"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+                >
+                  👤 {session.user.name?.split(" ")[0]}
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="btn btn--primary"
+                >
+                  خروج
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="btn btn--ghost">ورود</Link>
+                <Link href="/signup" className="btn btn--primary">ثبت‌نام</Link>
+              </>
+            )}
           </div>
 
           <button className="menu-toggle" onClick={toggleMenu}>

@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import FileCard from "./FileCard";
+import LoginAlert from "./LoginAlert";
 import { allFiles } from "@/lib/files";
+import { useSession } from "next-auth/react";
 
 export default function Hero() {
+  const { data: session } = useSession();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<typeof allFiles>([]);
   const [showResults, setShowResults] = useState(false);
@@ -75,6 +78,8 @@ export default function Hero() {
           <p className="hero__subtitle">
             جزوه، کتاب، نمونه سوال و مقاله — همه در یک جا، رایگان و مرتب.
           </p>
+
+          {!session?.user && <LoginAlert />}
 
           <form className="search" onSubmit={handleSubmit}>
             <input

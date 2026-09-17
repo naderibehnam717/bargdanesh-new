@@ -1,3 +1,7 @@
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import type { FileItem } from "@/lib/files";
 
 interface FileCardProps {
@@ -5,6 +9,20 @@ interface FileCardProps {
 }
 
 export default function FileCard({ file }: FileCardProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  function requireLogin(e: React.MouseEvent) {
+    if (status === "loading") {
+      e.preventDefault();
+      return;
+    }
+    if (!session?.user) {
+      e.preventDefault();
+      router.push("/login");
+    }
+  }
+
   return (
     <article className="content-card">
       <span className={`content-card__badge content-card__badge--${file.color}`}>
@@ -26,9 +44,10 @@ export default function FileCard({ file }: FileCardProps) {
             href={file.viewUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={requireLogin}
             className="btn btn--primary btn--sm"
           >
-            مشاهده
+            {session?.user ? "مشاهده" : "🔒 مشاهده"}
           </a>
         ) : null}
 
@@ -36,9 +55,10 @@ export default function FileCard({ file }: FileCardProps) {
           <a
             href={file.downloadUrl}
             download={file.downloadName}
+            onClick={requireLogin}
             className="btn btn--outline btn--sm"
           >
-            دانلود
+            {session?.user ? "دانلود" : "🔒 دانلود"}
           </a>
         ) : null}
 
