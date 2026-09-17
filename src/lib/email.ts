@@ -7,9 +7,12 @@ export async function sendPasswordResetEmail(
   token: string,
   userName?: string | null
 ) {
-  const resetUrl = `${
-    process.env.AUTH_URL || "http://localhost:3000"
-  }/reset-password?token=${token}&email=${encodeURIComponent(to)}`;
+  const baseUrl =
+    process.env.AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+  const resetUrl = `${baseUrl}/reset-password?token=${token}&email=${encodeURIComponent(
+    to
+  )}`;
 
   const { data, error } = await resend.emails.send({
     from: "برگ دانش <onboarding@resend.dev>",
@@ -20,101 +23,76 @@ export async function sendPasswordResetEmail(
       <html dir="rtl" lang="fa">
       <head>
         <meta charset="UTF-8">
-        <style>
-          body {
-            font-family: Tahoma, Arial, sans-serif;
-            background-color: #f8fafc;
-            padding: 40px 20px;
-            direction: rtl;
-          }
-          .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          }
-          .logo {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: #1e40af;
-            margin-bottom: 24px;
-          }
-          h1 {
-            color: #0f172a;
-            font-size: 22px;
-            margin-bottom: 16px;
-            text-align: center;
-          }
-          p {
-            color: #475569;
-            font-size: 15px;
-            line-height: 2;
-            margin-bottom: 16px;
-          }
-          .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: #ffffff !important;
-            padding: 14px 32px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 15px;
-            margin: 20px 0;
-          }
-          .btn-wrapper {
-            text-align: center;
-            margin: 24px 0;
-          }
-          .footer {
-            color: #94a3b8;
-            font-size: 13px;
-            text-align: center;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #e2e8f0;
-          }
-          .warning {
-            background: #fef3c7;
-            color: #92400e;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-top: 20px;
-            border-right: 4px solid #f59e0b;
-          }
-        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
-      <body>
-        <div class="container">
-          <div class="logo">📚 برگ دانش</div>
-          <h1>🔑 بازیابی رمز عبور</h1>
-          <p>سلام ${userName || "کاربر عزیز"}،</p>
-          <p>
-            ما درخواست بازیابی رمز عبور برای حساب شما دریافت کردیم.
-            برای تنظیم رمز جدید، روی دکمه زیر کلیک کنید:
-          </p>
-          <div class="btn-wrapper">
-            <a href="${resetUrl}" class="btn">🔓 تنظیم رمز جدید</a>
-          </div>
-          <p style="font-size: 13px; color: #94a3b8;">
-            یا این لینک را در مرورگر خود کپی کنید:
-          </p>
-          <p style="font-size: 12px; word-break: break-all; color: #2563eb; background: #f1f5f9; padding: 12px; border-radius: 8px;">
-            ${resetUrl}
-          </p>
-          <div class="warning">
-            ⏰ این لینک فقط تا <strong>۱ ساعت</strong> اعتبار دارد.
-          </div>
-          <div class="footer">
-            اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید.
-            <br>
-            <strong style="color: #1e40af;">دانش، یک برگ فاصله دارد.</strong>
-          </div>
-        </div>
+      <body style="margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; background-color: #f8fafc; direction: rtl;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
+          <tr>
+            <td align="center">
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 500px; background: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+                <tr>
+                  <td align="center" style="padding-bottom: 24px;">
+                    <div style="font-size: 24px; font-weight: 800; color: #1e40af;">
+                      📚 برگ دانش
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <h1 style="color: #0f172a; font-size: 22px; margin: 0 0 16px 0; font-weight: 700;">
+                      🔑 بازیابی رمز عبور
+                    </h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="color: #475569; font-size: 15px; line-height: 2; margin: 0 0 16px 0; text-align: right;">
+                      سلام ${userName || "کاربر عزیز"}،
+                    </p>
+                    <p style="color: #475569; font-size: 15px; line-height: 2; margin: 0 0 24px 0; text-align: right;">
+                      ما درخواست بازیابی رمز عبور برای حساب شما دریافت کردیم.
+                      برای تنظیم رمز جدید، روی دکمه زیر کلیک کنید:
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding: 8px 0 24px 0;">
+                    <a href="${resetUrl}" target="_blank" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 15px;">
+                      🔓 تنظیم رمز جدید
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="color: #94a3b8; font-size: 13px; margin: 0 0 8px 0; text-align: right;">
+                      یا این لینک را در مرورگر خود کپی کنید:
+                    </p>
+                    <p style="font-size: 12px; word-break: break-all; color: #2563eb; background: #f1f5f9; padding: 12px; border-radius: 8px; margin: 0 0 20px 0; text-align: left; direction: ltr;">
+                      ${resetUrl}
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="background: #fef3c7; color: #92400e; padding: 12px 16px; border-radius: 8px; font-size: 13px; border-right: 4px solid #f59e0b; text-align: right;">
+                      ⏰ این لینک فقط تا <strong>۱ ساعت</strong> اعتبار دارد.
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                    <p style="color: #94a3b8; font-size: 13px; margin: 16px 0 0 0; text-align: center;">
+                      اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید.
+                    </p>
+                    <p style="color: #1e40af; font-size: 13px; font-weight: 700; margin: 8px 0 0 0; text-align: center;">
+                      دانش، یک برگ فاصله دارد.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </body>
       </html>
     `,
