@@ -76,7 +76,31 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
 model Setting {
   id    String @id @default("main")
   data  String @db.Text
+}
+
+// ─── NEW: File model ───
+model File {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  desc         String   @db.Text
+  category     String
+  type         String
+  level        String
+  author       String?
+  viewUrl      String?
+  downloadUrl  String?
+  downloadName String?
+  color        String   @default("blue")
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([type])
+  @@index([level])
+  @@index([category])
 }
