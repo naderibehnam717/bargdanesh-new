@@ -5,22 +5,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,
-  
+
   // ✅ برای سئو: همه URLها بدون / انتهایی
-  // اگه تصمیم گرفتی با / باشه، true کن
   trailingSlash: false,
 
-  // ✅ ریدایرکت دامنه بدون www به www
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "bargdanesh.ir" }],
-        destination: "https://www.bargdanesh.ir/:path*",
-        permanent: true, // 301
-      },
-    ];
-  },
+  // ✅ توجه: ریدایرکت www در Vercel انجام می‌شه
+  //    پس اینجا لازم نیست (جلوگیری از double redirect)
 
   // ✅ هدرهای امنیتی و کش
   async headers() {
@@ -37,7 +27,6 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // کش طولانی برای فایل‌های استاتیک
       {
         source: "/:all*(svg|jpg|jpeg|png|webp|avif|ico|woff|woff2)",
         headers: [
@@ -53,11 +42,7 @@ const nextConfig: NextConfig = {
   // ✅ بهینه‌سازی تصاویر
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      // اگه از دامنه‌های خارجی عکس می‌گیری، اینجا اضافه کن
-      // مثال:
-      // { protocol: "https", hostname: "res.cloudinary.com" },
-    ],
+    remotePatterns: [],
   },
 
   // ✅ بهینه‌سازی import پکیج‌ها (کاهش bundle)
