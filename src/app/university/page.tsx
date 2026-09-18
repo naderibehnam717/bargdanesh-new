@@ -3,28 +3,50 @@ import { allFiles } from "@/lib/files";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "منابع دانشگاهی",
+  title: "منابع دانشگاهی — دانلود رایگان جزوه، کتاب و نمونه سوال",
   description:
-    "دانلود رایگان جزوه، کتاب و نمونه سوال رشته‌های دانشگاهی — روانشناسی، علوم تربیتی، کامپیوتر، فیزیک، شیمی و سایر رشته‌ها در برگ دانش",
+    "دانلود رایگان جزوه، کتاب و نمونه سوال تمامی رشته‌های دانشگاهی — روانشناسی، علوم تربیتی، کامپیوتر، فیزیک، شیمی، جامعه‌شناسی، معارف و سایر رشته‌ها در برگ دانش",
   keywords: [
     "جزوه دانشگاهی",
-    "منابع دانشگاهی",
     "دانلود جزوه دانشگاه",
     "جزوه روانشناسی",
     "جزوه علوم تربیتی",
     "جزوه کامپیوتر",
     "جزوه فیزیک",
+    "جزوه شیمی",
+    "جزوه جامعه‌شناسی",
+    "جزوه معارف",
+    "کتاب دانشگاهی رایگان",
+    "نمونه سوال دانشگاهی",
+    "منابع دانشگاهی",
     "برگ دانش",
   ],
+  alternates: {
+    canonical: "https://www.bargdanesh.ir/university",
+  },
   openGraph: {
     title: "منابع دانشگاهی | برگ دانش",
     description:
-      "دانلود رایگان جزوه، کتاب و نمونه سوال رشته‌های دانشگاهی در برگ دانش",
+      "دانلود رایگان جزوه، کتاب و نمونه سوال تمامی رشته‌های دانشگاهی",
     url: "https://www.bargdanesh.ir/university",
     type: "website",
+    locale: "fa_IR",
+    siteName: "برگ دانش",
+    images: [
+      {
+        url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "منابع دانشگاهی برگ دانش",
+      },
+    ],
   },
-  alternates: {
-    canonical: "https://www.bargdanesh.ir/university",
+  twitter: {
+    card: "summary_large_image",
+    title: "منابع دانشگاهی | برگ دانش",
+    description:
+      "دانلود رایگان جزوه، کتاب و نمونه سوال تمامی رشته‌های دانشگاهی",
+    images: ["/android-chrome-512x512.png"],
   },
 };
 
@@ -83,6 +105,137 @@ export default function UniversityPage() {
         </div>
       </section>
 
+      {/* ─────── محتوای متنی (سئو) ─────── */}
+      <section className="section" style={{ paddingBottom: "0" }}>
+        <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div
+            style={{
+              background: "#f8f9fa",
+              padding: "32px",
+              borderRadius: "12px",
+              lineHeight: 2,
+              textAlign: "justify",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "22px",
+                marginBottom: "16px",
+                color: "#1a1a1a",
+              }}
+            >
+              دانلود رایگان جزوه‌های دانشگاهی از برگ دانش
+            </h2>
+
+            <p style={{ marginBottom: "16px", color: "#444" }}>
+              بخش <strong>منابع دانشگاهی برگ دانش</strong> مرجعی کامل برای
+              دانشجویان تمامی مقاطع و رشته‌های تحصیلی است. در این بخش می‌توانید
+              به <strong>جزوه‌های درسی، کتاب‌های مرجع و نمونه سوالات امتحانی</strong>{" "}
+              رشته‌های مختلف به صورت رایگان دسترسی داشته باشید.
+            </p>
+
+            <p style={{ marginBottom: "16px", color: "#444" }}>
+              تمامی <strong>جزوه‌های دانشگاهی</strong> این بخش توسط اساتید
+              مجرب و دانشجویان ممتاز تهیه شده‌اند و شامل مباحث کلیدی، خلاصه‌های
+              درسی و نکات مهم امتحانی هستند. این منابع برای آمادگی در{" "}
+              <strong>امتحانات پایان‌ترم، کنکور ارشد و دکتری</strong> بسیار
+              مناسب می‌باشند.
+            </p>
+
+            <h3
+              style={{
+                fontSize: "18px",
+                marginTop: "24px",
+                marginBottom: "12px",
+                color: "#1a1a1a",
+              }}
+            >
+              رشته‌های موجود در این بخش:
+            </h3>
+
+            <ul
+              style={{
+                paddingRight: "20px",
+                color: "#444",
+                marginBottom: "16px",
+              }}
+            >
+              <li>
+                <strong>روانشناسی</strong> — جزوه روانشناسی عمومی، رشد، شخصیت و
+                اجتماعی
+              </li>
+              <li>
+                <strong>علوم تربیتی</strong> — روش‌های تدریس، ارزشیابی،
+                یادگیری و انگیزش
+              </li>
+              <li>
+                <strong>کامپیوتر</strong> — مبانی کامپیوتر، برنامه‌نویسی و
+                الگوریتم
+              </li>
+              <li>
+                <strong>فیزیک</strong> — فیزیک پایه، مکانیک و الکترومغناطیس
+              </li>
+              <li>
+                <strong>شیمی</strong> — شیمی آلی، معدنی و تجزیه
+              </li>
+              <li>
+                <strong>جامعه‌شناسی</strong> — مفاهیم اساسی و فرهنگ و جامعه
+              </li>
+              <li>
+                <strong>معارف</strong> — اندیشه اسلامی و معارف اسلامی
+              </li>
+              <li>
+                <strong>زبان انگلیسی</strong> — گرامر، ضمایر و ساختار جملات
+              </li>
+            </ul>
+
+            <h3
+              style={{
+                fontSize: "18px",
+                marginTop: "24px",
+                marginBottom: "12px",
+                color: "#1a1a1a",
+              }}
+            >
+              چرا از برگ دانش دانلود کنیم؟
+            </h3>
+
+            <ul
+              style={{
+                paddingRight: "20px",
+                color: "#444",
+                marginBottom: "16px",
+              }}
+            >
+              <li>✨ کاملاً <strong>رایگان</strong> و بدون نیاز به پرداخت</li>
+              <li>📄 فرمت <strong>PDF</strong> قابل مطالعه در همه دستگاه‌ها</li>
+              <li>🎯 محتوای <strong>خلاصه و نکته‌محور</strong> برای امتحانات</li>
+              <li>✅ تهیه شده توسط <strong>اساتید و دانشجویان ممتاز</strong></li>
+            </ul>
+
+            <p style={{ marginBottom: "0", color: "#444" }}>
+              اگر به دنبال <strong>کتاب‌های غیر درسی</strong> یا{" "}
+              <strong>نمونه سوالات امتحانی</strong> هستید، می‌توانید به بخش‌های{" "}
+              <Link
+                href="/books"
+                style={{ color: "#0066cc", textDecoration: "underline" }}
+              >
+                منابع غیر درسی
+              </Link>{" "}
+              و{" "}
+              <Link
+                href="/exams"
+                style={{ color: "#0066cc", textDecoration: "underline" }}
+              >
+                نمونه سوال
+              </Link>{" "}
+              مراجعه کنید.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────── دسته‌بندی ─────── */}
       <main className="section">
         <div className="container">
           <div className="section__header">

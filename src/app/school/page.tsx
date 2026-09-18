@@ -3,27 +3,50 @@ import { allFiles } from "@/lib/files";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "منابع مدرسه‌ای",
+  title: "منابع مدرسه‌ای — دانلود رایگان جزوه و نمونه سوال",
   description:
-    "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه — ریاضی، علوم، فارسی، عربی، دینی و سایر دروس در برگ دانش",
+    "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه — ابتدایی، متوسطه اول و دوم. دروس ریاضی، علوم، فارسی، عربی، دینی و زبان انگلیسی در برگ دانش",
   keywords: [
-    "جزوه مدرسه‌ای",
+    "جزوه مدرسه",
     "نمونه سوال مدرسه",
-    "دانلود جزوه مدرسه",
-    "منابع کنکور",
-    "جزوه ریاضی",
-    "جزوه علوم",
+    "دانلود جزوه مدرسه رایگان",
+    "نمونه سوال امتحانی",
+    "جزوه ریاضی مدرسه",
+    "جزوه علوم تجربی",
+    "جزوه فارسی",
+    "جزوه عربی",
+    "جزوه دینی",
+    "نمونه سوال متوسطه",
+    "کنکور",
+    "منابع مدرسه‌ای",
     "برگ دانش",
   ],
+  alternates: {
+    canonical: "https://www.bargdanesh.ir/school",
+  },
   openGraph: {
     title: "منابع مدرسه‌ای | برگ دانش",
     description:
-      "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه در برگ دانش",
+      "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه",
     url: "https://www.bargdanesh.ir/school",
     type: "website",
+    locale: "fa_IR",
+    siteName: "برگ دانش",
+    images: [
+      {
+        url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "منابع مدرسه‌ای برگ دانش",
+      },
+    ],
   },
-  alternates: {
-    canonical: "https://www.bargdanesh.ir/school",
+  twitter: {
+    card: "summary_large_image",
+    title: "منابع مدرسه‌ای | برگ دانش",
+    description:
+      "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه",
+    images: ["/android-chrome-512x512.png"],
   },
 };
 
@@ -61,6 +84,133 @@ export default function SchoolPage() {
         </div>
       </section>
 
+      {/* ─────── محتوای متنی (سئو) ─────── */}
+      <section className="section" style={{ paddingBottom: "0" }}>
+        <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div
+            style={{
+              background: "#f8f9fa",
+              padding: "32px",
+              borderRadius: "12px",
+              lineHeight: 2,
+              textAlign: "justify",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "22px",
+                marginBottom: "16px",
+                color: "#1a1a1a",
+              }}
+            >
+              دانلود رایگان جزوه و نمونه سوال مدرسه از برگ دانش
+            </h2>
+
+            <p style={{ marginBottom: "16px", color: "#444" }}>
+              بخش <strong>منابع مدرسه‌ای برگ دانش</strong> مرجعی کامل برای
+              دانش‌آموزان تمامی مقاطع تحصیلی — از <strong>ابتدایی</strong> تا{" "}
+              <strong>متوسطه‌ی دوم</strong> — است. در این بخش می‌توانید به{" "}
+              <strong>جزوه‌های درسی، نمونه سوالات امتحانی و کتاب‌های کمک‌آموزشی</strong>{" "}
+              دروس مختلف به صورت رایگان دسترسی داشته باشید.
+            </p>
+
+            <p style={{ marginBottom: "16px", color: "#444" }}>
+              تمامی <strong>نمونه سوالات مدرسه</strong> این بخش، سوالات استاندارد
+              امتحانات پایان‌ترم و هماهنگ کشوری هستند که برای آمادگی در
+              امتحانات مدرسه و <strong>کنکور سراسری</strong> بسیار مفید
+              می‌باشند. همچنین <strong>جزوه‌های آموزشی</strong> این بخش شامل
+              خلاصه‌های درس، نکات کلیدی و مثال‌های کاربردی هستند.
+            </p>
+
+            <h3
+              style={{
+                fontSize: "18px",
+                marginTop: "24px",
+                marginBottom: "12px",
+                color: "#1a1a1a",
+              }}
+            >
+              دروس موجود در این بخش:
+            </h3>
+
+            <ul
+              style={{
+                paddingRight: "20px",
+                color: "#444",
+                marginBottom: "16px",
+              }}
+            >
+              <li>
+                <strong>ریاضی</strong> — ریاضی تمامی پایه‌ها از ابتدایی تا
+                متوسطه
+              </li>
+              <li>
+                <strong>علوم تجربی</strong> — فیزیک، شیمی و زیست مدرسه
+              </li>
+              <li>
+                <strong>فارسی و ادبیات</strong> — قرائت، دستور زبان و آرایه‌ها
+              </li>
+              <li>
+                <strong>عربی</strong> — قواعد، ترجمه و متن
+              </li>
+              <li>
+                <strong>دینی و قرآن</strong> — پیام‌های آسمانی و دین و زندگی
+              </li>
+              <li>
+                <strong>زبان انگلیسی</strong> — گرامر، واژگان و مکالمه
+              </li>
+              <li>
+                <strong>علوم اجتماعی</strong> — تاریخ، جغرافیا و مدنی
+              </li>
+            </ul>
+
+            <h3
+              style={{
+                fontSize: "18px",
+                marginTop: "24px",
+                marginBottom: "12px",
+                color: "#1a1a1a",
+              }}
+            >
+              چرا از برگ دانش استفاده کنیم؟
+            </h3>
+
+            <ul
+              style={{
+                paddingRight: "20px",
+                color: "#444",
+                marginBottom: "16px",
+              }}
+            >
+              <li>✨ <strong>کاملاً رایگان</strong> برای همه‌ی دانش‌آموزان</li>
+              <li>📝 <strong>نمونه سوالات استاندارد</strong> امتحانات</li>
+              <li>📚 <strong>جزوه‌های خلاصه و نکته‌محور</strong></li>
+              <li>📱 قابل مطالعه در <strong>موبایل و کامپیوتر</strong></li>
+            </ul>
+
+            <p style={{ marginBottom: "0", color: "#444" }}>
+              اگر به دنبال <strong>منابع دانشگاهی</strong> یا{" "}
+              <strong>کتاب‌های غیر درسی</strong> هستید، می‌توانید به بخش‌های{" "}
+              <Link
+                href="/university"
+                style={{ color: "#0066cc", textDecoration: "underline" }}
+              >
+                دانشگاهی
+              </Link>{" "}
+              و{" "}
+              <Link
+                href="/books"
+                style={{ color: "#0066cc", textDecoration: "underline" }}
+              >
+                منابع غیر درسی
+              </Link>{" "}
+              مراجعه کنید.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────── دسته‌بندی ─────── */}
       <main className="section">
         <div className="container">
           <div className="section__header">
