@@ -1,18 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ✅ امنیت و پاکیزگی
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,
-
-  // ✅ برای سئو: همه URLها بدون / انتهایی
   trailingSlash: false,
 
-  // ✅ توجه: ریدایرکت www در Vercel انجام می‌شه
-  //    پس اینجا لازم نیست (جلوگیری از double redirect)
+  // ✅ ریدایرکت www در Vercel انجام می‌شه (double redirect نه)
 
-  // ✅ هدرهای امنیتی و کش
   async headers() {
     return [
       {
@@ -39,18 +34,15 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // ✅ بهینه‌سازی تصاویر
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [],
   },
 
-  // ✅ بهینه‌سازی import پکیج‌ها (کاهش bundle)
   experimental: {
     optimizePackageImports: ["lucide-react", "@heroicons/react"],
   },
 
-  // ✅ کاهش حجم production
   productionBrowserSourceMaps: false,
 };
 
