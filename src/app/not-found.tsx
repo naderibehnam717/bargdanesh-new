@@ -1,135 +1,207 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "صفحه یافت نشد | برگ دانش",
+  description: "صفحه‌ای که دنبالش هستید پیدا نشد",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function NotFound() {
   return (
     <main
-      className="section"
       style={{
+        minHeight: "60vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "70vh",
+        padding: "40px 20px",
       }}
     >
       <div
-        className="container"
-        style={{ maxWidth: "700px", textAlign: "center" }}
+        style={{
+          maxWidth: "600px",
+          width: "100%",
+          textAlign: "center",
+        }}
       >
-        <div style={{ marginBottom: "var(--sp-5)" }}>
-          <h1
-            style={{
-              fontSize: "160px",
-              fontWeight: 900,
-              lineHeight: 1,
-              background:
-                "linear-gradient(135deg, var(--primary), var(--primary-dark))",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              marginBottom: "var(--sp-3)",
-            }}
-          >
-            404
-          </h1>
-          <div style={{ fontSize: "72px", marginBottom: "var(--sp-4)" }}>📖</div>
-        </div>
-
-        <h2
+        {/* عدد 404 */}
+        <div
           style={{
-            fontSize: "32px",
-            fontWeight: 800,
-            color: "var(--text)",
-            marginBottom: "var(--sp-3)",
+            fontSize: "120px",
+            fontWeight: 900,
+            lineHeight: 1,
+            background: "linear-gradient(135deg, #0066cc 0%, #7c3aed 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            marginBottom: "8px",
           }}
         >
-          این برگ پیدا نشد!
-        </h2>
+          404
+        </div>
 
+        {/* ایموجی */}
+        <div style={{ fontSize: "56px", marginBottom: "16px" }}>📚</div>
+
+        {/* عنوان */}
+        <h1
+          style={{
+            fontSize: "28px",
+            fontWeight: 700,
+            color: "#1a1a1a",
+            marginBottom: "12px",
+          }}
+        >
+          صفحه‌ای که دنبالش بودید پیدا نشد!
+        </h1>
+
+        {/* توضیح */}
         <p
           style={{
             fontSize: "16px",
-            color: "var(--text-soft)",
-            lineHeight: 2,
-            marginBottom: "var(--sp-6)",
-            maxWidth: "500px",
-            marginLeft: "auto",
-            marginRight: "auto",
+            color: "#666",
+            lineHeight: 1.9,
+            marginBottom: "32px",
           }}
         >
-          به نظر می‌رسد صفحه‌ای که به دنبال آن هستید وجود ندارد یا جابه‌جا شده است.
-          نگران نباشید — می‌توانید از لینک‌های زیر استفاده کنید.
+          احتمالاً آدرس اشتباه تایپ شده یا این صفحه حذف شده است. نگران نباشید —
+          می‌توانید از لینک‌های زیر استفاده کنید یا به صفحه‌ی اصلی برگردید.
         </p>
 
+        {/* دکمه‌ها */}
         <div
           style={{
             display: "flex",
-            gap: "var(--sp-3)",
-            justifyContent: "center",
+            gap: "12px",
             flexWrap: "wrap",
-            marginBottom: "var(--sp-7)",
+            justifyContent: "center",
+            marginBottom: "40px",
           }}
         >
-          <Link href="/" className="btn btn--primary">
-            🏠 بازگشت به خانه
+          <Link
+            href="/"
+            className="btn btn--primary"
+            style={{ padding: "12px 24px", fontSize: "15px" }}
+          >
+            🏠 صفحه اصلی
           </Link>
-          <Link href="/articles" className="btn btn--outline">
-            📄 مشاهده مقالات
+          <Link
+            href="/university"
+            className="btn btn--outline"
+            style={{ padding: "12px 24px", fontSize: "15px" }}
+          >
+            🎓 جزوه‌های دانشگاهی
           </Link>
         </div>
 
+        {/* لینک‌های مفید */}
         <div
           style={{
-            padding: "var(--sp-5)",
-            background: "var(--card)",
-            borderRadius: "var(--r-lg)",
-            border: "1px solid var(--border)",
-            boxShadow: "var(--shadow-sm)",
+            background: "#f8f9fa",
+            borderRadius: "12px",
+            padding: "24px",
+            textAlign: "right",
           }}
         >
-          <h3
+          <h2
             style={{
               fontSize: "16px",
               fontWeight: 700,
-              color: "var(--text)",
-              marginBottom: "var(--sp-4)",
+              color: "#1a1a1a",
+              marginBottom: "16px",
+              textAlign: "center",
             }}
           >
-            🔗 شاید دنبال این‌ها بودید:
-          </h3>
+            📎 لینک‌های مفید
+          </h2>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-              gap: "var(--sp-3)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: "12px",
             }}
           >
             <Link
               href="/university"
-              className="btn btn--ghost"
-              style={{ border: "1px solid var(--border)" }}
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
             >
               🎓 دانشگاهی
             </Link>
             <Link
               href="/school"
-              className="btn btn--ghost"
-              style={{ border: "1px solid var(--border)" }}
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
             >
               🏫 مدرسه‌ای
             </Link>
             <Link
               href="/exams"
-              className="btn btn--ghost"
-              style={{ border: "1px solid var(--border)" }}
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
             >
               📝 نمونه سوال
             </Link>
             <Link
               href="/books"
-              className="btn btn--ghost"
-              style={{ border: "1px solid var(--border)" }}
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
             >
               📖 منابع غیر درسی
+            </Link>
+            <Link
+              href="/articles"
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
+            >
+              📄 مقالات
+            </Link>
+            <Link
+              href="/employment"
+              style={{
+                color: "#0066cc",
+                textDecoration: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                transition: "background 0.2s",
+                fontSize: "14px",
+              }}
+            >
+              💼 استخدامی
             </Link>
           </div>
         </div>
