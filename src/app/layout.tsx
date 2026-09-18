@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "./providers";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
@@ -87,6 +88,9 @@ export default function RootLayout({
           {children}
           <Footer />
         </Providers>
+
+        {/* ✅ دکمه‌ی بازگشت به بالا */}
+        <ScrollToTop />
 
         {/* Structured Data — WebSite */}
         <script
