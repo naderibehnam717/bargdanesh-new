@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFileBySlug, getFilesByType, allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
+import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -220,37 +221,13 @@ export default async function SchoolDetailPage({ params }: PageProps) {
               </p>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                paddingTop: "20px",
-                borderTop: "1px solid #eee",
-              }}
-            >
-              {file.downloadUrl && (
-                <a
-                  href={file.downloadUrl}
-                  download={file.downloadName}
-                  className="btn btn--primary"
-                >
-                  ⬇️ دانلود {file.type}
-                </a>
-              )}
-
-              {file.viewUrl && (
-                <a
-                  href={file.viewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn--outline"
-                >
-                  👁️ مشاهده آنلاین
-                </a>
-              )}
-            </div>
+            <ProtectedDownloadButtons
+              downloadUrl={file.downloadUrl}
+              viewUrl={file.viewUrl}
+              downloadName={file.downloadName}
+              fileTitle={file.title}
+              fileType={file.type}
+            />
           </div>
         </div>
       </main>
