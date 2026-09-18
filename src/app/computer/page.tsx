@@ -1,9 +1,10 @@
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
-export default function ComputerPage() {
+export default async function ComputerPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.category === "کامپیوتر");
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getFileBySlug, getFilesByType, allFiles } from "@/lib/files";
+import { getFileBySlug, getFilesByType, getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -12,7 +12,8 @@ interface PageProps {
 }
 
 // ─── SSG ───
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const allFiles = await getAllFiles();
   return allFiles
     .filter((f) => f.level === "دانشگاهی")
     .map((f) => ({ slug: f.slug }));
@@ -21,7 +22,7 @@ export function generateStaticParams() {
 // ─── متادیتا ───
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const file = getFileBySlug(slug);
+  const file = await getFileBySlug(slug);
 
   if (!file) {
     return { title: "صفحه یافت نشد" };
@@ -73,13 +74,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 // ─── صفحه ───
 export default async function UniversityDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const file = getFileBySlug(slug);
+  const file = await getFileBySlug(slug);
 
   if (!file || file.level !== "دانشگاهی") {
     notFound();
   }
 
-  const related = getFilesByType(file.type)
+  const allFilesOfType = await getFilesByType(file.type);
+  const related = allFilesOfType
     .filter(
       (f) =>
         f.level === "دانشگاهی" &&

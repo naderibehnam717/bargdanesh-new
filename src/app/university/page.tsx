@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
 
@@ -52,7 +52,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "جزوه‌های دانشگاهی برگ دانش رایگان هستند؟",
@@ -86,7 +85,8 @@ const faqs = [
   },
 ];
 
-export default function UniversityPage() {
+export default async function UniversityPage() {
+  const allFiles = await getAllFiles();
   const uniFiles = allFiles.filter((f) => f.level === "دانشگاهی");
   const categories = [...new Set(uniFiles.map((f) => f.category))];
 

@@ -3,13 +3,17 @@
 import { useState } from "react";
 import FileCard from "./FileCard";
 import LoginAlert from "./LoginAlert";
-import { allFiles } from "@/lib/files";
 import { useSession } from "next-auth/react";
+import type { FileItem } from "@/lib/files";
 
-export default function Hero() {
+interface HeroProps {
+  files: FileItem[];
+}
+
+export default function Hero({ files }: HeroProps) {
   const { data: session } = useSession();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<typeof allFiles>([]);
+  const [results, setResults] = useState<FileItem[]>([]);
   const [showResults, setShowResults] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
@@ -21,7 +25,7 @@ export default function Hero() {
       return;
     }
 
-    const found = allFiles.filter((file) => {
+    const found = files.filter((file) => {
       const text = (
         file.title +
         " " +

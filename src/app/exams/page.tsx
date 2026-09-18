@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
@@ -49,7 +49,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "نمونه سوالات برگ دانش رایگان هستند؟",
@@ -83,7 +82,8 @@ const faqs = [
   },
 ];
 
-export default function ExamsPage() {
+export default async function ExamsPage() {
+  const allFiles = await getAllFiles();
   const uniExams = allFiles.filter(
     (f) => f.type === "نمونه سوال" && f.level === "دانشگاهی"
   );

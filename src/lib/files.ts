@@ -18,7 +18,10 @@ export interface FileItem {
   color: FileColor;
 }
 
-export const allFiles: FileItem[] = [
+// ──────────────────────────────────────
+// فایل‌های هاردکد (ثابت)
+// ──────────────────────────────────────
+const hardcodedFiles: FileItem[] = [
   {
     slug: "jozve-fizik-paye",
     title: "جزوه فیزیک پایه",
@@ -29,7 +32,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1XKAoerWekowO56UXQ_0iw3WwX3FN0Q60/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1XKAoerWekowO56UXQ_0iw3WwX3FN0Q60",
     downloadName: "jozve-fizik-paye.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-mabani-computer-barname-nevisi",
@@ -41,7 +44,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/15h2ylcOqKHGuvNsT1Yfdz0RezD21--jW/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=15h2ylcOqKHGuvNsT1Yfdz0RezD21--jW",
     downloadName: "jozve-mabani-computer.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "ketab-andishe-islami-1",
@@ -53,7 +56,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/10TbXwsw7XGSbEHpTrzkAb9VZ1NRPWZnh/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=10TbXwsw7XGSbEHpTrzkAb9VZ1NRPWZnh",
     downloadName: "ketab-andishe-islami-1.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "jozve-amar-ravesh-tahghigh",
@@ -65,7 +68,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1GF_65KVpdGIksA0NfyAx8PPBxcFmnZ4f/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1GF_65KVpdGIksA0NfyAx8PPBxcFmnZ4f",
     downloadName: "jozve-amar-ravash-tahghigh.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-ravanshenasi-omumi",
@@ -78,7 +81,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/13elZtuifvT3kRuxxgOyKrbYxpmTHVDK6/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=13elZtuifvT3kRuxxgOyKrbYxpmTHVDK6",
     downloadName: "jozve-ravanshenasi-omumi.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-ravanshenasi-roshd",
@@ -91,7 +94,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1kyHTp4611PI7_WGNJwj6nPrgkOinRKn4/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1kyHTp4611PI7_WGNJwj6nPrgkOinRKn4",
     downloadName: "jozve-ravanshenasi-roshd.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-ravanshenasi-shakhsiat",
@@ -104,7 +107,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1-TsLOR5IzlbhV0z8aia9zmr1G8WK7wwH/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1-TsLOR5IzlbhV0z8aia9zmr1G8WK7wwH",
     downloadName: "jozve-ravanshenasi-shakhsiat.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-ravanshenasi-ejtemaei",
@@ -117,7 +120,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1SmpFYokvs91iATrv_ks1LBJrFcsb2QJt/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1SmpFYokvs91iATrv_ks1LBJrFcsb2QJt",
     downloadName: "jozve-ravanshenasi-ejtemaei.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-tafakor-hal-masale-khalaghiat",
@@ -130,7 +133,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1KYSK_RvPfJvTtitXfZzkyuyGbFahQ1R2/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1KYSK_RvPfJvTtitXfZzkyuyGbFahQ1R2",
     downloadName: "jozve-tafakor-hal-masale.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-angizesh-yadgiri",
@@ -143,7 +146,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1gpxtW2iyurPpKk_UN0ymdsB4yfuc9lse/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1gpxtW2iyurPpKk_UN0ymdsB4yfuc9lse",
     downloadName: "jozve-angizesh-yadgiri.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "jozve-roshd-tahavol-amoozesh",
@@ -156,7 +159,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1FCx0OKfAdECYAzPjvrA0nt1VVUZGkp1I/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1FCx0OKfAdECYAzPjvrA0nt1VVUZGkp1I",
     downloadName: "jozve-roshd-tahavol.pdf",
-    color: "rose"
+    color: "rose",
   },
   {
     slug: "jozve-tafavot-fardi-yadgirande",
@@ -169,7 +172,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1ErLGgkEtA6shRmnx3wIXOLK1tM080eWN/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1ErLGgkEtA6shRmnx3wIXOLK1tM080eWN",
     downloadName: "jozve-tafavot-fardi.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-hafeze-farayand-yadgiri",
@@ -182,7 +185,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/140KnkfmsD7TRPIbUOWS0m1aauRoNuMfm/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=140KnkfmsD7TRPIbUOWS0m1aauRoNuMfm",
     downloadName: "jozve-hafeze.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-mafhoom-yadgiri-nazariye",
@@ -195,7 +198,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1gzztUqrD_cG9K4KbCnniVyWA2ddg0pvT/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1gzztUqrD_cG9K4KbCnniVyWA2ddg0pvT",
     downloadName: "jozve-mafhoom-yadgiri.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-ravesh-fonoon-tadris",
@@ -208,7 +211,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1p4_PvDQACtjAQ1Q_EfjDQw3jDi3t9b5q/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1p4_PvDQACtjAQ1Q_EfjDQw3jDi3t9b5q",
     downloadName: "jozve-ravesh-fonoon-tadris.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-mabani-oloom-tarbiati",
@@ -221,7 +224,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1ldI9Wawz27sjHvULC_kHawWS01U9Ebe-/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1ldI9Wawz27sjHvULC_kHawWS01U9Ebe-",
     downloadName: "jozve-mabani-oloom-tarbiati.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "jozve-arzyabi-sanjesh-amoozeshi",
@@ -234,7 +237,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/13wvUg5DezDmRsEKSDD7tIbuZH3FCGSJT/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=13wvUg5DezDmRsEKSDD7tIbuZH3FCGSJT",
     downloadName: "jozve-arzyabi-sanjesh.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-farhang-jamee",
@@ -247,7 +250,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1eDve43xbWhZS7EntmJf6mZzdX6QyhwqP/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1eDve43xbWhZS7EntmJf6mZzdX6QyhwqP",
     downloadName: "jozve-farhang-va-jamee.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-mabani-jamee-shenasi",
@@ -260,7 +263,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1HEm77iAGSZ7hBoxYRkq1S_ssRhxKVpPJ/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1HEm77iAGSZ7hBoxYRkq1S_ssRhxKVpPJ",
     downloadName: "jozve-mabani-jamee-shenasi.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "jozve-zaban-zamayer-to-be",
@@ -273,7 +276,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1wsY_DBRlUpYVGzZtef_MvZsZVrkYHKwF/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1wsY_DBRlUpYVGzZtef_MvZsZVrkYHKwF",
     downloadName: "jozve-zaban-english-zamayer-va-to-be-1.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "jozve-esm-sefat-jomle-sadeh",
@@ -286,7 +289,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1k7RCPmgHGiG5wRvVhnSfj6KcsIdO7PoO/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1k7RCPmgHGiG5wRvVhnSfj6KcsIdO7PoO",
     downloadName: "jozve-esm-sefat-sakhtar-jomle.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "ketab-ertebat-ba-har-joor-adami",
@@ -299,7 +302,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1LuSVVkyATBBDaXV7grB2UPlhe3Pr9TYk/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1LuSVVkyATBBDaXV7grB2UPlhe3Pr9TYk",
     downloadName: "ketab-chetor-ba-har-joor-adami-ertebat-bargirar-konim.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "ketab-pranses-pa-berahne",
@@ -312,7 +315,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1KZXl8bQ9iqyObQYBtC2hXaMmVoH7xScQ/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1KZXl8bQ9iqyObQYBtC2hXaMmVoH7xScQ",
     downloadName: "ketab-prances-pa-berahne.pdf",
-    color: "red"
+    color: "red",
   },
   {
     slug: "ketab-zan-ziyadi",
@@ -325,7 +328,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1K_GwQlo3BB4hS7M9QSUyYPNyuNbSGgBg/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1K_GwQlo3BB4hS7M9QSUyYPNyuNbSGgBg",
     downloadName: "ketab-zan-e-ziyadi.pdf",
-    color: "purple"
+    color: "purple",
   },
   {
     slug: "roman-saat-setareh",
@@ -338,7 +341,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1uvQIORoUTTLQYO0D-y_O6J_megpw5BhP/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1uvQIORoUTTLQYO0D-y_O6J_megpw5BhP",
     downloadName: "roman-saat-setareh.pdf",
-    color: "yellow"
+    color: "yellow",
   },
   {
     slug: "namayeshname-mostajer-jadid-royaye-americayi",
@@ -351,7 +354,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1p7J8Q4k7h7C0ys8BBq0_34mbvm8bwyGC/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1p7J8Q4k7h7C0ys8BBq0_34mbvm8bwyGC",
     downloadName: "namayeshname-mostajer-jadid-v-royaye-americayi",
-    color: "pink"
+    color: "pink",
   },
   {
     slug: "dastan-tafsir-yek-khab",
@@ -364,7 +367,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1RoPh2ftXp6nsbk0KYST_3-o82DAcwy-S/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1RoPh2ftXp6nsbk0KYST_3-o82DAcwy-S",
     downloadName: "dastan-tafsir-e-yek-khab",
-    color: "orange"
+    color: "orange",
   },
   {
     slug: "roman-girande-shenakhte-nashod",
@@ -377,7 +380,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1Htt13U_hlylyQM3NXzvMl7JccQcCWfdn/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1Htt13U_hlylyQM3NXzvMl7JccQcCWfdn",
     downloadName: "roman-girandeh-shenakhte-nashod.pdf",
-    color: "red"
+    color: "red",
   },
   {
     slug: "roman-pish-az-an-ke-bekhabam",
@@ -390,7 +393,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1YJyTqEOlQ-PdFV75mlN67O36Cob4PRiV/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1YJyTqEOlQ-PdFV75mlN67O36Cob4PRiV",
     downloadName: "roman-pish-az-an-ke-bekhabam.pdf",
-    color: "blue"
+    color: "blue",
   },
   {
     slug: "roman-be-khodaye-nashenakhte",
@@ -403,7 +406,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/17ucqhPszuoxLRhLKAp4xKJt65UWXTAMJ/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=17ucqhPszuoxLRhLKAp4xKJt65UWXTAMJ",
     downloadName: "roman-be-khodaye-nashenakhte.pdf",
-    color: "black"
+    color: "black",
   },
   {
     slug: "roman-gahvare-gorbe",
@@ -416,7 +419,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1r3oplGCww6GkXNYxuUEaGiNWeA9KUopb/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1r3oplGCww6GkXNYxuUEaGiNWeA9KUopb",
     downloadName: "roman-gahvareye-gorbe.pdf",
-    color: "yellow"
+    color: "yellow",
   },
   {
     slug: "roman-shekast-napazir",
@@ -429,7 +432,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/17JUndqMctJX3BAOO2ClZovDl8m9h3woD/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=17JUndqMctJX3BAOO2ClZovDl8m9h3woD",
     downloadName: "roman-shekast-napazir.pdf",
-    color: "yellow"
+    color: "yellow",
   },
   {
     slug: "jozve-shimi-aali",
@@ -442,7 +445,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1tcVBDuI85FrCEjelFCUPc0IxCg5b2Nhe/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1tcVBDuI85FrCEjelFCUPc0IxCg5b2Nhe",
     downloadName: "jozve-shimi-aali.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "jozve-ashenayi-mabani-computer",
@@ -454,7 +457,7 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1ioO93Bl87mw8tFWweRVq3-Er_PC3jStt/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1ioO93Bl87mw8tFWweRVq3-Er_PC3jStt",
     downloadName: "jozve-ashenayi-ba-mabani-computer.pdf",
-    color: "green"
+    color: "green",
   },
   {
     slug: "jozve-mabani-computer-barname-sazi",
@@ -467,28 +470,95 @@ export const allFiles: FileItem[] = [
     viewUrl: "https://drive.google.com/file/d/1NJE8gbPq0AQAvS4Z6162TFinmJBH4x0k/view",
     downloadUrl: "https://drive.google.com/uc?export=download&id=1NJE8gbPq0AQAvS4Z6162TFinmJBH4x0k",
     downloadName: "jozve-mabani-computer-v-barname-sazi.pdf",
-    color: "yellow"
-  }
+    color: "yellow",
+  },
 ];
 
-// ─────── Helpers ───────
+// ──────────────────────────────────────
+// توابع اتصال به دیتابیس
+// ──────────────────────────────────────
 
-export function getFileBySlug(slug: string): FileItem | undefined {
-  return allFiles.find((f) => f.slug === slug);
+import { prisma } from "@/lib/prisma";
+
+interface AdminFileRow {
+  id: string;
+  slug: string;
+  title: string;
+  desc: string;
+  category: string;
+  type: string;
+  level: string;
+  author: string | null;
+  viewUrl: string | null;
+  downloadUrl: string | null;
+  downloadName: string | null;
+  color: string;
 }
 
-export function getFilesByType(type: FileType): FileItem[] {
-  return allFiles.filter((f) => f.type === type);
+function adminFileToFileItem(row: AdminFileRow): FileItem {
+  return {
+    slug: row.slug,
+    title: row.title,
+    desc: row.desc,
+    category: row.category,
+    type: row.type as FileType,
+    level: row.level as FileLevel,
+    author: row.author || undefined,
+    viewUrl: row.viewUrl || undefined,
+    downloadUrl: row.downloadUrl || undefined,
+    downloadName: row.downloadName || undefined,
+    color: (row.color as FileColor) || "blue",
+  };
 }
 
-export function getFilesByCategory(category: string): FileItem[] {
-  return allFiles.filter((f) => f.category === category);
+// ─── همه‌ی فایل‌ها (هاردکد + ادمین) ───
+export async function getAllFiles(): Promise<FileItem[]> {
+  let adminFiles: FileItem[] = [];
+
+  try {
+    const rows = await prisma.file.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    adminFiles = rows.map(adminFileToFileItem);
+  } catch (error) {
+    console.error("Error fetching admin files:", error);
+  }
+
+  // ترکیب: اگه slug تکراری باشه، هاردکد اولویت داره
+  const map = new Map<string, FileItem>();
+  hardcodedFiles.forEach((f) => map.set(f.slug, f));
+  adminFiles.forEach((f) => {
+    if (!map.has(f.slug)) {
+      map.set(f.slug, f);
+    }
+  });
+
+  return Array.from(map.values());
 }
 
-export function getAllCategories(): string[] {
-  return Array.from(new Set(allFiles.map((f) => f.category)));
+// ─── توابع کمکی (async) ───
+
+export async function getFileBySlug(slug: string): Promise<FileItem | undefined> {
+  const all = await getAllFiles();
+  return all.find((f) => f.slug === slug);
 }
 
-export function getAllSlugs(): string[] {
-  return allFiles.map((f) => f.slug);
+export async function getFilesByType(type: FileType): Promise<FileItem[]> {
+  const all = await getAllFiles();
+  return all.filter((f) => f.type === type);
+}
+
+export async function getFilesByCategory(category: string): Promise<FileItem[]> {
+  const all = await getAllFiles();
+  return all.filter((f) => f.category === category);
+}
+
+export async function getAllCategories(): Promise<string[]> {
+  const all = await getAllFiles();
+  return Array.from(new Set(all.map((f) => f.category)));
+}
+
+export async function getAllSlugs(): Promise<string[]> {
+  const all = await getAllFiles();
+  return all.map((f) => f.slug);
 }

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { readFile, writeFile } from "fs/promises";
-import path from "path";
+import { prisma } from "@/lib/prisma";
 
 async function checkAdmin() {
   const session = await auth();
@@ -10,50 +9,85 @@ async function checkAdmin() {
   return true;
 }
 
-const dataFile = path.join(process.cwd(), "src/lib/files-data.json");
-
-async function readFiles() {
-  try {
-    const data = await readFile(dataFile, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
+// ─── تولید slug از عنوان ───
+function slugify(text: string): string {
+  return text
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\u0600-\u06FF\w-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
-async function writeFiles(files: unknown[]) {
-  await writeFile(dataFile, JSON.stringify(files, null, 2), "utf-8");
-}
-
+// ─── GET: لیست همه فایل‌ها ───
 export async function GET() {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
-  const files = await readFiles();
+  const files = await prisma.file.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
   return NextResponse.json(files);
 }
 
+// ─── POST: اضافه کردن فایل جدید ───
 export async function POST(request: Request) {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
   const body = await request.json();
-  const files = await readFiles();
 
-  const newFile = {
-    id: Date.now().toString(),
-    ...body,
-    createdAt: new Date().toISOString(),
-  };
+  // اعتبارسنجی
+  if (!body.title || !body.desc || !body.category) {
+    return NextResponse.json(
+      { error: "عنوان، توضیح و دسته‌بندی الزامی هستند" },
+      { status: 400 }
+    );
+  }
 
-  files.push(newFile);
-  await writeFiles(files);
+  // تولید slug یکتا
+  let baseSlug = slugify(body.title);
+  let slug = baseSlug;
+  let counter = 1;
 
-  return NextResponse.json(newFile, { status: 201 });
+  while (await prisma.file.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  try {
+    const newFile = await prisma.file.create({
+      data: {
+        slug,
+        title: body.title,
+        desc: body.desc,
+        category: body.category,
+        type: body.type || "جزوه",
+        level: body.level || "دانشگاهی",
+        author: body.author || null,
+        viewUrl: body.viewUrl || null,
+        downloadUrl: body.downloadUrl || null,
+        downloadName: body.downloadName || null,
+        color: body.color || "blue",
+      },
+    });
+
+    return NextResponse.json(newFile, { status: 201 });
+  } catch (error) {
+    console.error("Error creating file:", error);
+    return NextResponse.json(
+      { error: "خطا در ذخیره فایل" },
+      { status: 500 }
+    );
+  }
 }
 
+// ─── DELETE: حذف فایل ───
 export async function DELETE(request: Request) {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
@@ -66,9 +100,11 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "شناسه لازم است" }, { status: 400 });
   }
 
-  const files = await readFiles();
-  const filtered = files.filter((f: { id: string }) => f.id !== id);
-  await writeFiles(filtered);
-
-  return NextResponse.json({ message: "فایل حذف شد" });
+  try {
+    await prisma.file.delete({ where: { id } });
+    return NextResponse.json({ message: "فایل حذف شد" });
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    return NextResponse.json({ error: "خطا در حذف" }, { status: 500 });
+  }
 }

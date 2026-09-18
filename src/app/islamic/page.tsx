@@ -1,9 +1,10 @@
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
-export default function IslamicPage() {
+export default async function IslamicPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.category === "معارف");
 
   return (

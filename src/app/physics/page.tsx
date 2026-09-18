@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
@@ -10,11 +10,12 @@ export const metadata: Metadata = {
     "دانلود رایگان جزوه‌های فیزیک پایه، الکترومغناطیس، مکانیک و... — جزوات اختصاصی برگ دانش برای دانشجویان.",
   keywords: ["فیزیک", "جزوه فیزیک", "دانلود جزوه", "فیزیک پایه", "برگ دانش"],
   alternates: {
-    canonical: "https://bargdanesh.ir/physics",
+    canonical: "https://www.bargdanesh.ir/physics",
   },
 };
 
-export default function PhysicsPage() {
+export default async function PhysicsPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.category === "فیزیک");
 
   return (

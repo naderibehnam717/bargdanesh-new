@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 
 export const metadata: Metadata = {
@@ -28,7 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NotesPage() {
+export default async function NotesPage() {
+  const allFiles = await getAllFiles();
   const notes = allFiles.filter((f) => f.type === "جزوه");
 
   return (

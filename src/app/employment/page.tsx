@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import FAQ from "@/components/FAQ";
@@ -52,7 +52,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "منابع استخدامی برگ دانش رایگان هستند؟",
@@ -86,7 +85,8 @@ const faqs = [
   },
 ];
 
-export default function EmploymentPage() {
+export default async function EmploymentPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.type === "منابع استخدامی");
 
   return (

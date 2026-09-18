@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import { getFilePath } from "@/lib/filePath";
 
 const BASE_URL = "https://www.bargdanesh.ir";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   // ────────── 1. صفحات ایستاتیک ──────────
@@ -69,7 +69,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.5,
     },
-    // دسته‌بندی‌های درسی
     {
       url: `${BASE_URL}/chemistry`,
       lastModified: now,
@@ -120,7 +119,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // ────────── 2. صفحات داینامیک (همه‌ی فایل‌ها) ──────────
+  // ────────── 2. صفحات داینامیک (از DB + هاردکد) ──────────
+  const allFiles = await getAllFiles();
   const filePages: MetadataRoute.Sitemap = allFiles.map((file) => ({
     url: `${BASE_URL}${getFilePath(file)}`,
     lastModified: now,

@@ -1,9 +1,10 @@
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
-export default function SociologyPage() {
+export default async function SociologyPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.category === "جامعه‌شناسی");
 
   return (

@@ -7,7 +7,7 @@ import Countdown from "@/components/Countdown";
 import QuotesSlider from "@/components/QuotesSlider";
 import UsefulLinks from "@/components/UsefulLinks";
 import CTA from "@/components/CTA";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -24,16 +24,18 @@ export const metadata: Metadata = {
     "برگ دانش",
   ],
   alternates: {
-    canonical: "https://bargdanesh.ir",
+    canonical: "https://www.bargdanesh.ir",
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  const allFiles = await getAllFiles();
   const latestFiles = [...allFiles].reverse().slice(0, 4);
 
   return (
     <>
-      <Hero />
+      {/* ✅ files رو پاس بده به Hero */}
+      <Hero files={allFiles} />
 
       <section className="section">
         <div className="container">
@@ -94,7 +96,7 @@ export default function Home() {
                   <h2 className="section__title">🆕 آخرین فایل‌های اضافه‌شده</h2>
                   <p className="section__subtitle">تازه‌ترین منابع برگ دانش</p>
                 </div>
-                <Link href="/notes" className="btn btn--outline btn--sm">
+                <Link href="/university" className="btn btn--outline btn--sm">
                   مشاهده همه →
                 </Link>
               </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
 
@@ -52,7 +52,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "منابع مدرسه‌ای برگ دانش رایگان هستند؟",
@@ -86,7 +85,8 @@ const faqs = [
   },
 ];
 
-export default function SchoolPage() {
+export default async function SchoolPage() {
+  const allFiles = await getAllFiles();
   const schoolFiles = allFiles.filter((f) => f.level === "مدرسه ای");
   const categories = [...new Set(schoolFiles.map((f) => f.category))];
 

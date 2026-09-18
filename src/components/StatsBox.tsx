@@ -1,10 +1,12 @@
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 
 function toFa(n: number): string {
   return String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 }
 
-export default function StatsBox() {
+export default async function StatsBox() {
+  const allFiles = await getAllFiles();
+
   const notesCount = allFiles.filter((f) => f.type === "جزوه").length;
   const booksCount = allFiles.filter((f) => f.type === "کتاب").length;
   const examsCount = allFiles.filter((f) => f.type === "نمونه سوال").length;

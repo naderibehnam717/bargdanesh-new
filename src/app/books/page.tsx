@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import BooksClient from "./BooksClient";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
@@ -33,7 +33,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "کتاب‌های برگ دانش رایگان هستند؟",
@@ -67,7 +66,8 @@ const faqs = [
   },
 ];
 
-export default function BooksPage() {
+export default async function BooksPage() {
+  const allFiles = await getAllFiles();
   const books = allFiles.filter((f) => f.type === "منابع غیر درسی");
 
   return (

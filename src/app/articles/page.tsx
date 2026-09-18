@@ -46,7 +46,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── FAQ ───
 const faqs = [
   {
     question: "مقالات برگ دانش رایگان هستند؟",

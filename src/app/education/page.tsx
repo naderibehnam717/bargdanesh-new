@@ -1,9 +1,10 @@
-import { allFiles } from "@/lib/files";
+import { getAllFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
 
-export default function EducationPage() {
+export default async function EducationPage() {
+  const allFiles = await getAllFiles();
   const files = allFiles.filter((f) => f.category === "علوم تربیتی");
 
   return (
