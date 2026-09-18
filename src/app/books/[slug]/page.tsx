@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getFileBySlug, getFilesByType, allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
+import Breadcrumb from "@/components/Breadcrumb";
+import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -82,6 +84,13 @@ export default async function BookDetailPage({ params }: PageProps) {
 
   const url = `https://www.bargdanesh.ir/books/${file.slug}`;
 
+  // ─── Breadcrumb items ───
+  const breadcrumbItems = [
+    { label: "خانه", href: "/" },
+    { label: "منابع غیر درسی", href: "/books" },
+    { label: file.title },
+  ];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Book",
@@ -99,57 +108,16 @@ export default async function BookDetailPage({ params }: PageProps) {
     },
   };
 
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "خانه",
-        item: "https://www.bargdanesh.ir",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "منابع غیر درسی",
-        item: "https://www.bargdanesh.ir/books",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: file.title,
-        item: url,
-      },
-    ],
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
 
-      <nav
-        aria-label="breadcrumb"
-        className="container"
-        style={{ padding: "16px 20px", fontSize: "14px", color: "#666" }}
-      >
-        <Link href="/" style={{ color: "#0066cc", textDecoration: "none" }}>
-          خانه
-        </Link>
-        <span style={{ margin: "0 8px" }}>›</span>
-        <Link href="/books" style={{ color: "#0066cc", textDecoration: "none" }}>
-          منابع غیر درسی
-        </Link>
-        <span style={{ margin: "0 8px" }}>›</span>
-        <span>{file.title}</span>
-      </nav>
+      {/* ✅ Breadcrumb */}
+      <Breadcrumb items={breadcrumbItems} />
+      <BreadcrumbSchema items={breadcrumbItems} />
 
       <section className="page-header">
         <div className="container page-header__inner">
