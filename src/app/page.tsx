@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import StudentConcerns from "@/components/StudentConcerns";
 import FileCard from "@/components/FileCard";
@@ -8,6 +9,24 @@ import UsefulLinks from "@/components/UsefulLinks";
 import CTA from "@/components/CTA";
 import { allFiles } from "@/lib/files";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "برگ دانش | دانش، یک برگ فاصله دارد",
+  description:
+    "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی. دسترسی آسان به منابع آموزشی با کیفیت برای دانشجویان و دانش‌آموزان.",
+  keywords: [
+    "جزوه",
+    "کتاب",
+    "نمونه سوال",
+    "مقاله",
+    "دانلود رایگان",
+    "منابع دانشگاهی",
+    "برگ دانش",
+  ],
+  alternates: {
+    canonical: "https://bargdanesh.ir",
+  },
+};
 
 export default function Home() {
   const latestFiles = [...allFiles].reverse().slice(0, 4);
@@ -80,10 +99,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div
-                className="cards-grid"
-                style={{ marginBottom: "48px" }}
-              >
+              <div className="cards-grid" style={{ marginBottom: "48px" }}>
                 {latestFiles.map((file, i) => (
                   <FileCard key={i} file={file} />
                 ))}

@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
+import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "./providers";
 
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-vazirmatn",
+});
+
 export const metadata: Metadata = {
-  title: "برگ دانش | دانش، یک برگ فاصله دارد",
+  metadataBase: new URL("https://www.bargdanesh.ir"),
+  title: {
+    default: "برگ دانش | دانش، یک برگ فاصله دارد",
+    template: "%s | برگ دانش",
+  },
   description:
-    "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی — برگ دانش",
+    "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی و مدرسه‌ای — برگ دانش",
+  authors: [{ name: "برگ دانش" }],
+  creator: "برگ دانش",
+  publisher: "برگ دانش",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -17,18 +32,44 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
-    other: [
+  },
+  manifest: "/site.webmanifest",
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    url: "https://www.bargdanesh.ir",
+    siteName: "برگ دانش",
+    title: "برگ دانش | دانش، یک برگ فاصله دارد",
+    description:
+      "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی و مدرسه‌ای",
+    images: [
       {
-        rel: "android-chrome",
-        url: "/android-chrome-192x192.png",
-      },
-      {
-        rel: "android-chrome",
         url: "/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "برگ دانش",
       },
     ],
   },
-  manifest: "/site.webmanifest",
+  twitter: {
+    card: "summary_large_image",
+    title: "برگ دانش | دانش، یک برگ فاصله دارد",
+    description:
+      "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی و مدرسه‌ای",
+    images: ["/android-chrome-512x512.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  // ⚠️ canonical رو حذف کردم - توی هر page جدا تنظیم می‌کنیم
 };
 
 export default function RootLayout({
@@ -37,25 +78,44 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body>
+    <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+      <body className={vazirmatn.className}>
         <Providers>
           <Header />
           {children}
           <Footer />
         </Providers>
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "برگ دانش",
+              url: "https://www.bargdanesh.ir",
+              description:
+                "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی و مدرسه‌ای",
+              inLanguage: "fa-IR",
+              potentialAction: {
+                "@type": "SearchAction",
+                target:
+                  "https://www.bargdanesh.ir/notes?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "برگ دانش",
+                url: "https://www.bargdanesh.ir",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://www.bargdanesh.ir/android-chrome-512x512.png",
+                },
+              },
+            }),
+          }}
+        />
       </body>
     </html>
   );

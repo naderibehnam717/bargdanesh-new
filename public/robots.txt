@@ -1,0 +1,25 @@
+# robots.txt for bargdanesh.ir
+
+User-agent: *
+Allow: /
+
+# بخش‌های مدیریتی
+Disallow: /admin
+Disallow: /dashboard
+
+# API
+Disallow: /api/
+
+# صفحات احراز هویت
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# پارامترهای جستجو و tracking
+Disallow: /*?q=
+Disallow: /*?search=
+Disallow: /*?utm_
+Disallow: /*?page=
+
+Sitemap: https://www.bargdanesh.ir/sitemap.xml

@@ -1,16 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { FileItem } from "@/lib/files";
+import { getFilePath } from "@/lib/filePath";
 
 interface FileCardProps {
   file: FileItem;
 }
 
 export default function FileCard({ file }: FileCardProps) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
@@ -35,7 +37,10 @@ export default function FileCard({ file }: FileCardProps) {
     }
   }
 
-  async function toggleFavorite() {
+  async function toggleFavorite(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!session?.user) {
       router.push("/login");
       return;
@@ -68,44 +73,22 @@ export default function FileCard({ file }: FileCardProps) {
     }
   }
 
-  function requireLogin(e: React.MouseEvent) {
-    if (status === "loading") {
-      e.preventDefault();
-      return;
-    }
-    if (!session?.user) {
-      e.preventDefault();
-      router.push("/login");
-    }
-  }
-
-  async function handleDownload(e: React.MouseEvent) {
-    if (!session?.user) {
-      e.preventDefault();
-      router.push("/login");
-      return;
-    }
-
-    // ثبت در تاریخچه دانلود
-    try {
-      await fetch("/api/user/downloads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileTitle: file.title }),
-      });
-    } catch {
-      // اگه ثبت نشد، ادامه می‌دیم
-    }
-  }
+  const detailPath = getFilePath(file);
 
   return (
     <article className="content-card">
-      <span className={`content-card__badge content-card__badge--${file.color}`}>
-        {file.category}
-      </span>
+      <Link href={detailPath} className="content-card__link" aria-label={`مشاهده ${file.title}`}>
+        <span className={`content-card__badge content-card__badge--${file.color}`}>
+          {file.category}
+        </span>
+      </Link>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
-        <h3 className="content-card__title" style={{ flex: 1 }}>{file.title}</h3>
+        <h3 className="content-card__title" style={{ flex: 1 }}>
+          <Link href={detailPath} style={{ color: "inherit", textDecoration: "none" }}>
+            {file.title}
+          </Link>
+        </h3>
         {session?.user && (
           <button
             onClick={toggleFavorite}
@@ -118,7 +101,6 @@ export default function FileCard({ file }: FileCardProps) {
               fontSize: "18px",
               padding: "4px",
               opacity: favLoading ? 0.5 : 1,
-              transition: "transform 0.2s ease",
               flexShrink: 0,
             }}
           >
@@ -135,31 +117,34 @@ export default function FileCard({ file }: FileCardProps) {
       </div>
 
       <div className="content-card__footer">
-        {file.viewUrl ? (
-          <a
-            href={file.viewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={requireLogin}
-            className="btn btn--primary btn--sm"
-          >
-            {session?.user ? "مشاهده" : "🔒 مشاهده"}
-          </a>
-        ) : null}
+        <Link href={detailPath} className="btn btn--primary btn--sm">
+          مشاهده جزئیات
+        </Link>
 
         {file.downloadUrl ? (
           <a
             href={file.downloadUrl}
             download={file.downloadName}
-            onClick={handleDownload}
+            onClick={async (e) => {
+              if (!session?.user) {
+                e.preventDefault();
+                router.push("/login");
+                return;
+              }
+              try {
+                await fetch("/api/user/downloads", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ fileTitle: file.title }),
+                });
+              } catch {
+                // ignore
+              }
+            }}
             className="btn btn--outline btn--sm"
           >
             {session?.user ? "دانلود" : "🔒 دانلود"}
           </a>
-        ) : null}
-
-        {!file.viewUrl && !file.downloadUrl ? (
-          <span style={{ color: "#999", fontSize: "13px" }}>به‌زودی...</span>
         ) : null}
       </div>
     </article>

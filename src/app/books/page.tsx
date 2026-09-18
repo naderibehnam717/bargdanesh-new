@@ -1,17 +1,25 @@
-"use client";
-
-import { useState } from "react";
+import type { Metadata } from "next";
 import { allFiles } from "@/lib/files";
-import FileCard from "@/components/FileCard";
+import BooksClient from "./BooksClient";
 
-const filters = ["همه", "کتاب", "رمان", "داستان", "شعر", "نمایشنامه"];
+export const metadata: Metadata = {
+  title: "منابع غیر درسی — کتاب، رمان، شعر",
+  description:
+    "دانلود رایگان کتاب، رمان، داستان، شعر و نمایشنامه — مجموعه‌ای متنوع برای علاقه‌مندان به مطالعه",
+  alternates: {
+    canonical: "https://www.bargdanesh.ir/books",
+  },
+  openGraph: {
+    title: "منابع غیر درسی | برگ دانش",
+    description:
+      "دانلود رایگان کتاب، رمان، داستان، شعر و نمایشنامه",
+    url: "https://www.bargdanesh.ir/books",
+    type: "website",
+  },
+};
 
 export default function BooksPage() {
-  const [activeFilter, setActiveFilter] = useState("همه");
-
   const books = allFiles.filter((f) => f.type === "منابع غیر درسی");
-  const filtered =
-    activeFilter === "همه" ? books : books.filter((f) => f.category === activeFilter);
 
   return (
     <>
@@ -26,29 +34,7 @@ export default function BooksPage() {
 
       <main className="section">
         <div className="container">
-          <div className="filter-bar">
-            {filters.map((filter) => (
-              <button
-                key={filter}
-                className={`filter-bar__item ${
-                  activeFilter === filter ? "filter-bar__item--active" : ""
-                }`}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          <div className="cards-grid">
-            {filtered.length === 0 ? (
-              <p style={{ textAlign: "center", padding: "60px 20px", color: "#999", gridColumn: "1 / -1" }}>
-                📚 هنوز منبعی اضافه نشده است.
-              </p>
-            ) : (
-              filtered.map((file, i) => <FileCard key={i} file={file} />)
-            )}
-          </div>
+          <BooksClient books={books} />
         </div>
       </main>
     </>

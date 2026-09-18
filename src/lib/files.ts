@@ -5,6 +5,7 @@ export type FileLevel = "دانشگاهی" | "مدرسه ای" | "غیر درس�
 export type FileColor = "blue" | "green" | "purple" | "rose" | "yellow" | "red" | "orange" | "pink" | "black";
 
 export interface FileItem {
+  slug: string;
   title: string;
   desc: string;
   category: string;
@@ -19,6 +20,7 @@ export interface FileItem {
 
 export const allFiles: FileItem[] = [
   {
+    slug: "jozve-fizik-paye",
     title: "جزوه فیزیک پایه",
     desc: "جزوه کامل فیزیک ۱ و ۲",
     category: "فیزیک",
@@ -30,6 +32,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-mabani-computer-barname-nevisi",
     title: "جزوه مبانی کامپیوتر و برنامه‌نویسی",
     desc: "مفاهیم پایه کامپیوتر، الگوریتم و برنامه‌نویسی C++",
     category: "کامپیوتر",
@@ -41,6 +44,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "ketab-andishe-islami-1",
     title: "کتاب اندیشه اسلامی ۱",
     desc: "کتاب مرجع اندیشه اسلامی — آیت‌الله جعفر سبحانی",
     category: "معارف",
@@ -52,6 +56,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "jozve-amar-ravesh-tahghigh",
     title: "جزوه آمار و روش تحقیق در علوم انسانی",
     desc: "آمار توصیفی، استنباطی، روش‌های تحقیق و آزمون فرضیه",
     category: "روانشناسی",
@@ -63,6 +68,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-ravanshenasi-omumi",
     title: "جزوه روانشناسی عمومی",
     desc: "مفاهیم پایه، مکاتب، یادگیری، حافظه، هوش و شخصیت",
     category: "روانشناسی",
@@ -75,6 +81,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-ravanshenasi-roshd",
     title: "جزوه روانشناسی رشد",
     desc: "مراحل رشد انسان از تولد تا سالمندی و نظریه‌های مهم رشد",
     category: "روانشناسی",
@@ -87,6 +94,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-ravanshenasi-shakhsiat",
     title: "جزوه روانشناسی شخصیت",
     desc: "نظریه‌های فروید، یونگ، آدلر، مازلو، راجرز و مدل پنج عامل بزرگ",
     category: "روانشناسی",
@@ -99,6 +107,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-ravanshenasi-ejtemaei",
     title: "جزوه روانشناسی اجتماعی",
     desc: "نگرش، نفوذ اجتماعی، همرنگی، اطاعت، گروه‌ها و پیش‌داوری",
     category: "روانشناسی",
@@ -111,6 +120,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-tafakor-hal-masale-khalaghiat",
     title: "جزوه تفکر، حل مسئله و خلاقیت",
     desc: "تفکر انتقادی، تفکر خلاق، مراحل حل مسئله و پرورش خلاقیت",
     category: "علوم تربیتی",
@@ -123,6 +133,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-angizesh-yadgiri",
     title: "جزوه انگیزش و نقش آن در یادگیری",
     desc: "انگیزش درونی و بیرونی، خودکارآمدی و نقش معلم در افزایش انگیزه",
     category: "علوم تربیتی",
@@ -135,6 +146,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "jozve-roshd-tahavol-amoozesh",
     title: "جزوه رشد و تحول در آموزش",
     desc: "ابعاد تحول، رابطه رشد و یادگیری و آموزش متناسب با سطح رشد",
     category: "علوم تربیتی",
@@ -147,6 +159,7 @@ export const allFiles: FileItem[] = [
     color: "rose"
   },
   {
+    slug: "jozve-tafavot-fardi-yadgirande",
     title: "جزوه تفاوت‌های فردی و شناخت یادگیرندگان",
     desc: "تفاوت‌های شناختی، استعداد، سرعت یادگیری، سبک‌های یادگیری و تفاوت‌های عاطفی",
     category: "علوم تربیتی",
@@ -159,6 +172,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-hafeze-farayand-yadgiri",
     title: "جزوه حافظه و فرایندهای یادگیری",
     desc: "رمزگردانی، ذخیره‌سازی، بازیابی و روش‌های تقویت حافظه",
     category: "علوم تربیتی",
@@ -171,6 +185,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-mafhoom-yadgiri-nazariye",
     title: "جزوه مفهوم یادگیری و نظریه‌های یادگیری",
     desc: "رفتارگرایی، شناخت‌گرایی، یادگیری مشاهده‌ای و نظریه‌های پاولف، اسکینر و بندورا",
     category: "علوم تربیتی",
@@ -183,6 +198,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-ravesh-fonoon-tadris",
     title: "جزوه روش‌ها و فنون تدریس",
     desc: "روش‌های تدریس مستقیم، سخنرانی، پرسش و پاسخ، بحث گروهی، حل مسئله و یادگیری مشارکتی",
     category: "علوم تربیتی",
@@ -195,6 +211,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-mabani-oloom-tarbiati",
     title: "جزوه مبانی و مفاهیم اساسی علوم تربیتی",
     desc: "تعریف علوم تربیتی، تفاوت آموزش و تربیت، نقش معلم و یادگیرنده و عوامل مؤثر بر یادگیری",
     category: "علوم تربیتی",
@@ -207,6 +224,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "jozve-arzyabi-sanjesh-amoozeshi",
     title: "جزوه ارزشیابی و سنجش آموزشی",
     desc: "اندازه‌گیری، سنجش، ارزشیابی تشخیصی، تکوینی و پایانی و ابزارهای سنجش",
     category: "علوم تربیتی",
@@ -219,6 +237,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-farhang-jamee",
     title: "جزوه فرهنگ و جامعه",
     desc: "مفاهیم پایه فرهنگ، ارزش‌ها، هنجارها، نمادها، نسبیت فرهنگی و تغییرات فرهنگی",
     category: "جامعه‌شناسی",
@@ -231,6 +250,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-mabani-jamee-shenasi",
     title: "جزوه مبانی و مفاهیم اساسی جامعه‌شناسی",
     desc: "جامعه، کنش اجتماعی، تعامل، گروه، نهاد، پایگاه، نقش و ساختار اجتماعی",
     category: "جامعه‌شناسی",
@@ -243,6 +263,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "jozve-zaban-zamayer-to-be",
     title: "جزوه ضمایر شخصی و فعل To Be در زبان انگلیسی",
     desc: "آموزش ضمایر شخصی، فعل To Be، جمله‌های مثبت، منفی و پرسشی",
     category: "زبان انگلیسی",
@@ -255,6 +276,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "jozve-esm-sefat-jomle-sadeh",
     title: "جزوه اسم، صفت و ساختار جمله‌های ساده",
     desc: "آموزش اسم، صفت و ساختار جمله‌های ساده در زبان انگلیسی",
     category: "زبان انگلیسی",
@@ -267,6 +289,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "ketab-ertebat-ba-har-joor-adami",
     title: "کتاب چطور با هرجور آدمی ارتباط برقرار کنیم؟",
     desc: "لیل لوندز — ترجمه فرخ بافنده | ۹۲ ترفند کوچک برای جذب دیگران",
     category: "کتاب",
@@ -279,6 +302,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "ketab-pranses-pa-berahne",
     title: "کتاب پرنسس پا برهنه",
     desc: "اریک امانوئل اشمیت - ترجمه سعیده بوغیری | چاپ چهارم",
     category: "کتاب",
@@ -291,6 +315,7 @@ export const allFiles: FileItem[] = [
     color: "red"
   },
   {
+    slug: "ketab-zan-ziyadi",
     title: "کتاب زن زیادی",
     desc: "کتاب زن زیادی - چاپ دهم - جلال آل احمد",
     category: "کتاب",
@@ -303,6 +328,7 @@ export const allFiles: FileItem[] = [
     color: "purple"
   },
   {
+    slug: "roman-saat-setareh",
     title: "رمان ساعت ستاره",
     desc: "کلاریس لیسپکتور - مترجم شکیبا محب علی",
     category: "رمان",
@@ -315,6 +341,7 @@ export const allFiles: FileItem[] = [
     color: "yellow"
   },
   {
+    slug: "namayeshname-mostajer-jadid-royaye-americayi",
     title: "نمایشنامه مستاجر جدید و رویای آمریکایی",
     desc: "اوژن یونسکو | ادوارد آلبی - ترجمه رضا کرم رضایی",
     category: "نمایشنامه",
@@ -327,6 +354,7 @@ export const allFiles: FileItem[] = [
     color: "pink"
   },
   {
+    slug: "dastan-tafsir-yek-khab",
     title: "داستان تفسیر یک خواب",
     desc: "زیگموند فروید - مترجم حمید محرمیان معلم",
     category: "داستان",
@@ -339,6 +367,7 @@ export const allFiles: FileItem[] = [
     color: "orange"
   },
   {
+    slug: "roman-girande-shenakhte-nashod",
     title: "رمان گیرنده شناخته نشد",
     desc: "کاترین کرسمن تیلور - ترجمه بهمن دارالشفایی",
     category: "رمان",
@@ -351,6 +380,7 @@ export const allFiles: FileItem[] = [
     color: "red"
   },
   {
+    slug: "roman-pish-az-an-ke-bekhabam",
     title: "رمان پیش از آنکه بخوابم",
     desc: "اس . جی . واتسون - مترجم شقایق قندهاری",
     category: "رمان",
@@ -363,6 +393,7 @@ export const allFiles: FileItem[] = [
     color: "blue"
   },
   {
+    slug: "roman-be-khodaye-nashenakhte",
     title: "رمان به خدای ناشناخته",
     desc: "جان اشتاین بک - مترجم محمد معینی",
     category: "رمان",
@@ -375,6 +406,7 @@ export const allFiles: FileItem[] = [
     color: "black"
   },
   {
+    slug: "roman-gahvare-gorbe",
     title: "رمان گهواره ی گربه",
     desc: "کرت ونه گوت جونیور - مترجم علی اصغر بهرامی",
     category: "رمان",
@@ -387,6 +419,7 @@ export const allFiles: FileItem[] = [
     color: "yellow"
   },
   {
+    slug: "roman-shekast-napazir",
     title: "رمان شکست ناپذیر",
     desc: "ارنست همینگوی - مترجمان مرسده بصیریان | همایون حنیفه وند مقدم",
     category: "رمان",
@@ -399,6 +432,7 @@ export const allFiles: FileItem[] = [
     color: "yellow"
   },
   {
+    slug: "jozve-shimi-aali",
     title: "جزوه شیمی آلی",
     desc: "شیمی آلی فصل یک - دکتر پارسا فراهانی",
     category: "شیمی",
@@ -411,6 +445,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "jozve-ashenayi-mabani-computer",
     title: "جزوه آشنایی با مبانی کامپیوتر",
     desc: "جزوه آشنایی با مبانی کامپیوتر",
     category: "کامپیوتر",
@@ -422,6 +457,7 @@ export const allFiles: FileItem[] = [
     color: "green"
   },
   {
+    slug: "jozve-mabani-computer-barname-sazi",
     title: "مبانی کامپیوتر و برنامه سازی",
     desc: "مبانی کامپیوتر و برنامه سازی - محمد هادی علائیان",
     category: "کامپیوتر",
@@ -434,3 +470,25 @@ export const allFiles: FileItem[] = [
     color: "yellow"
   }
 ];
+
+// ─────── Helpers ───────
+
+export function getFileBySlug(slug: string): FileItem | undefined {
+  return allFiles.find((f) => f.slug === slug);
+}
+
+export function getFilesByType(type: FileType): FileItem[] {
+  return allFiles.filter((f) => f.type === type);
+}
+
+export function getFilesByCategory(category: string): FileItem[] {
+  return allFiles.filter((f) => f.category === category);
+}
+
+export function getAllCategories(): string[] {
+  return Array.from(new Set(allFiles.map((f) => f.category)));
+}
+
+export function getAllSlugs(): string[] {
+  return allFiles.map((f) => f.slug);
+}

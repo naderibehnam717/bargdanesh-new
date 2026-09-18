@@ -1,18 +1,53 @@
+import type { Metadata } from "next";
 import { allFiles } from "@/lib/files";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "منابع مدرسه‌ای",
+  description:
+    "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه — ریاضی، علوم، فارسی، عربی، دینی و سایر دروس در برگ دانش",
+  keywords: [
+    "جزوه مدرسه‌ای",
+    "نمونه سوال مدرسه",
+    "دانلود جزوه مدرسه",
+    "منابع کنکور",
+    "جزوه ریاضی",
+    "جزوه علوم",
+    "برگ دانش",
+  ],
+  openGraph: {
+    title: "منابع مدرسه‌ای | برگ دانش",
+    description:
+      "دانلود رایگان جزوه، کتاب و نمونه سوال مقاطع مختلف مدرسه در برگ دانش",
+    url: "https://www.bargdanesh.ir/school",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://www.bargdanesh.ir/school",
+  },
+};
 
 export default function SchoolPage() {
   const schoolFiles = allFiles.filter((f) => f.level === "مدرسه ای");
   const categories = [...new Set(schoolFiles.map((f) => f.category))];
 
   const icons: Record<string, string> = {
-    "ریاضی": "📐", "علوم": "🔬", "فارسی": "📖", "ادبیات": "📖",
-    "عربی": "🕌", "دینی": "📿", "زبان": "🌍", "اجتماعی": "🏛️",
-    "قرآن": "📿", "علوم تجربی": "🧪"
+    ریاضی: "📐",
+    علوم: "🔬",
+    فارسی: "📖",
+    ادبیات: "📖",
+    عربی: "🕌",
+    دینی: "📿",
+    زبان: "🌍",
+    اجتماعی: "🏛️",
+    قرآن: "📿",
+    "علوم تجربی": "🧪",
   };
 
   const typeLabels: Record<string, string> = {
-    "جزوه": "جزوه", "کتاب": "کتاب", "نمونه سوال": "نمونه سوال"
+    جزوه: "جزوه",
+    کتاب: "کتاب",
+    "نمونه سوال": "نمونه سوال",
   };
 
   return (
@@ -20,7 +55,9 @@ export default function SchoolPage() {
       <section className="page-header">
         <div className="container page-header__inner">
           <h1 className="page-header__title">🏫 مدرسه ای</h1>
-          <p className="page-header__subtitle">منابع و نمونه سوالات مقاطع مختلف مدرسه</p>
+          <p className="page-header__subtitle">
+            منابع و نمونه سوالات مقاطع مختلف مدرسه
+          </p>
         </div>
       </section>
 
@@ -33,14 +70,25 @@ export default function SchoolPage() {
 
           <div className="cards-grid">
             {categories.length === 0 ? (
-              <p style={{ textAlign: "center", padding: "40px", color: "#999", gridColumn: "1 / -1" }}>
+              <p
+                style={{
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#999",
+                  gridColumn: "1 / -1",
+                }}
+              >
                 هنوز فایلی اضافه نشده است.
               </p>
             ) : (
               categories.map((cat) => {
-                const filesInCat = schoolFiles.filter((f) => f.category === cat);
+                const filesInCat = schoolFiles.filter(
+                  (f) => f.category === cat
+                );
                 const types = [...new Set(filesInCat.map((f) => f.type))];
-                const typesText = types.map((t) => typeLabels[t] || t).join("، ");
+                const typesText = types
+                  .map((t) => typeLabels[t] || t)
+                  .join("، ");
 
                 let href = "/exams";
                 if (types.length === 1) {
@@ -51,7 +99,12 @@ export default function SchoolPage() {
                 const icon = icons[cat] || "📁";
 
                 return (
-                  <Link key={cat} href={href} className="content-card" style={{ textDecoration: "none" }}>
+                  <Link
+                    key={cat}
+                    href={href}
+                    className="content-card"
+                    style={{ textDecoration: "none" }}
+                  >
                     <div className="category-card__icon">{icon}</div>
                     <h3 className="content-card__title">{cat}</h3>
                     <p className="content-card__desc">

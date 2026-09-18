@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
 import { allFiles } from "@/lib/files";
 import FileCard from "@/components/FileCard";
 import AnimatedTitle from "@/components/AnimatedTitle";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "فیزیک",
+  description:
+    "دانلود رایگان جزوه‌های فیزیک پایه، الکترومغناطیس، مکانیک و... — جزوات اختصاصی برگ دانش برای دانشجویان.",
+  keywords: ["فیزیک", "جزوه فیزیک", "دانلود جزوه", "فیزیک پایه", "برگ دانش"],
+  alternates: {
+    canonical: "https://bargdanesh.ir/physics",
+  },
+};
 
 export default function PhysicsPage() {
   const files = allFiles.filter((f) => f.category === "فیزیک");
@@ -11,9 +22,9 @@ export default function PhysicsPage() {
       <section className="subject-hero" data-subject="physics">
         <div className="container">
           <AnimatedTitle
-  text="PHYSICS"
-  emojis={["⚛️", "🔬", "🧲", "⚡", "🌌", "🔭", "💡", "🧪"]}
-/>
+            text="PHYSICS"
+            emojis={["⚛️", "🔬", "🧲", "⚡", "🌌", "🔭", "💡", "🧪"]}
+          />
           <p className="subject-hero__subtitle">فیزیک</p>
         </div>
       </section>
@@ -23,14 +34,14 @@ export default function PhysicsPage() {
           <div className="subject-intro">
             <h2 className="subject-intro__title">📖 درباره‌ی فیزیک</h2>
             <p className="subject-intro__text">
-              فیزیک علم مطالعه‌ی ماده، انرژی، حرکت و نیرو است. این علم پایه‌ی بسیاری از
-              علوم دیگر مانند مهندسی، شیمی و نجوم محسوب می‌شود و به ما کمک می‌کند قوانین
-              حاکم بر جهان را بهتر بفهمیم.
+              فیزیک علم مطالعه‌ی ماده، انرژی، حرکت و نیرو است. این علم پایه‌ی
+              بسیاری از علوم دیگر مانند مهندسی، شیمی و نجوم محسوب می‌شود و به ما
+              کمک می‌کند قوانین حاکم بر جهان را بهتر بفهمیم.
             </p>
             <p className="subject-intro__text">
-              در این بخش، جزوه‌های اختصاصی برگ دانش در زمینه‌های مختلف فیزیک در اختیار
-              شما قرار دارد. همه‌ی این جزوه‌ها به‌صورت رایگان و با کیفیت بالا آماده
-              شده‌اند.
+              در این بخش، جزوه‌های اختصاصی برگ دانش در زمینه‌های مختلف فیزیک در
+              اختیار شما قرار دارد. همه‌ی این جزوه‌ها به‌صورت رایگان و با کیفیت
+              بالا آماده شده‌اند.
             </p>
           </div>
 
