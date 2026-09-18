@@ -6,8 +6,6 @@ const nextConfig: NextConfig = {
   compress: true,
   trailingSlash: false,
 
-  // ✅ ریدایرکت www در Vercel انجام می‌شه (double redirect نه)
-
   async headers() {
     return [
       {
@@ -37,6 +35,10 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [],
+    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   experimental: {

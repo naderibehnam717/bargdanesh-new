@@ -10,6 +10,9 @@ const vazirmatn = Vazirmatn({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
   variable: "--font-vazirmatn",
+  preload: true,
+  adjustFontFallback: true,
+  fallback: ["Tahoma", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -69,7 +72,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // ⚠️ canonical رو حذف کردم - توی هر page جدا تنظیم می‌کنیم
 };
 
 export default function RootLayout({
@@ -86,7 +88,7 @@ export default function RootLayout({
           <Footer />
         </Providers>
 
-        {/* Structured Data */}
+        {/* Structured Data — WebSite */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -98,12 +100,6 @@ export default function RootLayout({
               description:
                 "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله دانشگاهی و مدرسه‌ای",
               inLanguage: "fa-IR",
-              potentialAction: {
-                "@type": "SearchAction",
-                target:
-                  "https://www.bargdanesh.ir/notes?q={search_term_string}",
-                "query-input": "required name=search_term_string",
-              },
               publisher: {
                 "@type": "Organization",
                 name: "برگ دانش",
