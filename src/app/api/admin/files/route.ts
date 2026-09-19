@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 async function checkAdmin() {
   const session = await auth();
@@ -9,7 +10,6 @@ async function checkAdmin() {
   return true;
 }
 
-// ─── تولید slug از عنوان ───
 function slugify(text: string): string {
   return text
     .toString()
@@ -21,7 +21,7 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// ─── GET: لیست همه فایل‌ها ───
+// ─── GET: لیست فایل‌ها ───
 export async function GET() {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
@@ -34,7 +34,7 @@ export async function GET() {
   return NextResponse.json(files);
 }
 
-// ─── POST: اضافه کردن فایل جدید ───
+// ─── POST: اضافه کردن فایل ───
 export async function POST(request: Request) {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
 
   const body = await request.json();
 
-  // اعتبارسنجی
   if (!body.title || !body.desc || !body.category) {
     return NextResponse.json(
       { error: "عنوان، توضیح و دسته‌بندی الزامی هستند" },
@@ -50,7 +49,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // تولید slug یکتا
   let baseSlug = slugify(body.title);
   let slug = baseSlug;
   let counter = 1;
@@ -77,6 +75,9 @@ export async function POST(request: Request) {
       },
     });
 
+    // ✅ Cache رو پاک کن
+    revalidatePath("/", "layout");
+
     return NextResponse.json(newFile, { status: 201 });
   } catch (error) {
     console.error("Error creating file:", error);
@@ -102,6 +103,10 @@ export async function DELETE(request: Request) {
 
   try {
     await prisma.file.delete({ where: { id } });
+
+    // ✅ Cache رو پاک کن
+    revalidatePath("/", "layout");
+
     return NextResponse.json({ message: "فایل حذف شد" });
   } catch (error) {
     console.error("Error deleting file:", error);
