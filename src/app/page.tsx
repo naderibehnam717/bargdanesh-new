@@ -2,13 +2,15 @@ import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import StudentConcerns from "@/components/StudentConcerns";
 import FileCard from "@/components/FileCard";
-import StatsBox from "@/components/StatsBox";
+import StatsBanner from "@/components/StatsBanner";
 import Countdown from "@/components/Countdown";
 import QuotesSlider from "@/components/QuotesSlider";
 import UsefulLinks from "@/components/UsefulLinks";
 import CTA from "@/components/CTA";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
+import HomeGuides from "@/components/HomeGuides";
+import DailyQuiz from "@/components/DailyQuiz";
 import { getAllFiles } from "@/lib/files";
 import Link from "next/link";
 
@@ -28,8 +30,10 @@ export const metadata: Metadata = {
     "جزوه کنکور",
     "مقاله رایگان",
     "برگ دانش",
-    "دانلود جزوه روانشناسی",
-    "دانلود جزوه کامپیوتر",
+    "روش مطالعه",
+    "تقویت حافظه",
+    "آمادگی کنکور",
+    "کوییز روزانه",
   ],
   alternates: {
     canonical: "https://www.bargdanesh.ir",
@@ -54,8 +58,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "برگ دانش | دانلود رایگان جزوه، کتاب و نمونه سوال",
-    description:
-      "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله",
+    description: "مرجع دانلود رایگان جزوه، کتاب، نمونه سوال و مقاله",
     images: ["/android-chrome-512x512.png"],
   },
 };
@@ -96,48 +99,12 @@ const faqs = [
 
 // ─── دسته‌بندی‌ها ───
 const categories = [
-  {
-    title: "دانشگاهی",
-    desc: "جزوه‌های تمام رشته‌ها",
-    icon: "🎓",
-    href: "/university",
-    color: "blue",
-  },
-  {
-    title: "مدرسه‌ای",
-    desc: "منابع تمام مقاطع",
-    icon: "🏫",
-    href: "/school",
-    color: "green",
-  },
-  {
-    title: "نمونه سوال",
-    desc: "آرشیو سوالات امتحانی",
-    icon: "📝",
-    href: "/exams",
-    color: "purple",
-  },
-  {
-    title: "منابع غیر درسی",
-    desc: "کتاب، رمان و داستان",
-    icon: "📖",
-    href: "/books",
-    color: "orange",
-  },
-  {
-    title: "منابع استخدامی",
-    desc: "آمادگی آزمون‌های استخدامی",
-    icon: "💼",
-    href: "/employment",
-    color: "rose",
-  },
-  {
-    title: "مقالات",
-    desc: "مقالات علمی و پژوهشی",
-    icon: "📄",
-    href: "/articles",
-    color: "yellow",
-  },
+  { title: "دانشگاهی", desc: "جزوه‌های تمام رشته‌ها", icon: "🎓", href: "/university" },
+  { title: "مدرسه‌ای", desc: "منابع تمام مقاطع", icon: "🏫", href: "/school" },
+  { title: "نمونه سوال", desc: "آرشیو سوالات امتحانی", icon: "📝", href: "/exams" },
+  { title: "منابع غیر درسی", desc: "کتاب، رمان و داستان", icon: "📖", href: "/books" },
+  { title: "منابع استخدامی", desc: "آمادگی آزمون‌های استخدامی", icon: "💼", href: "/employment" },
+  { title: "مقالات", desc: "مقالات علمی و پژوهشی", icon: "📄", href: "/articles" },
 ];
 
 export default async function Home() {
@@ -146,73 +113,34 @@ export default async function Home() {
 
   return (
     <>
-      {/* ✅ Hero */}
+      {/* 1. Hero */}
       <Hero files={allFiles} />
 
-      {/* ─────── دسته‌بندی‌ها ─────── */}
+      {/* 2. دسته‌بندی‌ها */}
       <section className="section">
         <div className="container">
-          <div
-            className="section__header"
-            style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto", maxWidth: "700px" }}
-          >
+          <div className="section__header" style={{ textAlign: "center" }}>
             <h2 className="section__title">📁 دسته‌بندی‌های برگ دانش</h2>
-            <p className="section__subtitle">
-              منبع مورد نظرت رو سریع پیدا کن
-            </p>
+            <p className="section__subtitle">منبع مورد نظرت رو سریع پیدا کن</p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "16px",
-              maxWidth: "1000px",
-              margin: "0 auto",
-            }}
-          >
+          <div className="home-categories">
             {categories.map((cat) => (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                style={{
-                  display: "block",
-                  padding: "24px",
-                  background: "#fff",
-                  borderRadius: "12px",
-                  border: "1px solid #e5e5e5",
-                  textDecoration: "none",
-                  textAlign: "center",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                }}
-              >
-                <div style={{ fontSize: "40px", marginBottom: "8px" }}>
-                  {cat.icon}
-                </div>
-                <h3
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: 700,
-                    color: "#1a1a1a",
-                    marginBottom: "4px",
-                  }}
-                >
-                  {cat.title}
-                </h3>
-                <p style={{ fontSize: "13px", color: "#666", margin: 0 }}>
-                  {cat.desc}
-                </p>
+              <Link key={cat.href} href={cat.href} className="home-category-card">
+                <div className="home-category-card__icon">{cat.icon}</div>
+                <h3 className="home-category-card__title">{cat.title}</h3>
+                <p className="home-category-card__desc">{cat.desc}</p>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─────── بخش اصلی ─────── */}
+      {/* 3. چرا برگ دانش + Countdown */}
       <section className="section" style={{ background: "#f8f9fa" }}>
         <div className="container">
-          <div className="layout-with-sidebar">
-            <div>
+          <div className="home-two-col">
+            <div className="home-two-col__main">
               <div className="section__header">
                 <h2 className="section__title">چرا برگ دانش؟</h2>
                 <p className="section__subtitle">چیزی که ما را متفاوت می‌کند</p>
@@ -220,7 +148,7 @@ export default async function Home() {
 
               <StudentConcerns />
 
-              <div className="features" style={{ marginBottom: "48px" }}>
+              <div className="features">
                 <div className="feature">
                   <div className="feature__icon">⚡</div>
                   <h3 className="feature__title">دسترسی سریع</h3>
@@ -250,16 +178,27 @@ export default async function Home() {
                   </p>
                 </div>
               </div>
+            </div>
 
+            <aside className="home-two-col__aside">
+              <Countdown />
+              <StatsBanner />
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. کوییز روزانه + آخرین فایل‌ها */}
+      <section className="section">
+        <div className="container">
+          <div className="home-two-col">
+            <div className="home-two-col__main">
               <div
                 className="section__header"
                 style={{
-                  textAlign: "right",
-                  marginLeft: 0,
-                  maxWidth: "100%",
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "space-between",
+                  alignItems: "center",
                   flexWrap: "wrap",
                   gap: "12px",
                 }}
@@ -273,321 +212,154 @@ export default async function Home() {
                 </Link>
               </div>
 
-              <div className="cards-grid" style={{ marginBottom: "48px" }}>
+              <div className="cards-grid">
                 {latestFiles.map((file, i) => (
                   <FileCard key={i} file={file} />
                 ))}
               </div>
-
-              <StatsBox />
             </div>
 
-            <aside className="sidebar">
-              <Countdown />
+            <aside className="home-two-col__aside">
+              <DailyQuiz />
               <QuotesSlider />
-              <UsefulLinks />
             </aside>
           </div>
         </div>
       </section>
 
-      {/* ─────── چطور کار می‌کند؟ ─────── */}
+      {/* 5. چطور کار می‌کنه + UsefulLinks */}
+      <section className="section" style={{ background: "#f8f9fa" }}>
+        <div className="container">
+          <div className="home-two-col">
+            <div className="home-two-col__main">
+              <div className="section__header">
+                <h2 className="section__title">🎯 چطور از برگ دانش استفاده کنم؟</h2>
+                <p className="section__subtitle">
+                  فقط ۳ مرحله ساده — سریع و رایگان
+                </p>
+              </div>
+
+              <div className="home-how">
+                <div className="home-how__card">
+                  <div className="home-how__num">۱</div>
+                  <h3 className="home-how__title">ثبت‌نام کن</h3>
+                  <p className="home-how__desc">
+                    با ایمیل خود در چند ثانیه ثبت‌نام کن. کاملاً رایگانه.
+                  </p>
+                </div>
+                <div className="home-how__card">
+                  <div className="home-how__num">۲</div>
+                  <h3 className="home-how__title">فایل رو پیدا کن</h3>
+                  <p className="home-how__desc">
+                    از بین هزاران جزوه، کتاب و نمونه سوال، فایل مورد نظرت رو
+                    انتخاب کن.
+                  </p>
+                </div>
+                <div className="home-how__card">
+                  <div className="home-how__num">۳</div>
+                  <h3 className="home-how__title">رایگان دانلود کن</h3>
+                  <p className="home-how__desc">
+                    روی دکمه‌ی دانلود کلیک کن و فایل PDF رو رایگان دریافت کن.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <aside className="home-two-col__aside">
+              <div className="sidebar">
+                <UsefulLinks />
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. راهنمای مطالعه */}
+      <HomeGuides />
+
+      {/* 7. محتوای سئو + FAQ */}
       <section className="section">
         <div className="container">
-          <div
-            className="section__header"
-            style={{
-              textAlign: "center",
-              marginLeft: "auto",
-              marginRight: "auto",
-              maxWidth: "700px",
-            }}
-          >
-            <h2 className="section__title">🎯 چطور از برگ دانش استفاده کنم؟</h2>
-            <p className="section__subtitle">
-              فقط ۳ مرحله ساده — سریع و رایگان
-            </p>
-          </div>
+          <div className="home-two-col">
+            <div className="home-two-col__main">
+              <div className="home-seo-content">
+                <h2 className="home-seo-content__title">
+                  برگ دانش — مرجع دانلود رایگان جزوه، کتاب و نمونه سوال
+                </h2>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "24px",
-              maxWidth: "1000px",
-              margin: "0 auto",
-            }}
-          >
-            <div
-              style={{
-                textAlign: "center",
-                padding: "32px 24px",
-                background: "#fff",
-                borderRadius: "12px",
-                border: "1px solid #e5e5e5",
-              }}
-            >
-              <div
-                style={{
-                  width: "64px",
-                  height: "64px",
-                  background: "linear-gradient(135deg, #0066cc, #7c3aed)",
-                  color: "#fff",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "28px",
-                  fontWeight: 700,
-                  margin: "0 auto 16px",
-                }}
-              >
-                ۱
+                <p>
+                  <strong>برگ دانش</strong> یک پلتفرم آموزشی رایگان است که با
+                  هدف کمک به دانشجویان و دانش‌آموزان ایرانی راه‌اندازی شده است.
+                  در این سایت می‌توانید به هزاران <strong>جزوه دانشگاهی</strong>
+                  ، <strong>کتاب رایگان</strong>،{" "}
+                  <strong>نمونه سوال امتحانی</strong> و{" "}
+                  <strong>مقاله علمی</strong> دسترسی داشته باشید.
+                </p>
+
+                <p>
+                  ما معتقدیم که <strong>دانش باید در دسترس همه باشد</strong>. به
+                  همین دلیل، تمامی منابع آموزشی موجود در برگ دانش به صورت کاملاً
+                  رایگان در اختیار کاربران قرار می‌گیرد. کافی است در سایت ثبت‌نام
+                  کنید و فایل‌های مورد نظر خود را دانلود کنید.
+                </p>
+
+                <h3>چه منابعی در برگ دانش موجود است؟</h3>
+
+                <ul>
+                  <li>
+                    <strong>جزوه‌های دانشگاهی</strong> — روانشناسی، علوم تربیتی،
+                    کامپیوتر، فیزیک، شیمی، جامعه‌شناسی و زبان انگلیسی
+                  </li>
+                  <li>
+                    <strong>منابع مدرسه‌ای</strong> — تمام مقاطع از ابتدایی تا
+                    متوسطه
+                  </li>
+                  <li>
+                    <strong>نمونه سوالات امتحانی</strong> — پایان‌ترم، میان‌ترم
+                    و نهایی
+                  </li>
+                  <li>
+                    <strong>کتاب‌های غیر درسی</strong> — رمان، داستان و
+                    کتاب‌های عمومی
+                  </li>
+                  <li>
+                    <strong>منابع استخدامی</strong> — آمادگی برای آزمون‌های
+                    استخدامی
+                  </li>
+                </ul>
+
+                <h3>چرا برگ دانش را انتخاب کنیم؟</h3>
+
+                <ul>
+                  <li>✨ تمامی منابع <strong>کاملاً رایگان</strong> هستند</li>
+                  <li>📚 بیش از <strong>۵۰+ فایل آموزشی</strong> در دسترس</li>
+                  <li>
+                    📄 فرمت <strong>PDF</strong> — قابل مطالعه در همه دستگاه‌ها
+                  </li>
+                  <li>🎯 محتوای <strong>با کیفیت و به‌روز</strong></li>
+                  <li>⚡ <strong>دانلود سریع</strong> و آسان</li>
+                </ul>
+
+                <p>
+                  برای شروع، کافیست به یکی از دسته‌بندی‌های{" "}
+                  <Link href="/university">دانشگاهی</Link>،{" "}
+                  <Link href="/school">مدرسه‌ای</Link>،{" "}
+                  <Link href="/exams">نمونه سوال</Link> یا{" "}
+                  <Link href="/books">کتاب‌ها</Link> مراجعه کنید.
+                </p>
               </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  marginBottom: "8px",
-                  color: "#1a1a1a",
-                }}
-              >
-                ثبت‌نام کن
-              </h3>
-              <p style={{ color: "#666", fontSize: "14px", lineHeight: 1.8 }}>
-                با ایمیل خود در چند ثانیه ثبت‌نام کن. ثبت‌نام کاملاً رایگانه.
-              </p>
             </div>
 
-            <div
-              style={{
-                textAlign: "center",
-                padding: "32px 24px",
-                background: "#fff",
-                borderRadius: "12px",
-                border: "1px solid #e5e5e5",
-              }}
-            >
-              <div
-                style={{
-                  width: "64px",
-                  height: "64px",
-                  background: "linear-gradient(135deg, #0066cc, #7c3aed)",
-                  color: "#fff",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "28px",
-                  fontWeight: 700,
-                  margin: "0 auto 16px",
-                }}
-              >
-                ۲
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  marginBottom: "8px",
-                  color: "#1a1a1a",
-                }}
-              >
-                فایل مورد نظرت رو پیدا کن
-              </h3>
-              <p style={{ color: "#666", fontSize: "14px", lineHeight: 1.8 }}>
-                از بین هزاران جزوه، کتاب و نمونه سوال، فایل مورد نظرت رو انتخاب
-                کن.
-              </p>
-            </div>
-
-            <div
-              style={{
-                textAlign: "center",
-                padding: "32px 24px",
-                background: "#fff",
-                borderRadius: "12px",
-                border: "1px solid #e5e5e5",
-              }}
-            >
-              <div
-                style={{
-                  width: "64px",
-                  height: "64px",
-                  background: "linear-gradient(135deg, #0066cc, #7c3aed)",
-                  color: "#fff",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "28px",
-                  fontWeight: 700,
-                  margin: "0 auto 16px",
-                }}
-              >
-                ۳
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  marginBottom: "8px",
-                  color: "#1a1a1a",
-                }}
-              >
-                رایگان دانلود کن
-              </h3>
-              <p style={{ color: "#666", fontSize: "14px", lineHeight: 1.8 }}>
-                روی دکمه‌ی دانلود کلیک کن و فایل PDF رو رایگان دریافت کن.
-              </p>
-            </div>
+            <aside className="home-two-col__aside">
+              <FAQ faqs={faqs} title="سوالات متداول" />
+            </aside>
           </div>
         </div>
       </section>
 
-      {/* ─────── محتوای متنی (سئو) ─────── */}
-      <section className="section" style={{ background: "#f8f9fa" }}>
-        <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
-          <div
-            style={{
-              background: "#fff",
-              padding: "32px",
-              borderRadius: "12px",
-              lineHeight: 2,
-              textAlign: "justify",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "22px",
-                marginBottom: "16px",
-                color: "#1a1a1a",
-              }}
-            >
-              برگ دانش — مرجع دانلود رایگان جزوه، کتاب و نمونه سوال
-            </h2>
-
-            <p style={{ marginBottom: "16px", color: "#444" }}>
-              <strong>برگ دانش</strong> یک پلتفرم آموزشی رایگان است که با هدف
-              کمک به دانشجویان و دانش‌آموزان ایرانی راه‌اندازی شده است. در این
-              سایت می‌توانید به هزاران <strong>جزوه دانشگاهی</strong>،{" "}
-              <strong>کتاب رایگان</strong>، <strong>نمونه سوال امتحانی</strong> و{" "}
-              <strong>مقاله علمی</strong> دسترسی داشته باشید.
-            </p>
-
-            <p style={{ marginBottom: "16px", color: "#444" }}>
-              ما معتقدیم که <strong>دانش باید در دسترس همه باشد</strong>. به
-              همین دلیل، تمامی منابع آموزشی موجود در برگ دانش به صورت کاملاً
-              رایگان در اختیار کاربران قرار می‌گیرد. کافی است در سایت ثبت‌نام
-              کنید و فایل‌های مورد نظر خود را دانلود کنید.
-            </p>
-
-            <h3
-              style={{
-                fontSize: "18px",
-                marginTop: "24px",
-                marginBottom: "12px",
-                color: "#1a1a1a",
-              }}
-            >
-              چه منابعی در برگ دانش موجود است؟
-            </h3>
-
-            <ul
-              style={{
-                paddingRight: "20px",
-                color: "#444",
-                marginBottom: "16px",
-              }}
-            >
-              <li>
-                <strong>جزوه‌های دانشگاهی</strong> — روانشناسی، علوم تربیتی،
-                کامپیوتر، فیزیک، شیمی، جامعه‌شناسی و زبان انگلیسی
-              </li>
-              <li>
-                <strong>منابع مدرسه‌ای</strong> — تمام مقاطع از ابتدایی تا
-                متوسطه
-              </li>
-              <li>
-                <strong>نمونه سوالات امتحانی</strong> — پایان‌ترم، میان‌ترم و
-                نهایی
-              </li>
-              <li>
-                <strong>کتاب‌های غیر درسی</strong> — رمان، داستان و کتاب‌های
-                عمومی
-              </li>
-              <li>
-                <strong>منابع استخدامی</strong> — آمادگی برای آزمون‌های استخدامی
-              </li>
-            </ul>
-
-            <h3
-              style={{
-                fontSize: "18px",
-                marginTop: "24px",
-                marginBottom: "12px",
-                color: "#1a1a1a",
-              }}
-            >
-              چرا برگ دانش را انتخاب کنیم؟
-            </h3>
-
-            <ul
-              style={{
-                paddingRight: "20px",
-                color: "#444",
-                marginBottom: "16px",
-              }}
-            >
-              <li>✨ تمامی منابع <strong>کاملاً رایگان</strong> هستند</li>
-              <li>📚 بیش از <strong>۵۰+ فایل آموزشی</strong> در دسترس</li>
-              <li>📄 فرمت <strong>PDF</strong> — قابل مطالعه در همه دستگاه‌ها</li>
-              <li>🎯 محتوای <strong>با کیفیت و به‌روز</strong></li>
-              <li>⚡ <strong>دانلود سریع</strong> و آسان</li>
-            </ul>
-
-            <p style={{ marginBottom: "0", color: "#444" }}>
-              برای شروع، کافیست به یکی از دسته‌بندی‌های{" "}
-              <Link
-                href="/university"
-                style={{ color: "#0066cc", textDecoration: "underline" }}
-              >
-                دانشگاهی
-              </Link>
-              ،{" "}
-              <Link
-                href="/school"
-                style={{ color: "#0066cc", textDecoration: "underline" }}
-              >
-                مدرسه‌ای
-              </Link>
-              ،{" "}
-              <Link
-                href="/exams"
-                style={{ color: "#0066cc", textDecoration: "underline" }}
-              >
-                نمونه سوال
-              </Link>{" "}
-              یا{" "}
-              <Link
-                href="/books"
-                style={{ color: "#0066cc", textDecoration: "underline" }}
-              >
-                کتاب‌ها
-              </Link>{" "}
-              مراجعه کنید.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────── FAQ ─────── */}
-      <FAQ faqs={faqs} title="سوالات متداول" />
-      <FAQSchema faqs={faqs} />
-
-      {/* ─────── CTA ─────── */}
+      {/* 8. CTA */}
       <CTA />
+      <FAQSchema faqs={faqs} />
     </>
   );
 }

@@ -42,3 +42,305 @@ body {
     height: 0.9em;
   }
 }
+/* ─── دسته‌بندی‌های صفحه اصلی ─── */
+.home-categories {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.home-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 28px 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e5e5;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.home-category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 102, 204, 0.12);
+  border-color: #0066cc;
+}
+
+.home-category-card__icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+  transition: transform 0.3s ease;
+}
+
+.home-category-card:hover .home-category-card__icon {
+  transform: scale(1.15);
+}
+
+.home-category-card__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.home-category-card__desc {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ─── چیدمان دو ستونه ─── */
+.home-two-col {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 40px;
+  align-items: start;
+}
+
+.home-two-col__main {
+  min-width: 0;
+}
+
+.home-two-col__aside {
+  position: sticky;
+  top: 20px;
+}
+
+/* ─── چطور کار می‌کنه ─── */
+.home-how {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.home-how__card {
+  text-align: center;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e5e5;
+  transition: all 0.3s ease;
+}
+
+.home-how__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.home-how__num {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #0066cc, #7c3aed);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 auto 16px;
+}
+
+.home-how__title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.home-how__desc {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ─── محتوای سئو ─── */
+.home-seo-content {
+  background: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e5e5e5;
+  line-height: 2;
+  text-align: justify;
+}
+
+.home-seo-content__title {
+  font-size: 22px;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.home-seo-content p {
+  margin-bottom: 16px;
+  color: #444;
+}
+
+.home-seo-content h3 {
+  font-size: 18px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.home-seo-content ul {
+  padding-right: 20px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.home-seo-content a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+/* ─── ریسپانسیو ─── */
+@media (max-width: 1024px) {
+  .home-two-col {
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .home-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-how {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-two-col {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .home-two-col__aside {
+    position: static;
+  }
+
+  .home-how {
+    grid-template-columns: 1fr;
+  }
+
+  .home-category-card {
+    padding: 20px 16px;
+  }
+
+  .home-category-card__icon {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-categories {
+    grid-template-columns: 1fr;
+  }
+}
+/* ─── راهنمای مطالعه (HomeGuides) ─── */
+.home-guides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.home-guide-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e5e5;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-guide-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.home-guide-card--blue::before { background: #0066cc; }
+.home-guide-card--green::before { background: #10b981; }
+.home-guide-card--purple::before { background: #7c3aed; }
+.home-guide-card--orange::before { background: #f97316; }
+.home-guide-card--rose::before { background: #e11d48; }
+.home-guide-card--yellow::before { background: #eab308; }
+
+.home-guide-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  border-color: #0066cc;
+}
+
+.home-guide-card:hover::before {
+  width: 100%;
+}
+
+.home-guide-card__icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.home-guide-card:hover .home-guide-card__icon {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.home-guide-card__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.home-guide-card__desc {
+  font-size: 13.5px;
+  color: #666;
+  line-height: 1.9;
+  margin: 0;
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.home-guide-card__link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0066cc;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.home-guide-card:hover .home-guide-card__link {
+  transform: translateX(-4px);
+}

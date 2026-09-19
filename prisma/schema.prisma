@@ -82,7 +82,6 @@ model Setting {
   data  String @db.Text
 }
 
-// ─── NEW: File model ───
 model File {
   id           String   @id @default(cuid())
   slug         String   @unique
@@ -103,4 +102,33 @@ model File {
   @@index([type])
   @@index([level])
   @@index([category])
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  question    String   @db.Text
+  options     Json
+  correctIdx  Int
+  explanation String?  @db.Text
+  category    String
+  level       String   @default("دانشگاهی")
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@index([level])
+  @@index([isPublished])
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String?
+  quizId      String
+  selectedIdx Int
+  isCorrect   Boolean
+  createdAt   DateTime @default(now())
+
+  @@index([quizId])
+  @@index([userId])
+  @@index([createdAt])
 }
