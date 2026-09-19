@@ -10,13 +10,20 @@ async function checkAdmin() {
   return true;
 }
 
+// ─── تولید slug ───
 function slugify(text: string): string {
+  // اگه متن فارسی بود، از "file-{timestamp}" استفاده کن
+  const hasPersian = /[\u0600-\u06FF]/.test(text);
+  if (hasPersian) {
+    return `file-${Date.now()}`;
+  }
+
   return text
     .toString()
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^\u0600-\u06FF\w-]/g, "")
+    .replace(/[^\w-]/g, "")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
@@ -49,6 +56,7 @@ export async function POST(request: Request) {
     );
   }
 
+  // تولید slug یکتا
   let baseSlug = slugify(body.title);
   let slug = baseSlug;
   let counter = 1;
