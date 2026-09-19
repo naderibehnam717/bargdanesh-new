@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import StudentConcerns from "@/components/StudentConcerns";
 import FileCard from "@/components/FileCard";
@@ -10,9 +11,30 @@ import CTA from "@/components/CTA";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
 import HomeGuides from "@/components/HomeGuides";
-import DailyQuiz from "@/components/DailyQuiz";
 import { getAllFiles } from "@/lib/files";
 import Link from "next/link";
+
+// ✅ کوییز با Lazy Load (برای سرعت)
+const DailyQuiz = dynamic(() => import("@/components/DailyQuiz"), {
+  loading: () => (
+    <div
+      style={{
+        background: "linear-gradient(135deg, #0066cc 0%, #7c3aed 100%)",
+        borderRadius: "20px",
+        padding: "40px 24px",
+        color: "#fff",
+        textAlign: "center",
+        boxShadow: "0 10px 40px rgba(0, 102, 204, 0.25)",
+        minHeight: "300px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <p style={{ opacity: 0.8, fontSize: "14px" }}>⏳ در حال بارگذاری کوییز...</p>
+    </div>
+  ),
+});
 
 export const metadata: Metadata = {
   title: "برگ دانش | دانلود رایگان جزوه، کتاب و نمونه سوال",
@@ -233,7 +255,9 @@ export default async function Home() {
           <div className="home-two-col">
             <div className="home-two-col__main">
               <div className="section__header">
-                <h2 className="section__title">🎯 چطور از برگ دانش استفاده کنم؟</h2>
+                <h2 className="section__title">
+                  🎯 چطور از برگ دانش استفاده کنم؟
+                </h2>
                 <p className="section__subtitle">
                   فقط ۳ مرحله ساده — سریع و رایگان
                 </p>
