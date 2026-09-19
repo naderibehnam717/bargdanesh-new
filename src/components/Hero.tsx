@@ -10,6 +10,79 @@ interface HeroProps {
   files: FileItem[];
 }
 
+// ─── برگ SVG با طراحی اختصاصی ───
+function LeafSVG({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      style={{
+        display: "inline-block",
+        width: "1em",
+        height: "1em",
+        verticalAlign: "middle",
+        margin: "0 0.15em",
+      }}
+    >
+      {/* بدنه‌ی برگ */}
+      <path
+        d="M50 5 C 20 20, 5 50, 15 80 C 20 90, 30 95, 50 95 C 70 95, 80 90, 85 80 C 95 50, 80 20, 50 5 Z"
+        fill="url(#leafGradient)"
+        stroke="#2d7d46"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      {/* رگه‌ی اصلی */}
+      <path
+        d="M50 10 L 50 90"
+        stroke="#2d7d46"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* رگه‌های فرعی */}
+      <path
+        d="M50 30 Q 35 35, 25 45"
+        stroke="#2d7d46"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M50 30 Q 65 35, 75 45"
+        stroke="#2d7d46"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M50 50 Q 38 55, 28 65"
+        stroke="#2d7d46"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M50 50 Q 62 55, 72 65"
+        stroke="#2d7d46"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* گرادیانت */}
+      <defs>
+        <linearGradient id="leafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#6ee7a8" />
+          <stop offset="50%" stopColor="#34d399" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
 export default function Hero({ files }: HeroProps) {
   const { data: session } = useSession();
   const [query, setQuery] = useState("");
@@ -75,7 +148,10 @@ export default function Hero({ files }: HeroProps) {
 
           <h1 className="hero__title">
             دانش، یک
-            <span className="hero__title-highlight">برگ</span>
+            <span className="hero__title-highlight">
+              <LeafSVG className="hero__leaf" />
+              برگ
+            </span>
             فاصله دارد
           </h1>
 

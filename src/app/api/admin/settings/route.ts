@@ -13,7 +13,7 @@ const defaultSettings = {
   siteName: "برگ دانش",
   siteDescription: "مرجع دانلود جزوه، کتاب و مقاله دانشگاهی",
   siteEmail: "info@bargdanesh.ir",
-  sitePhone: "۰۹۱۲۳۴۵۶۷۸۹",
+  sitePhone: "",
   telegram: "",
   instagram: "",
   twitter: "",

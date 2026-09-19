@@ -17,7 +17,7 @@ interface Settings {
 const defaultSettings: Settings = {
   siteName: "برگ دانش",
   siteEmail: "info@bargdanesh.ir",
-  sitePhone: "۰۹۱۲۳۴۵۶۷۸۹",
+  sitePhone: "",
   telegram: "",
   instagram: "",
   twitter: "",
@@ -31,7 +31,7 @@ export default function Footer() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/settings");
+        const res = await fetch("/api/settings", { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
         setSettings({ ...defaultSettings, ...data });
@@ -89,7 +89,6 @@ export default function Footer() {
             <h4 className="footer__title">ارتباط با ما</h4>
             <ul className="footer__list">
               <li>📧 {settings.siteEmail}</li>
-              <li>📱 {settings.sitePhone}</li>
               <li><Link href="/about">درباره ما</Link></li>
               <li><Link href="/contact">تماس با ما</Link></li>
             </ul>

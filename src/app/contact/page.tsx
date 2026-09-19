@@ -1,10 +1,61 @@
+"use client";
+
+import { useState } from "react";
+
 export default function ContactPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (status !== "idle") setStatus("idle");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setStatus("idle");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus("success");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+        setErrorMessage(data.error || "خطا در ارسال پیام");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("خطا در ارتباط با سرور");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       <section className="page-header">
         <div className="container page-header__inner">
           <h1 className="page-header__title">📬 تماس با ما</h1>
-          <p className="page-header__subtitle">خوشحال می‌شویم صدای شما را بشنویم</p>
+          <p className="page-header__subtitle">
+            خوشحال می‌شویم صدای شما را بشنویم
+          </p>
         </div>
       </section>
 
@@ -23,23 +74,20 @@ export default function ContactPage() {
               <h3 className="feature__title">ایمیل</h3>
               <p className="feature__desc">info@bargdanesh.ir</p>
             </div>
-            <div className="feature">
-              <div className="feature__icon">📱</div>
-              <h3 className="feature__title">تلفن</h3>
-              <p className="feature__desc">۰۹۱۲۳۴۵۶۷۸۹</p>
-            </div>
+
             <div className="feature">
               <div className="feature__icon">📍</div>
               <h3 className="feature__title">آدرس</h3>
-              <p className="feature__desc">تهران، ایران</p>
+              <p className="feature__desc">کرمانشاه ، ایران</p>
             </div>
+
             <div className="feature">
               <div className="feature__icon">⏰</div>
               <h3 className="feature__title">ساعات پاسخگویی</h3>
               <p className="feature__desc">
-                شنبه تا پنجشنبه
+                همه روز هفته
                 <br />
-                ۹ صبح تا ۶ عصر
+                9 صبح تا 10 شب
               </p>
             </div>
           </div>
@@ -77,16 +125,66 @@ export default function ContactPage() {
               هر سوال، پیشنهاد یا انتقادی دارید — بنویسید برایمان.
             </p>
 
-            <form action="#" method="post">
+            {/* ─────── پیام موفقیت ─────── */}
+            {status === "success" && (
+              <div
+                style={{
+                  background: "#d1fae5",
+                  color: "#065f46",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  marginBottom: "20px",
+                  textAlign: "center",
+                  fontWeight: 600,
+                  border: "1px solid #6ee7b7",
+                }}
+              >
+                ✅ پیام شما با موفقیت ارسال شد!
+                <br />
+                <span style={{ fontSize: "13px", fontWeight: 400 }}>
+                  به‌زودی پاسخ می‌دهیم.
+                </span>
+              </div>
+            )}
+
+            {/* ─────── پیام خطا ─────── */}
+            {status === "error" && (
+              <div
+                style={{
+                  background: "#fee2e2",
+                  color: "#991b1b",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  marginBottom: "20px",
+                  textAlign: "center",
+                  fontWeight: 600,
+                  border: "1px solid #fca5a5",
+                }}
+              >
+                ❌ {errorMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: "var(--sp-4)" }}>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: 600, marginBottom: "var(--sp-2)" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    marginBottom: "var(--sp-2)",
+                  }}
+                >
                   نام و نام خانوادگی
                 </label>
                 <input
                   type="text"
                   name="name"
+                  value={form.name}
+                  onChange={handleChange}
                   placeholder="نام خود را وارد کنید"
                   required
+                  disabled={loading}
                   style={{
                     width: "100%",
                     padding: "12px 16px",
@@ -96,19 +194,30 @@ export default function ContactPage() {
                     background: "var(--bg)",
                     color: "var(--text)",
                     outline: "none",
+                    opacity: loading ? 0.6 : 1,
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "var(--sp-4)" }}>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: 600, marginBottom: "var(--sp-2)" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    marginBottom: "var(--sp-2)",
+                  }}
+                >
                   ایمیل
                 </label>
                 <input
                   type="email"
                   name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   placeholder="example@email.com"
                   required
+                  disabled={loading}
                   style={{
                     width: "100%",
                     padding: "12px 16px",
@@ -118,18 +227,29 @@ export default function ContactPage() {
                     background: "var(--bg)",
                     color: "var(--text)",
                     outline: "none",
+                    opacity: loading ? 0.6 : 1,
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "var(--sp-5)" }}>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: 600, marginBottom: "var(--sp-2)" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    marginBottom: "var(--sp-2)",
+                  }}
+                >
                   پیام
                 </label>
                 <textarea
                   name="message"
+                  value={form.message}
+                  onChange={handleChange}
                   placeholder="پیام خود را بنویسید..."
                   required
+                  disabled={loading}
                   style={{
                     width: "100%",
                     minHeight: "140px",
@@ -141,16 +261,22 @@ export default function ContactPage() {
                     color: "var(--text)",
                     resize: "vertical",
                     outline: "none",
+                    opacity: loading ? 0.6 : 1,
                   }}
                 ></textarea>
               </div>
 
               <button
                 type="submit"
+                disabled={loading}
                 className="btn btn--primary"
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                }}
               >
-                📤 ارسال پیام
+                {loading ? "⏳ در حال ارسال..." : "📤 ارسال پیام"}
               </button>
             </form>
           </div>
