@@ -6,6 +6,7 @@ import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema";
+import CommentSection from "@/components/CommentSection";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -124,7 +125,6 @@ export default async function UniversityDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ✅ Breadcrumb */}
       <Breadcrumb items={breadcrumbItems} />
       <BreadcrumbSchema items={breadcrumbItems} />
 
@@ -199,6 +199,9 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               fileType={file.type}
             />
           </div>
+
+          {/* ✅ کامنت‌ها */}
+          <CommentSection fileSlug={file.slug} />
         </div>
       </main>
 
