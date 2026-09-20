@@ -210,7 +210,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. کوییز روزانه + آخرین فایل‌ها */}
+      {/* 4. آخرین فایل‌ها + کوییز */}
       <section className="section">
         <div className="container">
           <div className="home-two-col">
@@ -243,14 +243,20 @@ export default async function Home() {
 
             <aside className="home-two-col__aside">
               <DailyQuiz />
-              <QuotesSlider />
             </aside>
           </div>
         </div>
       </section>
 
-      {/* 5. چطور کار می‌کنه + UsefulLinks */}
+      {/* 4.5 نقل قول‌ها — تمام عرض، وسط صفحه */}
       <section className="section" style={{ background: "#f8f9fa" }}>
+        <div className="container">
+          <QuotesSlider />
+        </div>
+      </section>
+
+      {/* 5. چطور کار می‌کنه + UsefulLinks */}
+      <section className="section">
         <div className="container">
           <div className="home-two-col">
             <div className="home-two-col__main">

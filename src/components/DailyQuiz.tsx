@@ -10,6 +10,9 @@ interface QuizData {
   level: string;
   totalAttempts: number;
   correctAttempts: number;
+  seenCount?: number;
+  totalQuizzes?: number;
+  dayIndex?: number;
 }
 
 interface AnswerResult {
@@ -18,6 +21,17 @@ interface AnswerResult {
   explanation: string | null;
   totalAttempts: number;
   correctAttempts: number;
+}
+
+// ─── Session ID ───
+function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+  let sid = localStorage.getItem("quiz_session_id");
+  if (!sid) {
+    sid = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem("quiz_session_id", sid);
+  }
+  return sid;
 }
 
 // ─── آدم فکرکننده SVG ───
@@ -32,77 +46,20 @@ function ThinkingPerson() {
         filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.15))",
       }}
     >
-      {/* حباب فکر */}
       <circle cx="95" cy="25" r="4" fill="#fff" opacity="0.9" />
       <circle cx="105" cy="15" r="6" fill="#fff" opacity="0.9" />
       <ellipse cx="112" cy="5" rx="10" ry="7" fill="#fff" opacity="0.9" />
-
-      {/* علامت سوال توی حباب */}
-      <text
-        x="112"
-        y="9"
-        textAnchor="middle"
-        fontSize="10"
-        fontWeight="900"
-        fill="#7c3aed"
-      >
-        ?
-      </text>
-
-      {/* سر */}
+      <text x="112" y="9" textAnchor="middle" fontSize="10" fontWeight="900" fill="#7c3aed">?</text>
       <circle cx="55" cy="45" r="22" fill="#fbbf24" />
       <circle cx="55" cy="45" r="22" fill="url(#headShadow)" opacity="0.4" />
-
-      {/* چشم‌ها */}
       <circle cx="48" cy="42" r="2.5" fill="#1f2937" />
       <circle cx="62" cy="42" r="2.5" fill="#1f2937" />
-
-      {/* ابروها (فکرکننده) */}
-      <path
-        d="M44 36 Q 48 33, 52 36"
-        stroke="#1f2937"
-        strokeWidth="1.5"
-        fill="none"
-        strokeLinecap="round"
-      />
-      <path
-        d="M58 34 Q 62 32, 66 35"
-        stroke="#1f2937"
-        strokeWidth="1.5"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      {/* دهان (متفکر) */}
-      <path
-        d="M50 55 Q 55 53, 60 55"
-        stroke="#1f2937"
-        strokeWidth="1.5"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      {/* بدن */}
-      <path
-        d="M35 90 Q 35 70, 55 70 Q 75 70, 75 90 Z"
-        fill="#fbbf24"
-      />
-      <path
-        d="M35 90 Q 35 70, 55 70 Q 75 70, 75 90 Z"
-        fill="url(#bodyShadow)"
-        opacity="0.3"
-      />
-
-      {/* دست زیر چانه (فکرکننده) */}
-      <path
-        d="M55 70 Q 55 75, 50 78 Q 45 80, 45 72"
-        stroke="#f59e0b"
-        strokeWidth="3"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      {/* گرادیانت‌ها */}
+      <path d="M44 36 Q 48 33, 52 36" stroke="#1f2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path d="M58 34 Q 62 32, 66 35" stroke="#1f2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path d="M50 55 Q 55 53, 60 55" stroke="#1f2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path d="M35 90 Q 35 70, 55 70 Q 75 70, 75 90 Z" fill="#fbbf24" />
+      <path d="M35 90 Q 35 70, 55 70 Q 75 70, 75 90 Z" fill="url(#bodyShadow)" opacity="0.3" />
+      <path d="M55 70 Q 55 75, 50 78 Q 45 80, 45 72" stroke="#f59e0b" strokeWidth="3" fill="none" strokeLinecap="round" />
       <defs>
         <radialGradient id="headShadow" cx="50%" cy="50%">
           <stop offset="0%" stopColor="#fff" stopOpacity="0" />
@@ -124,6 +81,11 @@ export default function DailyQuiz() {
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [isNext, setIsNext] = useState(false);
+  const [sessionId, setSessionId] = useState("");
+
+  useEffect(() => {
+    setSessionId(getSessionId());
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -148,7 +110,12 @@ export default function DailyQuiz() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/quiz/random", { cache: "no-store" });
+      const res = await fetch("/api/quiz/random", {
+        cache: "no-store",
+        headers: {
+          "x-session-id": sessionId || getSessionId(),
+        },
+      });
       if (!res.ok) throw new Error();
       const data = await res.json();
       setQuiz(data);
@@ -202,11 +169,7 @@ export default function DailyQuiz() {
           gap: "16px",
         }}
       >
-        <div
-          style={{
-            animation: "pulse 1.5s ease-in-out infinite",
-          }}
-        >
+        <div style={{ animation: "pulse 1.5s ease-in-out infinite" }}>
           <ThinkingPerson />
         </div>
         <p style={{ opacity: 0.9, fontSize: "14px", margin: 0 }}>
@@ -229,11 +192,14 @@ export default function DailyQuiz() {
       ? Math.round((correctAttempts / totalAttempts) * 100)
       : 0;
 
+  const progress = quiz.seenCount && quiz.totalQuizzes
+    ? (quiz.seenCount / quiz.totalQuizzes) * 100
+    : 0;
+
   return (
     <div
       style={{
-        background:
-          "linear-gradient(135deg, #0066cc 0%, #7c3aed 60%, #a855f7 100%)",
+        background: "linear-gradient(135deg, #0066cc 0%, #7c3aed 60%, #a855f7 100%)",
         borderRadius: "20px",
         padding: "24px",
         color: "#fff",
@@ -242,143 +208,66 @@ export default function DailyQuiz() {
         overflow: "hidden",
       }}
     >
-      {/* حباب‌های تزئینی */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "-30px",
-          right: "-30px",
-          width: "100px",
-          height: "100px",
-          background: "rgba(255,255,255,0.08)",
-          borderRadius: "50%",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          bottom: "-20px",
-          left: "-20px",
-          width: "80px",
-          height: "80px",
-          background: "rgba(255,255,255,0.06)",
-          borderRadius: "50%",
-          pointerEvents: "none",
-        }}
-      />
+      <div aria-hidden="true" style={{ position: "absolute", top: "-30px", right: "-30px", width: "100px", height: "100px", background: "rgba(255,255,255,0.08)", borderRadius: "50%", pointerEvents: "none" }} />
+      <div aria-hidden="true" style={{ position: "absolute", bottom: "-20px", left: "-20px", width: "80px", height: "80px", background: "rgba(255,255,255,0.06)", borderRadius: "50%", pointerEvents: "none" }} />
 
       {/* هدر */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "16px",
-          gap: "8px",
-          flexWrap: "wrap",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", gap: "8px", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div
-            style={{
-              width: "40px",
-              height: "40px",
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              style={{ width: "22px", height: "22px" }}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 22h6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(10px)" }}>
+            <svg viewBox="0 0 24 24" style={{ width: "22px", height: "22px" }} fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2z" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 22h6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
           <div>
             <div style={{ fontSize: "16px", fontWeight: 800, lineHeight: 1.2 }}>
               {isNext ? "🎲 کوییز" : "🎯 کوییز روزانه"}
             </div>
-            <div
-              style={{
-                fontSize: "11px",
-                opacity: 0.85,
-                marginTop: "2px",
-              }}
-            >
-              {isNext ? "سوال تصادفی" : "هر روز یه سوال"}
+            <div style={{ fontSize: "11px", opacity: 0.85, marginTop: "2px" }}>
+              {isNext ? "سوال تصادفی" : `سوال ${quiz.dayIndex || "?"} از ${quiz.totalQuizzes || "?"}`}
             </div>
           </div>
         </div>
-        <span
-          style={{
-            background: "rgba(255,255,255,0.22)",
-            padding: "5px 12px",
-            borderRadius: "100px",
-            fontSize: "12px",
-            fontWeight: 700,
-            backdropFilter: "blur(10px)",
-          }}
-        >
+        <span style={{ background: "rgba(255,255,255,0.22)", padding: "5px 12px", borderRadius: "100px", fontSize: "12px", fontWeight: 700, backdropFilter: "blur(10px)" }}>
           {quiz.category}
         </span>
       </div>
 
-      {/* سوال */}
-      <div
-        style={{
-          background: "rgba(255,255,255,0.12)",
-          borderRadius: "14px",
-          padding: "16px",
-          marginBottom: "16px",
-          backdropFilter: "blur(10px)",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <p
+      {/* Progress Bar (فقط برای سوال رندوم) */}
+      {quiz.seenCount && quiz.totalQuizzes && (
+        <div
           style={{
-            fontSize: "15px",
-            lineHeight: 1.9,
-            margin: 0,
-            fontWeight: 600,
-            textAlign: "right",
+            height: "4px",
+            background: "rgba(255,255,255,0.2)",
+            borderRadius: "100px",
+            overflow: "hidden",
+            marginBottom: "16px",
+            position: "relative",
+            zIndex: 1,
           }}
         >
+          <div
+            style={{
+              width: `${progress}%`,
+              height: "100%",
+              background: "#fff",
+              borderRadius: "100px",
+              transition: "width 0.5s ease",
+            }}
+          />
+        </div>
+      )}
+
+      {/* سوال */}
+      <div style={{ background: "rgba(255,255,255,0.12)", borderRadius: "14px", padding: "16px", marginBottom: "16px", backdropFilter: "blur(10px)", position: "relative", zIndex: 1 }}>
+        <p style={{ fontSize: "15px", lineHeight: 1.9, margin: 0, fontWeight: 600, textAlign: "right" }}>
           {quiz.question}
         </p>
       </div>
 
       {/* گزینه‌ها */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px", position: "relative", zIndex: 1 }}>
         {quiz.options.map((opt, idx) => {
           const isSelected = selected === idx;
           const isCorrectAnswer = result && result.correctIdx === idx;
@@ -418,35 +307,8 @@ export default function DailyQuiz() {
                 gap: "10px",
                 backdropFilter: "blur(10px)",
               }}
-              onMouseEnter={(e) => {
-                if (!result && !submitting) {
-                  e.currentTarget.style.background =
-                    "rgba(255,255,255,0.28)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!result && !submitting) {
-                  e.currentTarget.style.background =
-                    "rgba(255,255,255,0.15)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }
-              }}
             >
-              <span
-                style={{
-                  width: "26px",
-                  height: "26px",
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.22)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "13px",
-                  fontWeight: 800,
-                  flexShrink: 0,
-                }}
-              >
+              <span style={{ width: "26px", height: "26px", borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 800, flexShrink: 0 }}>
                 {["الف", "ب", "ج", "د"][idx]}
               </span>
               <span style={{ flex: 1 }}>{opt}</span>
@@ -460,86 +322,29 @@ export default function DailyQuiz() {
       {/* نتیجه */}
       {result && (
         <>
-          <div
-            style={{
-              marginTop: "18px",
-              padding: "16px",
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: "12px",
-              fontSize: "14px",
-              lineHeight: 1.9,
-              backdropFilter: "blur(10px)",
-              position: "relative",
-              zIndex: 1,
-              animation: "fadeIn 0.4s ease",
-            }}
-          >
-            <div
-              style={{
-                marginBottom: result.explanation ? "12px" : 0,
-                fontWeight: 800,
-                fontSize: "15px",
-              }}
-            >
-              {result.isCorrect
-                ? "🎉 آفرین! پاسخ درست بود"
-                : "😔 ایش! پاسخ نادرست بود"}
+          <div style={{ marginTop: "18px", padding: "16px", background: "rgba(255,255,255,0.15)", borderRadius: "12px", fontSize: "14px", lineHeight: 1.9, backdropFilter: "blur(10px)", position: "relative", zIndex: 1, animation: "fadeIn 0.4s ease" }}>
+            <div style={{ marginBottom: result.explanation ? "12px" : 0, fontWeight: 800, fontSize: "15px" }}>
+              {result.isCorrect ? "🎉 آفرین! پاسخ درست بود" : "😔 ایش! پاسخ نادرست بود"}
             </div>
             {result.explanation && (
-              <div
-                style={{
-                  opacity: 0.95,
-                  fontSize: "13px",
-                  paddingRight: "8px",
-                  borderRight: "3px solid rgba(255,255,255,0.4)",
-                  paddingTop: "4px",
-                  paddingBottom: "4px",
-                }}
-              >
+              <div style={{ opacity: 0.95, fontSize: "13px", paddingRight: "8px", borderRight: "3px solid rgba(255,255,255,0.4)", paddingTop: "4px", paddingBottom: "4px" }}>
                 💡 {result.explanation}
               </div>
             )}
           </div>
 
-          {/* آمار */}
-          <div
-            style={{
-              marginTop: "16px",
-              paddingTop: "16px",
-              borderTop: "1px solid rgba(255,255,255,0.2)",
-              display: "flex",
-              justifyContent: "space-around",
-              textAlign: "center",
-              fontSize: "13px",
-              position: "relative",
-              zIndex: 1,
-            }}
-          >
+          <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid rgba(255,255,255,0.2)", display: "flex", justifyContent: "space-around", textAlign: "center", fontSize: "13px", position: "relative", zIndex: 1 }}>
             <div>
-              <div style={{ fontSize: "22px", fontWeight: 900 }}>
-                {totalAttempts}
-              </div>
-              <div style={{ opacity: 0.85, fontSize: "12px" }}>
-                👥 پاسخ داده
-              </div>
+              <div style={{ fontSize: "22px", fontWeight: 900 }}>{totalAttempts}</div>
+              <div style={{ opacity: 0.85, fontSize: "12px" }}>👥 پاسخ داده</div>
             </div>
-            <div
-              style={{
-                width: "1px",
-                background: "rgba(255,255,255,0.2)",
-              }}
-            />
+            <div style={{ width: "1px", background: "rgba(255,255,255,0.2)" }} />
             <div>
-              <div style={{ fontSize: "22px", fontWeight: 900 }}>
-                {successRate}%
-              </div>
-              <div style={{ opacity: 0.85, fontSize: "12px" }}>
-                ✅ درست
-              </div>
+              <div style={{ fontSize: "22px", fontWeight: 900 }}>{successRate}%</div>
+              <div style={{ opacity: 0.85, fontSize: "12px" }}>✅ درست</div>
             </div>
           </div>
 
-          {/* دکمه‌ی سوال بعدی */}
           <button
             onClick={loadNext}
             disabled={isNext}
@@ -559,7 +364,6 @@ export default function DailyQuiz() {
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              transition: "all 0.2s",
               opacity: isNext ? 0.7 : 1,
               position: "relative",
               zIndex: 1,

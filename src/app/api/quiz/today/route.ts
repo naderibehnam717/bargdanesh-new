@@ -4,13 +4,16 @@ import { seedQuizzes } from "@/lib/quiz-data";
 
 export const dynamic = "force-dynamic";
 
-// ─── انتخاب سوال روز ───
-function getTodayIndex(): number {
+// ─── انتخاب سوال روز (بدون تکرار تا پایان چرخه) ───
+function getTodayIndex(totalQuizzes: number): number {
   const today = new Date();
   const startOfYear = new Date(today.getFullYear(), 0, 0);
   const diff = today.getTime() - startOfYear.getTime();
   const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-  return dayOfYear;
+
+  // سوال امروز بر اساس روز سال
+  // چرخه‌ی کامل: هر تعداد سوال یه دور کامل
+  return dayOfYear % totalQuizzes;
 }
 
 export async function GET() {
@@ -31,13 +34,12 @@ export async function GET() {
       });
     }
 
-    // ۲. سوالات منتشرشده
-    const quizzes = await prisma.quiz.findMany({
+    // ۲. تعداد سوالات منتشرشده
+    const totalQuizzes = await prisma.quiz.count({
       where: { isPublished: true },
-      orderBy: { createdAt: "asc" },
     });
 
-    if (quizzes.length === 0) {
+    if (totalQuizzes === 0) {
       return NextResponse.json(
         { error: "سوالی موجود نیست" },
         { status: 404 }
@@ -45,10 +47,27 @@ export async function GET() {
     }
 
     // ۳. سوال امروز بر اساس روز سال
-    const todayIndex = getTodayIndex() % quizzes.length;
-    const quiz = quizzes[todayIndex];
+    // چون تعداد سوالات زیاد می‌شه، هر روز سوال متفاوت
+    const todayIndex = getTodayIndex(totalQuizzes);
 
-    // ۴. آمار کلی این سوال (چند نفر جواب دادن)
+    // ۴. سوالات رو با ترتیب ثابت بگیر
+    const quizzes = await prisma.quiz.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "asc" },
+      skip: todayIndex,
+      take: 1,
+    });
+
+    const quiz = quizzes[0];
+
+    if (!quiz) {
+      return NextResponse.json(
+        { error: "سوالی یافت نشد" },
+        { status: 404 }
+      );
+    }
+
+    // ۵. آمار
     const attempts = await prisma.quizAttempt.findMany({
       where: { quizId: quiz.id },
       select: { isCorrect: true },
@@ -65,6 +84,8 @@ export async function GET() {
       level: quiz.level,
       totalAttempts,
       correctAttempts,
+      dayIndex: todayIndex + 1,
+      totalQuizzes,
     });
   } catch (error) {
     console.error("Quiz today error:", error);
