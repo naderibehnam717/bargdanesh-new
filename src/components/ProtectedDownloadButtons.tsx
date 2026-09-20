@@ -11,6 +11,12 @@ interface Props {
   fileType: string;
 }
 
+// ─── تبدیل view به preview ───
+function toPreviewUrl(url: string): string {
+  if (!url) return url;
+  return url.replace("/view", "/preview");
+}
+
 export default function ProtectedDownloadButtons({
   downloadUrl,
   viewUrl,
@@ -68,7 +74,7 @@ export default function ProtectedDownloadButtons({
 
       {viewUrl && (
         <a
-          href={session?.user ? viewUrl : "/login"}
+          href={session?.user ? toPreviewUrl(viewUrl) : "/login"}
           target={session?.user ? "_blank" : undefined}
           rel="noopener noreferrer"
           onClick={requireLogin}

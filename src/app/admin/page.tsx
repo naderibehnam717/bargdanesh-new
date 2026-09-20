@@ -17,6 +17,9 @@ export default async function AdminPage() {
   const totalUsers = await prisma.user.count();
   const totalFavorites = await prisma.favorite.count();
   const totalDownloads = await prisma.download.count();
+  const totalComments = await prisma.comment.count();
+  const totalFiles = await prisma.file.count();
+  const totalQuizzes = await prisma.quiz.count();
 
   return (
     <>
@@ -31,21 +34,27 @@ export default async function AdminPage() {
 
       <main className="section">
         <div className="container">
+          {/* آمار */}
           <div className="stats-box" style={{ marginBottom: "var(--sp-7)" }}>
             <div className="stat-item">
               <div className="stat-item__number">{totalUsers}</div>
               <div className="stat-item__label">👥 کاربر</div>
             </div>
             <div className="stat-item">
-              <div className="stat-item__number">{totalFavorites}</div>
-              <div className="stat-item__label">❤️ علاقه‌مندی</div>
+              <div className="stat-item__number">{totalFiles}</div>
+              <div className="stat-item__label">📁 فایل</div>
             </div>
             <div className="stat-item">
               <div className="stat-item__number">{totalDownloads}</div>
               <div className="stat-item__label">📥 دانلود</div>
             </div>
+            <div className="stat-item">
+              <div className="stat-item__number">{totalComments}</div>
+              <div className="stat-item__label">💬 کامنت</div>
+            </div>
           </div>
 
+          {/* لینک‌ها */}
           <div className="features">
             <Link
               href="/admin/users"
@@ -79,7 +88,19 @@ export default async function AdminPage() {
               <div className="feature__icon">💬</div>
               <h3 className="feature__title">مدیریت کامنت‌ها</h3>
               <p className="feature__desc">
-                تأیید یا حذف کامنت‌ها
+                تأیید یا حذف کامنت‌ها ({totalComments})
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/quizzes"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">🎯</div>
+              <h3 className="feature__title">مدیریت کوییزها</h3>
+              <p className="feature__desc">
+                افزودن و حذف سوالات ({totalQuizzes})
               </p>
             </Link>
 
