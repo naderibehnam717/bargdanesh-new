@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-// ─── GET: لیست کامنت‌های یه فایل ───
+// ─── GET: لیست کامنت‌های یه فایل (با ریپلای‌ها) ───
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -17,10 +17,12 @@ export async function GET(request: Request) {
       );
     }
 
+    // فقط کامنت‌های اصلی (بدون parent)
     const comments = await prisma.comment.findMany({
       where: {
         fileSlug,
         isApproved: true,
+        parentId: null,
       },
       orderBy: { createdAt: "desc" },
       include: {
@@ -29,6 +31,32 @@ export async function GET(request: Request) {
             id: true,
             name: true,
             image: true,
+          },
+        },
+        replies: {
+          where: { isApproved: true },
+          orderBy: { createdAt: "asc" },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+            replies: {
+              where: { isApproved: true },
+              orderBy: { createdAt: "asc" },
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -44,7 +72,7 @@ export async function GET(request: Request) {
   }
 }
 
-// ─── POST: ارسال کامنت ───
+// ─── POST: ارسال کامنت یا ریپلای ───
 export async function POST(request: Request) {
   try {
     const session = await auth();
@@ -58,14 +86,11 @@ export async function POST(request: Request) {
 
     const userId = (session.user as { id?: string }).id;
     if (!userId) {
-      return NextResponse.json(
-        { error: "کاربر یافت نشد" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "کاربر یافت نشد" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { fileSlug, content } = body;
+    const { fileSlug, content, parentId } = body;
 
     // اعتبارسنجی
     if (!fileSlug || !content) {
@@ -89,12 +114,35 @@ export async function POST(request: Request) {
       );
     }
 
+    // اگه parentId داره، چک کن وجود داره
+    if (parentId) {
+      const parent = await prisma.comment.findUnique({
+        where: { id: parentId },
+      });
+
+      if (!parent) {
+        return NextResponse.json(
+          { error: "کامنت والد یافت نشد" },
+          { status: 404 }
+        );
+      }
+
+      // جلوگیری از ریپلای به ریپلای (فقط ۲ سطح)
+      if (parent.parentId) {
+        return NextResponse.json(
+          { error: "امکان پاسخ به پاسخ وجود ندارد" },
+          { status: 400 }
+        );
+      }
+    }
+
     const comment = await prisma.comment.create({
       data: {
         userId,
         fileSlug,
         content: content.trim(),
         isApproved: true,
+        parentId: parentId || null,
       },
       include: {
         user: {
@@ -104,16 +152,24 @@ export async function POST(request: Request) {
             image: true,
           },
         },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
       },
     });
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
     console.error("Post comment error:", error);
-    return NextResponse.json(
-      { error: "خطا در ثبت نظر" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "خطا در ثبت نظر" }, { status: 500 });
   }
 }
 
@@ -123,10 +179,7 @@ export async function DELETE(request: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: "دسترسی ندارید" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "دسترسی ندارید" }, { status: 401 });
     }
 
     const userId = (session.user as { id?: string }).id;
@@ -142,7 +195,6 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // کامنت رو پیدا کن
     const comment = await prisma.comment.findUnique({
       where: { id },
     });
@@ -154,15 +206,11 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // فقط ادمین یا صاحب کامنت می‌تونه حذف کنه
     const isAdmin = userRole === "admin";
     const isOwner = comment.userId === userId;
 
     if (!isAdmin && !isOwner) {
-      return NextResponse.json(
-        { error: "دسترسی ندارید" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
     }
 
     await prisma.comment.delete({ where: { id } });
@@ -170,9 +218,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "کامنت حذف شد" });
   } catch (error) {
     console.error("Delete comment error:", error);
-    return NextResponse.json(
-      { error: "خطا در حذف کامنت" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "خطا در حذف کامنت" }, { status: 500 });
   }
 }

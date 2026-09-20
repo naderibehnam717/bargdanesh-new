@@ -10,12 +10,14 @@ interface Comment {
   content: string;
   fileSlug: string;
   isApproved: boolean;
+  parentId: string | null;
   createdAt: string;
   user: {
     id: string;
     name: string | null;
     email: string;
   };
+  replies?: Comment[];
 }
 
 function toFaDate(dateStr: string): string {
@@ -26,6 +28,10 @@ function toFaDate(dateStr: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function toFa(n: number): string {
+  return String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 }
 
 export default function AdminCommentsPage() {
@@ -89,7 +95,7 @@ export default function AdminCommentsPage() {
   async function handleDelete(id: string, content: string) {
     if (
       !confirm(
-        `آیا مطمئنی می‌خوای این نظر رو حذف کنی؟\n\n"${content.slice(0, 50)}..."`
+        `آیا مطمئنی می‌خوای این نظر رو حذف کنی؟\n\n"${content.slice(0, 50)}..."\n\n⚠️ ریپلای‌ها هم حذف می‌شن!`
       )
     )
       return;
@@ -107,6 +113,7 @@ export default function AdminCommentsPage() {
     }
   }
 
+  // فیلتر و جستجو فقط روی کامنت‌های اصلی
   const filtered = comments.filter((c) => {
     const q = search.toLowerCase();
     const matchSearch =
@@ -125,6 +132,12 @@ export default function AdminCommentsPage() {
     return matchSearch && matchFilter;
   });
 
+  function countAll(list: Comment[]): number {
+    return list.reduce((total, c) => {
+      return total + 1 + (c.replies ? countAll(c.replies) : 0);
+    }, 0);
+  }
+
   if (loading) {
     return (
       <main className="section">
@@ -140,6 +153,7 @@ export default function AdminCommentsPage() {
 
   const approvedCount = comments.filter((c) => c.isApproved).length;
   const pendingCount = comments.filter((c) => !c.isApproved).length;
+  const totalWithReplies = countAll(comments);
 
   return (
     <>
@@ -147,8 +161,8 @@ export default function AdminCommentsPage() {
         <div className="container page-header__inner">
           <h1 className="page-header__title">💬 مدیریت کامنت‌ها</h1>
           <p className="page-header__subtitle">
-            {comments.length} کامنت — {approvedCount} تاییدشده، {pendingCount} در
-            انتظار
+            {toFa(totalWithReplies)} کامنت — {toFa(comments.length)} اصلی،{" "}
+            {toFa(totalWithReplies - comments.length)} ریپلای
           </p>
         </div>
       </section>
@@ -176,7 +190,7 @@ export default function AdminCommentsPage() {
                 filter === "all" ? "btn--primary" : "btn--ghost"
               }`}
             >
-              همه ({comments.length})
+              همه ({toFa(comments.length)})
             </button>
             <button
               onClick={() => setFilter("approved")}
@@ -184,7 +198,7 @@ export default function AdminCommentsPage() {
                 filter === "approved" ? "btn--primary" : "btn--ghost"
               }`}
             >
-              ✅ تاییدشده ({approvedCount})
+              ✅ تاییدشده ({toFa(approvedCount)})
             </button>
             <button
               onClick={() => setFilter("pending")}
@@ -192,7 +206,7 @@ export default function AdminCommentsPage() {
                 filter === "pending" ? "btn--primary" : "btn--ghost"
               }`}
             >
-              ⏳ در انتظار ({pendingCount})
+              ⏳ در انتظار ({toFa(pendingCount)})
             </button>
           </div>
 
@@ -231,167 +245,254 @@ export default function AdminCommentsPage() {
             </div>
           ) : (
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
-              {filtered.map((comment) => (
-                <div
-                  key={comment.id}
-                  style={{
-                    background: "#fff",
-                    padding: "20px",
-                    borderRadius: "12px",
-                    border: comment.isApproved
-                      ? "1px solid #e5e5e5"
-                      : "2px solid #fbbf24",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                  }}
-                >
+              {filtered.map((comment) => {
+                const replyCount = comment.replies?.length || 0;
+
+                return (
                   <div
+                    key={comment.id}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      marginBottom: "12px",
-                      gap: "12px",
-                      flexWrap: "wrap",
+                      background: "#fff",
+                      padding: "20px",
+                      borderRadius: "12px",
+                      border: comment.isApproved
+                        ? "1px solid #e5e5e5"
+                        : "2px solid #fbbf24",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        marginBottom: "12px",
+                        gap: "12px",
+                        flexWrap: "wrap",
                       }}
                     >
                       <div
                         style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          background:
-                            "linear-gradient(135deg, #0066cc, #7c3aed)",
-                          color: "#fff",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "16px",
-                          fontWeight: 700,
-                          flexShrink: 0,
+                          gap: "10px",
                         }}
                       >
-                        {comment.user.name?.charAt(0) || "ک"}
-                      </div>
-                      <div>
                         <div
                           style={{
-                            fontSize: "14px",
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            background:
+                              "linear-gradient(135deg, #0066cc, #7c3aed)",
+                            color: "#fff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "16px",
                             fontWeight: 700,
-                            color: "#1a1a1a",
+                            flexShrink: 0,
                           }}
                         >
-                          {comment.user.name || "کاربر"}
+                          {comment.user.name?.charAt(0) || "ک"}
                         </div>
-                        <div style={{ fontSize: "12px", color: "#666" }}>
-                          {comment.user.email}
+                        <div>
+                          <div
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: 700,
+                              color: "#1a1a1a",
+                            }}
+                          >
+                            {comment.user.name || "کاربر"}
+                          </div>
+                          <div style={{ fontSize: "12px", color: "#666" }}>
+                            {comment.user.email}
+                          </div>
                         </div>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                        {!comment.isApproved && (
+                          <span
+                            style={{
+                              background: "#fef3c7",
+                              color: "#92400e",
+                              padding: "4px 10px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            ⏳ در انتظار
+                          </span>
+                        )}
+                        {replyCount > 0 && (
+                          <span
+                            style={{
+                              background: "#dbeafe",
+                              color: "#1e40af",
+                              padding: "4px 10px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            💬 {toFa(replyCount)} پاسخ
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {!comment.isApproved && (
-                      <span
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        color: "#444",
+                        lineHeight: 1.9,
+                        margin: "0 0 12px",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {comment.content}
+                    </p>
+
+                    {/* نمایش ریپلای‌ها */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div
                         style={{
-                          background: "#fef3c7",
-                          color: "#92400e",
-                          padding: "4px 10px",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          fontWeight: 700,
+                          marginRight: "16px",
+                          paddingRight: "12px",
+                          borderRight: "2px solid #dbeafe",
+                          marginBottom: "12px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "8px",
                         }}
                       >
-                        ⏳ در انتظار
-                      </span>
+                        {comment.replies.map((reply) => (
+                          <div
+                            key={reply.id}
+                            style={{
+                              background: "#f8f9fa",
+                              padding: "10px 12px",
+                              borderRadius: "8px",
+                              fontSize: "13px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                marginBottom: "4px",
+                                gap: "8px",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <strong
+                                style={{ fontSize: "12px", color: "#0066cc" }}
+                              >
+                                ↪ {reply.user.name || "کاربر"}
+                              </strong>
+                              <button
+                                onClick={() =>
+                                  handleDelete(reply.id, reply.content)
+                                }
+                                style={{
+                                  background: "transparent",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  fontSize: "12px",
+                                  color: "#e11d48",
+                                  padding: "0",
+                                }}
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                            <p
+                              style={{
+                                margin: 0,
+                                color: "#444",
+                                lineHeight: 1.8,
+                              }}
+                            >
+                              {reply.content}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     )}
-                  </div>
 
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "#444",
-                      lineHeight: 1.9,
-                      margin: "0 0 12px",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {comment.content}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      paddingTop: "12px",
-                      borderTop: "1px solid #f0f0f0",
-                      gap: "12px",
-                      flexWrap: "wrap",
-                    }}
-                  >
                     <div
                       style={{
                         display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingTop: "12px",
+                        borderTop: "1px solid #f0f0f0",
                         gap: "12px",
-                        fontSize: "12px",
-                        color: "#999",
+                        flexWrap: "wrap",
                       }}
                     >
-                      <span>📁 {comment.fileSlug}</span>
-                      <span>🕐 {toFaDate(comment.createdAt)}</span>
-                    </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "12px",
+                          fontSize: "12px",
+                          color: "#999",
+                        }}
+                      >
+                        <span>📁 {comment.fileSlug}</span>
+                        <span>🕐 {toFaDate(comment.createdAt)}</span>
+                      </div>
 
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <button
-                        onClick={() =>
-                          toggleApproval(comment.id, comment.isApproved)
-                        }
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: "8px",
-                          background: comment.isApproved
-                            ? "#fef3c7"
-                            : "#d1fae5",
-                          color: comment.isApproved ? "#92400e" : "#065f46",
-                          border: "none",
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          fontWeight: 700,
-                          fontFamily: "inherit",
-                        }}
-                      >
-                        {comment.isApproved ? "⏸️ لغو تایید" : "✅ تایید"}
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleDelete(comment.id, comment.content)
-                        }
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: "8px",
-                          background: "#fee2e2",
-                          color: "#991b1b",
-                          border: "none",
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          fontWeight: 700,
-                          fontFamily: "inherit",
-                        }}
-                      >
-                        🗑️ حذف
-                      </button>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          onClick={() =>
+                            toggleApproval(comment.id, comment.isApproved)
+                          }
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "8px",
+                            background: comment.isApproved
+                              ? "#fef3c7"
+                              : "#d1fae5",
+                            color: comment.isApproved ? "#92400e" : "#065f46",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: "12px",
+                            fontWeight: 700,
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          {comment.isApproved ? "⏸️ لغو تایید" : "✅ تایید"}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDelete(comment.id, comment.content)
+                          }
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "8px",
+                            background: "#fee2e2",
+                            color: "#991b1b",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: "12px",
+                            fontWeight: 700,
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          🗑️ حذف
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

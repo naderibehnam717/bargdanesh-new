@@ -34,7 +34,7 @@ export default async function AdminPage() {
 
       <main className="section">
         <div className="container">
-          {/* آمار */}
+          {/* آمار سریع */}
           <div className="stats-box" style={{ marginBottom: "var(--sp-7)" }}>
             <div className="stat-item">
               <div className="stat-item__number">{totalUsers}</div>
@@ -56,6 +56,18 @@ export default async function AdminPage() {
 
           {/* لینک‌ها */}
           <div className="features">
+            <Link
+              href="/admin/stats"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📊</div>
+              <h3 className="feature__title">آمار پیشرفته</h3>
+              <p className="feature__desc">
+                نمودارها و گزارش‌های کامل
+              </p>
+            </Link>
+
             <Link
               href="/admin/users"
               className="feature"
@@ -81,6 +93,18 @@ export default async function AdminPage() {
             </Link>
 
             <Link
+              href="/admin/downloads"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📥</div>
+              <h3 className="feature__title">تاریخچه دانلود</h3>
+              <p className="feature__desc">
+                گزارش دانلودها ({totalDownloads})
+              </p>
+            </Link>
+
+            <Link
               href="/admin/comments"
               className="feature"
               style={{ textDecoration: "none" }}
@@ -101,6 +125,18 @@ export default async function AdminPage() {
               <h3 className="feature__title">مدیریت کوییزها</h3>
               <p className="feature__desc">
                 افزودن و حذف سوالات ({totalQuizzes})
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/email"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📧</div>
+              <h3 className="feature__title">ایمیل گروهی</h3>
+              <p className="feature__desc">
+                ارسال ایمیل به کاربران
               </p>
             </Link>
 
