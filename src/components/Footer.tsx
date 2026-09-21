@@ -65,6 +65,7 @@ export default function Footer() {
               <li><Link href="/university">دانشگاهی</Link></li>
               <li><Link href="/school">مدرسه ای</Link></li>
               <li><Link href="/exams">نمونه سوال</Link></li>
+              <li><Link href="/konkur">آرشیو کنکور</Link></li>
               <li><Link href="/articles">مقالات</Link></li>
               <li><Link href="/books">منابع غیر درسی</Link></li>
               <li><Link href="/employment">منابع استخدامی</Link></li>

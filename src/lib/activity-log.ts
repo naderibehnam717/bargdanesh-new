@@ -16,6 +16,7 @@ export type EntityType =
   | "User"
   | "Comment"
   | "Quiz"
+  | "Konkur"
   | "Settings"
   | "Email"
   | "Auth";
@@ -30,7 +31,6 @@ interface LogActivityParams {
 
 /**
  * ثبت فعالیت ادمین در دیتابیس
- * - اگه خطا داد، log نمی‌کنه ولی برنامه رو متوقف نمی‌کنه
  */
 export async function logActivity({
   adminId,
@@ -57,7 +57,6 @@ export async function logActivity({
       },
     });
   } catch (error) {
-    // خطا رو log می‌کنیم ولی برنامه رو متوقف نمی‌کنیم
     console.error("Failed to log activity:", error);
   }
 }
@@ -115,6 +114,7 @@ export const entityLabels: Record<EntityType, string> = {
   User: "کاربر",
   Comment: "کامنت",
   Quiz: "کوییز",
+  Konkur: "کنکور",
   Settings: "تنظیمات",
   Email: "ایمیل",
   Auth: "احراز هویت",
@@ -128,6 +128,7 @@ export const entityIcons: Record<EntityType, string> = {
   User: "👤",
   Comment: "💬",
   Quiz: "🎯",
+  Konkur: "📚",
   Settings: "🔧",
   Email: "📧",
   Auth: "🔐",

@@ -124,6 +124,7 @@ const categories = [
   { title: "دانشگاهی", desc: "جزوه‌های تمام رشته‌ها", icon: "🎓", href: "/university" },
   { title: "مدرسه‌ای", desc: "منابع تمام مقاطع", icon: "🏫", href: "/school" },
   { title: "نمونه سوال", desc: "آرشیو سوالات امتحانی", icon: "📝", href: "/exams" },
+  { title: "آرشیو کنکور", desc: "دفترچه سوالات و کلید پاسخ", icon: "📚", href: "/konkur" },
   { title: "منابع غیر درسی", desc: "کتاب، رمان و داستان", icon: "📖", href: "/books" },
   { title: "منابع استخدامی", desc: "آمادگی آزمون‌های استخدامی", icon: "💼", href: "/employment" },
   { title: "مقالات", desc: "مقالات علمی و پژوهشی", icon: "📄", href: "/articles" },

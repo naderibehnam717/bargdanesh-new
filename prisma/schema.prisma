@@ -19,11 +19,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  favorites Favorite[]
-  downloads Download[]
-  accounts  Account[]
-  sessions  Session[]
-  comments  Comment[]
+  favorites  Favorite[]
+  downloads  Download[]
+  accounts   Account[]
+  sessions   Session[]
+  comments   Comment[]
   activities ActivityLog[]
 }
 
@@ -185,4 +185,22 @@ model ActivityLog {
   @@index([action])
   @@index([entityType])
   @@index([createdAt])
+}
+
+model Konkur {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  year        Int
+  field       String
+  description String?  @db.Text
+  questionUrl String?
+  answerUrl   String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([year])
+  @@index([field])
+  @@index([year, field])
 }

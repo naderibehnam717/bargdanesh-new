@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllFiles } from "@/lib/files";
 import { getFilePath } from "@/lib/filePath";
+import { prisma } from "@/lib/prisma";
 
 const BASE_URL = "https://www.bargdanesh.ir";
 
@@ -38,6 +39,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/konkur`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/books`,
@@ -119,7 +126,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // ────────── 2. صفحات داینامیک (از DB + هاردکد) ──────────
+  // ────────── 2. صفحات داینامیک (فایل‌ها) ──────────
   const allFiles = await getAllFiles();
   const filePages: MetadataRoute.Sitemap = allFiles.map((file) => ({
     url: `${BASE_URL}${getFilePath(file)}`,
@@ -128,5 +135,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: file.level === "دانشگاهی" ? 0.8 : 0.6,
   }));
 
-  return [...staticPages, ...filePages];
+  // ────────── 3. صفحات داینامیک (کنکور) ──────────
+  let konkurPages: MetadataRoute.Sitemap = [];
+  try {
+    const konkurList = await prisma.konkur.findMany({
+      select: { slug: true, updatedAt: true },
+    });
+
+    konkurPages = konkurList.map((k) => ({
+      url: `${BASE_URL}/konkur/${k.slug}`,
+      lastModified: k.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }));
+  } catch (error) {
+    console.error("Sitemap konkur error:", error);
+  }
+
+  return [...staticPages, ...filePages, ...konkurPages];
 }

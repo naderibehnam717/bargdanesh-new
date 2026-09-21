@@ -21,6 +21,7 @@ export default async function AdminPage() {
   const totalFiles = await prisma.file.count();
   const totalQuizzes = await prisma.quiz.count();
   const totalLogs = await prisma.activityLog.count();
+  const totalKonkur = await prisma.konkur.count();
 
   return (
     <>
@@ -90,6 +91,18 @@ export default async function AdminPage() {
               <h3 className="feature__title">مدیریت فایل‌ها</h3>
               <p className="feature__desc">
                 اضافه، ویرایش و حذف فایل‌ها
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/konkur"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📚</div>
+              <h3 className="feature__title">آرشیو کنکور</h3>
+              <p className="feature__desc">
+                مدیریت آزمون‌های کنکور ({totalKonkur})
               </p>
             </Link>
 

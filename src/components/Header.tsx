@@ -51,6 +51,7 @@ export default function Header() {
             <Link href="/university" className="nav__link" onClick={closeMenu}>دانشگاهی</Link>
             <Link href="/school" className="nav__link" onClick={closeMenu}>مدرسه ای</Link>
             <Link href="/exams" className="nav__link" onClick={closeMenu}>نمونه سوال</Link>
+            <Link href="/konkur" className="nav__link" onClick={closeMenu}>کنکور</Link>
             <Link href="/articles" className="nav__link" onClick={closeMenu}>مقالات</Link>
             <Link href="/books" className="nav__link" onClick={closeMenu}>منابع غیر درسی</Link>
             <Link href="/employment" className="nav__link" onClick={closeMenu}>منابع استخدامی</Link>
