@@ -20,6 +20,7 @@ export default async function AdminPage() {
   const totalComments = await prisma.comment.count();
   const totalFiles = await prisma.file.count();
   const totalQuizzes = await prisma.quiz.count();
+  const totalLogs = await prisma.activityLog.count();
 
   return (
     <>
@@ -137,6 +138,18 @@ export default async function AdminPage() {
               <h3 className="feature__title">ایمیل گروهی</h3>
               <p className="feature__desc">
                 ارسال ایمیل به کاربران
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/logs"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📜</div>
+              <h3 className="feature__title">لاگ فعالیت‌ها</h3>
+              <p className="feature__desc">
+                تاریخچه‌ی کامل ({totalLogs})
               </p>
             </Link>
 

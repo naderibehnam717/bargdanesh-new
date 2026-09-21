@@ -2,17 +2,16 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity-log";
 
 async function checkAdmin() {
   const session = await auth();
-  if (!session?.user) return false;
-  if ((session.user as { role?: string }).role !== "admin") return false;
-  return true;
+  if (!session?.user) return null;
+  if ((session.user as { role?: string }).role !== "admin") return null;
+  return (session.user as { id?: string }).id || null;
 }
 
-// ─── تولید slug ───
 function slugify(text: string): string {
-  // اگه متن فارسی بود، از "file-{timestamp}" استفاده کن
   const hasPersian = /[\u0600-\u06FF]/.test(text);
   if (hasPersian) {
     return `file-${Date.now()}`;
@@ -28,9 +27,10 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// ─── GET: لیست فایل‌ها ───
+// ─── GET ───
 export async function GET() {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
@@ -41,9 +41,10 @@ export async function GET() {
   return NextResponse.json(files);
 }
 
-// ─── POST: اضافه کردن فایل ───
+// ─── POST ───
 export async function POST(request: Request) {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
@@ -56,7 +57,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // تولید slug یکتا
   let baseSlug = slugify(body.title);
   let slug = baseSlug;
   let counter = 1;
@@ -83,22 +83,32 @@ export async function POST(request: Request) {
       },
     });
 
-    // ✅ Cache رو پاک کن
+    // ✅ ثبت فعالیت
+    await logActivity({
+      adminId,
+      action: "create",
+      entityType: "File",
+      entityId: newFile.id,
+      details: {
+        title: newFile.title,
+        category: newFile.category,
+        type: newFile.type,
+      },
+    });
+
     revalidatePath("/", "layout");
 
     return NextResponse.json(newFile, { status: 201 });
   } catch (error) {
     console.error("Error creating file:", error);
-    return NextResponse.json(
-      { error: "خطا در ذخیره فایل" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "خطا در ذخیره فایل" }, { status: 500 });
   }
 }
 
-// ─── DELETE: حذف فایل ───
+// ─── DELETE ───
 export async function DELETE(request: Request) {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
@@ -110,9 +120,23 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    // قبل از حذف، اطلاعات رو بگیر
+    const file = await prisma.file.findUnique({
+      where: { id },
+      select: { title: true, category: true, type: true },
+    });
+
     await prisma.file.delete({ where: { id } });
 
-    // ✅ Cache رو پاک کن
+    // ✅ ثبت فعالیت
+    await logActivity({
+      adminId,
+      action: "delete",
+      entityType: "File",
+      entityId: id,
+      details: file || { id },
+    });
+
     revalidatePath("/", "layout");
 
     return NextResponse.json({ message: "فایل حذف شد" });

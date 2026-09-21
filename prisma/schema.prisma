@@ -24,6 +24,7 @@ model User {
   accounts  Account[]
   sessions  Session[]
   comments  Comment[]
+  activities ActivityLog[]
 }
 
 model Favorite {
@@ -157,14 +158,31 @@ model Comment {
 }
 
 model EmailLog {
-  id          String   @id @default(cuid())
-  subject     String
-  content     String   @db.Text
+  id             String   @id @default(cuid())
+  subject        String
+  content        String   @db.Text
   recipientCount Int
-  sentCount   Int      @default(0)
-  failedCount Int      @default(0)
-  status      String   @default("pending")
-  createdAt   DateTime @default(now())
+  sentCount      Int      @default(0)
+  failedCount    Int      @default(0)
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
 
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String
+  entityType String
+  entityId   String?
+  details    String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([action])
+  @@index([entityType])
   @@index([createdAt])
 }

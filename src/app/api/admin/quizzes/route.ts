@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-log";
 
 export const dynamic = "force-dynamic";
 
 async function checkAdmin() {
   const session = await auth();
-  if (!session?.user) return false;
-  if ((session.user as { role?: string }).role !== "admin") return false;
-  return true;
+  if (!session?.user) return null;
+  if ((session.user as { role?: string }).role !== "admin") return null;
+  return (session.user as { id?: string }).id || null;
 }
 
 // ─── GET: لیست سوالات ───
 export async function GET() {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
@@ -26,21 +28,17 @@ export async function GET() {
 
 // ─── POST: افزودن سوال ───
 export async function POST(request: Request) {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
   const body = await request.json();
 
-  const { question, options, correctIdx, explanation, category, level } =
-    body;
+  const { question, options, correctIdx, explanation, category, level } = body;
 
-  // اعتبارسنجی
   if (!question || !options || !Array.isArray(options)) {
-    return NextResponse.json(
-      { error: "اطلاعات ناقص" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "اطلاعات ناقص" }, { status: 400 });
   }
 
   if (options.length !== 4 || options.some((o: string) => !o.trim())) {
@@ -77,6 +75,19 @@ export async function POST(request: Request) {
       },
     });
 
+    // ✅ ثبت فعالیت
+    await logActivity({
+      adminId,
+      action: "create",
+      entityType: "Quiz",
+      entityId: quiz.id,
+      details: {
+        question: quiz.question.slice(0, 100),
+        category: quiz.category,
+        level: quiz.level,
+      },
+    });
+
     return NextResponse.json(quiz, { status: 201 });
   } catch (error) {
     console.error("Create quiz error:", error);
@@ -86,7 +97,8 @@ export async function POST(request: Request) {
 
 // ─── DELETE: حذف سوال ───
 export async function DELETE(request: Request) {
-  if (!(await checkAdmin())) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
     return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
   }
 
@@ -98,7 +110,29 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    // قبل از حذف، اطلاعات رو بگیر
+    const quiz = await prisma.quiz.findUnique({
+      where: { id },
+      select: { question: true, category: true, level: true },
+    });
+
     await prisma.quiz.delete({ where: { id } });
+
+    // ✅ ثبت فعالیت
+    await logActivity({
+      adminId,
+      action: "delete",
+      entityType: "Quiz",
+      entityId: id,
+      details: quiz
+        ? {
+            question: quiz.question.slice(0, 100),
+            category: quiz.category,
+            level: quiz.level,
+          }
+        : { id },
+    });
+
     return NextResponse.json({ message: "سوال حذف شد" });
   } catch (error) {
     console.error("Delete quiz error:", error);
