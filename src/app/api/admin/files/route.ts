@@ -27,7 +27,7 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// ─── GET ───
+// ─── GET: لیست فایل‌ها ───
 export async function GET() {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -41,7 +41,7 @@ export async function GET() {
   return NextResponse.json(files);
 }
 
-// ─── POST ───
+// ─── POST: افزودن فایل ───
 export async function POST(request: Request) {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -83,7 +83,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // ✅ ثبت فعالیت
     await logActivity({
       adminId,
       action: "create",
@@ -105,7 +104,77 @@ export async function POST(request: Request) {
   }
 }
 
-// ─── DELETE ───
+// ─── PUT: ویرایش فایل ───
+export async function PUT(request: Request) {
+  const adminId = await checkAdmin();
+  if (!adminId) {
+    return NextResponse.json({ error: "دسترسی ندارید" }, { status: 403 });
+  }
+
+  const body = await request.json();
+  const { id, ...data } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: "شناسه لازم است" }, { status: 400 });
+  }
+
+  try {
+    // اطلاعات قدیمی
+    const oldFile = await prisma.file.findUnique({
+      where: { id },
+    });
+
+    if (!oldFile) {
+      return NextResponse.json({ error: "فایل یافت نشد" }, { status: 404 });
+    }
+
+    // آپدیت
+    const updatedFile = await prisma.file.update({
+      where: { id },
+      data: {
+        title: data.title ?? oldFile.title,
+        desc: data.desc ?? oldFile.desc,
+        category: data.category ?? oldFile.category,
+        type: data.type ?? oldFile.type,
+        level: data.level ?? oldFile.level,
+        author: data.author !== undefined ? data.author || null : oldFile.author,
+        viewUrl:
+          data.viewUrl !== undefined ? data.viewUrl || null : oldFile.viewUrl,
+        downloadUrl:
+          data.downloadUrl !== undefined
+            ? data.downloadUrl || null
+            : oldFile.downloadUrl,
+        downloadName:
+          data.downloadName !== undefined
+            ? data.downloadName || null
+            : oldFile.downloadName,
+        color: data.color ?? oldFile.color,
+      },
+    });
+
+    // ثبت فعالیت
+    await logActivity({
+      adminId,
+      action: "update",
+      entityType: "File",
+      entityId: id,
+      details: {
+        title: updatedFile.title,
+        category: updatedFile.category,
+        changes: Object.keys(data),
+      },
+    });
+
+    revalidatePath("/", "layout");
+
+    return NextResponse.json(updatedFile);
+  } catch (error) {
+    console.error("Update file error:", error);
+    return NextResponse.json({ error: "خطا در ویرایش" }, { status: 500 });
+  }
+}
+
+// ─── DELETE: حذف فایل ───
 export async function DELETE(request: Request) {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -120,7 +189,6 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    // قبل از حذف، اطلاعات رو بگیر
     const file = await prisma.file.findUnique({
       where: { id },
       select: { title: true, category: true, type: true },
@@ -128,7 +196,6 @@ export async function DELETE(request: Request) {
 
     await prisma.file.delete({ where: { id } });
 
-    // ✅ ثبت فعالیت
     await logActivity({
       adminId,
       action: "delete",

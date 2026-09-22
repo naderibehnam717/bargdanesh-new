@@ -5,12 +5,11 @@ import { prisma } from "@/lib/prisma";
 import Breadcrumb from "@/components/Breadcrumb";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 import ProtectedKonkurButtons from "@/components/ProtectedKonkurButtons";
+import CommentSection from "@/components/CommentSection";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-// ⚠️ generateStaticParams حذف شد — صفحه dynamic هست
 
 // ─── متادیتا ───
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -22,8 +21,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const url = `https://www.bargdanesh.ir/konkur/${konkur.slug}`;
-  const title = `${konkur.title} — دفترچه سوالات و کلید پاسخ`;
-  const description = `دانلود رایگان دفترچه سوالات و کلید پاسخ ${konkur.title} از برگ دانش`;
+  const title = konkur.subtitle
+    ? `${konkur.title} — ${konkur.subtitle}`
+    : `${konkur.title} — دفترچه سوالات و کلید پاسخ`;
+  const description = `دانلود رایگان ${konkur.subtitle || "دفترچه سوالات و کلید پاسخ"} ${konkur.title} از برگ دانش`;
 
   return {
     title,
@@ -53,12 +54,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     keywords: [
       konkur.title,
+      konkur.subtitle || "",
       `کنکور ${konkur.year}`,
       `کنکور ${konkur.field}`,
       `دفترچه سوالات کنکور ${konkur.year}`,
       `کلید پاسخ کنکور ${konkur.year}`,
       `دانلود کنکور ${konkur.field}`,
-    ],
+    ].filter(Boolean),
   };
 }
 
@@ -82,7 +84,9 @@ export default async function KonkurDetailPage({ params }: PageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LearningResource",
-    name: konkur.title,
+    name: konkur.subtitle
+      ? `${konkur.title} - ${konkur.subtitle}`
+      : konkur.title,
     description:
       konkur.description ||
       `دفترچه سوالات و کلید پاسخ ${konkur.title}`,
@@ -126,10 +130,31 @@ export default async function KonkurDetailPage({ params }: PageProps) {
           >
             کنکور {toFa(konkur.year)} — {konkur.field}
           </span>
+
           <h1 className="page-header__title" style={{ marginTop: "12px" }}>
             {konkur.title}
           </h1>
-          <p className="page-header__subtitle">
+
+          {/* ✅ subtitle */}
+          {konkur.subtitle && (
+            <div
+              style={{
+                display: "inline-block",
+                marginTop: "12px",
+                padding: "8px 20px",
+                background: "#f0f7ff",
+                color: "#0066cc",
+                borderRadius: "100px",
+                fontSize: "15px",
+                fontWeight: 700,
+                border: "2px solid #0066cc",
+              }}
+            >
+              📌 {konkur.subtitle}
+            </div>
+          )}
+
+          <p className="page-header__subtitle" style={{ marginTop: "12px" }}>
             دفترچه سوالات و کلید پاسخ — دانلود رایگان
           </p>
         </div>
@@ -164,6 +189,13 @@ export default async function KonkurDetailPage({ params }: PageProps) {
 
               <dt style={{ fontWeight: 700 }}>🎓 رشته:</dt>
               <dd>{konkur.field}</dd>
+
+              {konkur.subtitle && (
+                <>
+                  <dt style={{ fontWeight: 700 }}>📌 عنوان:</dt>
+                  <dd>{konkur.subtitle}</dd>
+                </>
+              )}
 
               <dt style={{ fontWeight: 700 }}>📚 نوع:</dt>
               <dd>کنکور سراسری</dd>
@@ -209,8 +241,13 @@ export default async function KonkurDetailPage({ params }: PageProps) {
                 </h2>
                 <p style={{ margin: 0 }}>
                   این بخش شامل دفترچه سوالات و کلید پاسخ{" "}
-                  <strong>{konkur.title}</strong> است. با دانلود و مطالعه این
-                  فایل‌ها، می‌توانید با ساختار سوالات کنکور سراسری در رشته‌ی{" "}
+                  <strong>
+                    {konkur.subtitle
+                      ? `${konkur.title} (${konkur.subtitle})`
+                      : konkur.title}
+                  </strong>{" "}
+                  است. با دانلود و مطالعه این فایل‌ها، می‌توانید با ساختار
+                  سوالات کنکور سراسری در رشته‌ی{" "}
                   <strong>{konkur.field}</strong> و سطح دشواری آن‌ها آشنا شوید.
                 </p>
               </div>
@@ -277,6 +314,9 @@ export default async function KonkurDetailPage({ params }: PageProps) {
               مراجعه کنید.
             </p>
           </div>
+
+          {/* ✅ کامنت‌ها */}
+          <CommentSection fileSlug={`konkur-${konkur.slug}`} />
         </div>
       </main>
     </>

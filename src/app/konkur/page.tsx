@@ -72,7 +72,6 @@ export default async function KonkurPage({ searchParams }: PageProps) {
     orderBy: [{ year: "desc" }, { order: "asc" }],
   });
 
-  // گروه‌بندی بر اساس سال
   const groupedByYear = konkurList.reduce((acc, item) => {
     if (!acc[item.year]) acc[item.year] = [];
     acc[item.year].push(item);
@@ -83,7 +82,8 @@ export default async function KonkurPage({ searchParams }: PageProps) {
     .map(Number)
     .sort((a, b) => b - a);
 
-  const toFa = (n: number) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
+  const toFa = (n: number) =>
+    String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 
   return (
     <>
@@ -154,9 +154,7 @@ export default async function KonkurPage({ searchParams }: PageProps) {
               >
                 📅 سال کنکور:
               </div>
-              <div
-                style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
-              >
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <Link
                   href="/konkur"
                   className={`btn btn--sm ${
@@ -168,7 +166,9 @@ export default async function KonkurPage({ searchParams }: PageProps) {
                 {YEARS.map((y) => (
                   <Link
                     key={y}
-                    href={`/konkur?year=${y}${field && field !== "all" ? `&field=${field}` : ""}`}
+                    href={`/konkur?year=${y}${
+                      field && field !== "all" ? `&field=${field}` : ""
+                    }`}
                     className={`btn btn--sm ${
                       year === String(y) ? "btn--primary" : "btn--ghost"
                     }`}
@@ -191,11 +191,11 @@ export default async function KonkurPage({ searchParams }: PageProps) {
               >
                 🎓 رشته:
               </div>
-              <div
-                style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
-              >
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <Link
-                  href={`/konkur${year && year !== "all" ? `?year=${year}` : ""}`}
+                  href={`/konkur${
+                    year && year !== "all" ? `?year=${year}` : ""
+                  }`}
                   className={`btn btn--sm ${
                     !field || field === "all" ? "btn--primary" : "btn--ghost"
                   }`}
@@ -205,7 +205,9 @@ export default async function KonkurPage({ searchParams }: PageProps) {
                 {FIELDS.map((f) => (
                   <Link
                     key={f.value}
-                    href={`/konkur?field=${encodeURIComponent(f.value)}${year && year !== "all" ? `&year=${year}` : ""}`}
+                    href={`/konkur?field=${encodeURIComponent(f.value)}${
+                      year && year !== "all" ? `&year=${year}` : ""
+                    }`}
                     className={`btn btn--sm ${
                       field === f.value ? "btn--primary" : "btn--ghost"
                     }`}
@@ -319,6 +321,25 @@ export default async function KonkurPage({ searchParams }: PageProps) {
                               {item.field}
                             </strong>
                           </div>
+
+                          {/* ✅ subtitle */}
+                          {item.subtitle && (
+                            <div
+                              style={{
+                                fontSize: "13px",
+                                fontWeight: 700,
+                                color: "#0066cc",
+                                marginBottom: "8px",
+                                padding: "4px 10px",
+                                background: "#f0f7ff",
+                                borderRadius: "6px",
+                                display: "inline-block",
+                              }}
+                            >
+                              📌 {item.subtitle}
+                            </div>
+                          )}
+
                           <div
                             style={{
                               fontSize: "12px",

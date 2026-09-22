@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// ─── GET: لیست کنکورها ───
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

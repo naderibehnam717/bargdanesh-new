@@ -7,20 +7,21 @@ import Link from "next/link";
 
 interface FileData {
   id: string;
+  slug: string;
   title: string;
   desc: string;
   category: string;
   type: string;
   level: string;
-  author?: string;
-  viewUrl?: string;
-  downloadUrl?: string;
-  downloadName?: string;
-  color?: string;
+  author?: string | null;
+  viewUrl?: string | null;
+  downloadUrl?: string | null;
+  downloadName?: string | null;
+  color?: string | null;
   createdAt?: string;
 }
 
-const emptyForm: Omit<FileData, "id" | "createdAt"> = {
+const emptyForm = {
   title: "",
   desc: "",
   category: "",
@@ -40,8 +41,10 @@ export default function AdminFilesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -62,7 +65,7 @@ export default function AdminFilesPage() {
 
   async function fetchFiles() {
     try {
-      const res = await fetch("/api/admin/files");
+      const res = await fetch("/api/admin/files", { cache: "no-store" });
       if (!res.ok) throw new Error("خطا");
       const data = await res.json();
       setFiles(data);
@@ -74,30 +77,75 @@ export default function AdminFilesPage() {
   }
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function handleEdit(file: FileData) {
+    setForm({
+      title: file.title,
+      desc: file.desc,
+      category: file.category,
+      type: file.type,
+      level: file.level,
+      author: file.author || "",
+      viewUrl: file.viewUrl || "",
+      downloadUrl: file.downloadUrl || "",
+      downloadName: file.downloadName || "",
+      color: file.color || "blue",
+    });
+    setEditingId(file.id);
+    setShowForm(true);
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleCancel() {
+    setForm(emptyForm);
+    setEditingId(null);
+    setShowForm(false);
+    setError("");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError("");
     setSaving(true);
 
-    const res = await fetch("/api/admin/files", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const method = editingId ? "PUT" : "POST";
+      const body = editingId ? { id: editingId, ...form } : form;
 
-    if (res.ok) {
-      const newFile = await res.json();
-      setFiles([newFile, ...files]);
-      setForm(emptyForm);
-      setShowForm(false);
-    } else {
-      alert("خطا در ذخیره فایل");
+      const res = await fetch("/api/admin/files", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "خطا در ذخیره");
+        return;
+      }
+
+      if (editingId) {
+        // ویرایش
+        setFiles(files.map((f) => (f.id === editingId ? data : f)));
+      } else {
+        // جدید
+        setFiles([data, ...files]);
+      }
+
+      handleCancel();
+    } catch {
+      setError("خطا در ارتباط با سرور");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   async function handleDelete(id: string, title: string) {
@@ -114,15 +162,17 @@ export default function AdminFilesPage() {
   const filtered = files.filter((f) => {
     const q = search.toLowerCase();
     return (
-      f.title.toLowerCase().includes(q) ||
-      f.category.toLowerCase().includes(q)
+      f.title.toLowerCase().includes(q) || f.category.toLowerCase().includes(q)
     );
   });
 
   if (loading) {
     return (
       <main className="section">
-        <div className="container" style={{ textAlign: "center", padding: "60px" }}>
+        <div
+          className="container"
+          style={{ textAlign: "center", padding: "60px" }}
+        >
           در حال بارگذاری...
         </div>
       </main>
@@ -138,6 +188,15 @@ export default function AdminFilesPage() {
     background: "var(--bg)",
     color: "var(--text)",
     outline: "none",
+    fontFamily: "inherit",
+  };
+
+  const labelStyle = {
+    display: "block",
+    fontSize: "13px",
+    fontWeight: 700,
+    marginBottom: "6px",
+    color: "var(--text)",
   };
 
   return (
@@ -164,7 +223,13 @@ export default function AdminFilesPage() {
               ← بازگشت به پنل ادمین
             </Link>
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => {
+                if (showForm) {
+                  handleCancel();
+                } else {
+                  setShowForm(true);
+                }
+              }}
               className="btn btn--primary"
             >
               {showForm ? "✕ بستن فرم" : "➕ افزودن فایل جدید"}
@@ -178,114 +243,194 @@ export default function AdminFilesPage() {
                 background: "var(--card)",
                 padding: "var(--sp-5)",
                 borderRadius: "var(--r-lg)",
-                border: "1px solid var(--border)",
+                border: editingId
+                  ? "2px solid #f59e0b"
+                  : "1px solid var(--border)",
                 marginBottom: "var(--sp-5)",
                 display: "grid",
                 gap: "var(--sp-3)",
               }}
             >
               <h3 style={{ fontSize: "18px", fontWeight: 700 }}>
-                ➕ افزودن فایل جدید
+                {editingId ? "✏️ ویرایش فایل" : "➕ افزودن فایل جدید"}
               </h3>
 
-              <input
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                placeholder="عنوان فایل *"
-                required
-                style={inputStyle}
-              />
-              <textarea
-                name="desc"
-                value={form.desc}
-                onChange={handleChange}
-                placeholder="توضیح کوتاه *"
-                required
-                rows={3}
-                style={inputStyle}
-              />
-              <input
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                placeholder="دسته‌بندی (مثل: فیزیک، روانشناسی) *"
-                required
-                style={inputStyle}
-              />
-              <select
-                name="type"
-                value={form.type}
-                onChange={handleChange}
-                style={inputStyle}
-              >
-                <option value="جزوه">جزوه</option>
-                <option value="کتاب">کتاب</option>
-                <option value="نمونه سوال">نمونه سوال</option>
-                <option value="منابع غیر درسی">منابع غیر درسی</option>
-                <option value="منابع استخدامی">منابع استخدامی</option>
-              </select>
-              <select
-                name="level"
-                value={form.level}
-                onChange={handleChange}
-                style={inputStyle}
-              >
-                <option value="دانشگاهی">دانشگاهی</option>
-                <option value="مدرسه ای">مدرسه ای</option>
-                <option value="غیر درسی">غیر درسی</option>
-                <option value="استخدامی">استخدامی</option>
-              </select>
-              <input
-                name="author"
-                value={form.author}
-                onChange={handleChange}
-                placeholder="نویسنده (اختیاری)"
-                style={inputStyle}
-              />
-              <input
-                name="viewUrl"
-                value={form.viewUrl}
-                onChange={handleChange}
-                placeholder="لینک مشاهده (Google Drive)"
-                style={inputStyle}
-              />
-              <input
-                name="downloadUrl"
-                value={form.downloadUrl}
-                onChange={handleChange}
-                placeholder="لینک دانلود"
-                style={inputStyle}
-              />
-              <input
-                name="downloadName"
-                value={form.downloadName}
-                onChange={handleChange}
-                placeholder="اسم فایل دانلود (انگلیسی)"
-                style={inputStyle}
-              />
-              <select
-                name="color"
-                value={form.color}
-                onChange={handleChange}
-                style={inputStyle}
-              >
-                <option value="blue">آبی</option>
-                <option value="green">سبز</option>
-                <option value="purple">بنفش</option>
-                <option value="rose">قرمز</option>
-                <option value="yellow">زرد</option>
-                <option value="orange">نارنجی</option>
-              </select>
+              {error && (
+                <div
+                  style={{
+                    background: "#fee2e2",
+                    color: "#991b1b",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    fontSize: "13px",
+                    border: "1px solid #fca5a5",
+                  }}
+                >
+                  ❌ {error}
+                </div>
+              )}
 
-              <button
-                type="submit"
-                disabled={saving}
-                className="btn btn--primary"
-                style={{ width: "100%" }}
+              <div>
+                <label style={labelStyle}>عنوان *</label>
+                <input
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  placeholder="عنوان فایل"
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>توضیح *</label>
+                <textarea
+                  name="desc"
+                  value={form.desc}
+                  onChange={handleChange}
+                  placeholder="توضیح کوتاه"
+                  required
+                  rows={3}
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>دسته‌بندی *</label>
+                <input
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  placeholder="مثل: فیزیک، روانشناسی"
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "12px",
+                }}
               >
-                {saving ? "در حال ذخیره..." : "💾 ذخیره فایل"}
-              </button>
+                <div>
+                  <label style={labelStyle}>نوع *</label>
+                  <select
+                    name="type"
+                    value={form.type}
+                    onChange={handleChange}
+                    style={inputStyle}
+                  >
+                    <option value="جزوه">جزوه</option>
+                    <option value="کتاب">کتاب</option>
+                    <option value="نمونه سوال">نمونه سوال</option>
+                    <option value="منابع غیر درسی">منابع غیر درسی</option>
+                    <option value="منابع استخدامی">منابع استخدامی</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>مقطع *</label>
+                  <select
+                    name="level"
+                    value={form.level}
+                    onChange={handleChange}
+                    style={inputStyle}
+                  >
+                    <option value="دانشگاهی">دانشگاهی</option>
+                    <option value="مدرسه ای">مدرسه ای</option>
+                    <option value="غیر درسی">غیر درسی</option>
+                    <option value="استخدامی">استخدامی</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>نویسنده (اختیاری)</label>
+                <input
+                  name="author"
+                  value={form.author}
+                  onChange={handleChange}
+                  placeholder="نویسنده"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>لینک مشاهده (Google Drive)</label>
+                <input
+                  name="viewUrl"
+                  value={form.viewUrl}
+                  onChange={handleChange}
+                  placeholder="https://drive.google.com/file/d/.../view"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>لینک دانلود</label>
+                <input
+                  name="downloadUrl"
+                  value={form.downloadUrl}
+                  onChange={handleChange}
+                  placeholder="https://drive.google.com/uc?export=download&id=..."
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>اسم فایل دانلود (انگلیسی)</label>
+                <input
+                  name="downloadName"
+                  value={form.downloadName}
+                  onChange={handleChange}
+                  placeholder="file-name.pdf"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>رنگ</label>
+                <select
+                  name="color"
+                  value={form.color}
+                  onChange={handleChange}
+                  style={inputStyle}
+                >
+                  <option value="blue">آبی</option>
+                  <option value="green">سبز</option>
+                  <option value="purple">بنفش</option>
+                  <option value="rose">قرمز</option>
+                  <option value="yellow">زرد</option>
+                  <option value="orange">نارنجی</option>
+                </select>
+              </div>
+
+              <div style={{ display: "flex", gap: "12px" }}>
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="btn btn--ghost"
+                    style={{ flex: 1 }}
+                  >
+                    لغو
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn btn--primary"
+                  style={{ flex: 2 }}
+                >
+                  {saving
+                    ? "در حال ذخیره..."
+                    : editingId
+                    ? "💾 ذخیره تغییرات"
+                    : "💾 ذخیره فایل"}
+                </button>
+              </div>
             </form>
           )}
 
@@ -328,11 +473,15 @@ export default function AdminFilesPage() {
                   }}
                 >
                   <span
-                    className={`content-card__badge content-card__badge--${file.color || "blue"}`}
+                    className={`content-card__badge content-card__badge--${
+                      file.color || "blue"
+                    }`}
                   >
                     {file.category}
                   </span>
-                  <h3 style={{ fontSize: "15px", fontWeight: 700 }}>{file.title}</h3>
+                  <h3 style={{ fontSize: "15px", fontWeight: 700 }}>
+                    {file.title}
+                  </h3>
                   <p
                     style={{
                       fontSize: "13px",
@@ -355,21 +504,43 @@ export default function AdminFilesPage() {
                     <span>📎 {file.type}</span>
                     <span>🎯 {file.level}</span>
                   </div>
-                  <button
-                    onClick={() => handleDelete(file.id, file.title)}
-                    style={{
-                      padding: "8px",
-                      borderRadius: "var(--r-md)",
-                      background: "var(--rose-light)",
-                      color: "var(--rose)",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    🗑️ حذف
-                  </button>
+
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      onClick={() => handleEdit(file)}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        borderRadius: "var(--r-md)",
+                        background: "#fef3c7",
+                        color: "#92400e",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      ✏️ ویرایش
+                    </button>
+                    <button
+                      onClick={() => handleDelete(file.id, file.title)}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        borderRadius: "var(--r-md)",
+                        background: "var(--rose-light)",
+                        color: "var(--rose)",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      🗑️ حذف
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

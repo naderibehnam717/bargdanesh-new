@@ -191,6 +191,7 @@ model Konkur {
   id          String   @id @default(cuid())
   slug        String   @unique
   title       String
+  subtitle    String?
   year        Int
   field       String
   description String?  @db.Text

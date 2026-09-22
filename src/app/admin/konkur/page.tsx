@@ -9,6 +9,7 @@ interface Konkur {
   id: string;
   slug: string;
   title: string;
+  subtitle: string | null;
   year: number;
   field: string;
   description: string | null;
@@ -29,6 +30,7 @@ const YEARS = [1404, 1403, 1402, 1401, 1400];
 
 const emptyForm = {
   title: "",
+  subtitle: "",
   year: 1404,
   field: "",
   description: "",
@@ -48,6 +50,7 @@ export default function AdminKonkurPage() {
   const [search, setSearch] = useState("");
   const [filterYear, setFilterYear] = useState<number | "all">("all");
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -94,6 +97,28 @@ export default function AdminKonkurPage() {
     });
   }
 
+  function handleEdit(item: Konkur) {
+    setForm({
+      title: item.title,
+      subtitle: item.subtitle || "",
+      year: item.year,
+      field: item.field,
+      description: item.description || "",
+      questionUrl: item.questionUrl || "",
+      answerUrl: item.answerUrl || "",
+    });
+    setEditingId(item.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleCancel() {
+    setForm(emptyForm);
+    setEditingId(null);
+    setShowForm(false);
+    setError("");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -106,10 +131,13 @@ export default function AdminKonkurPage() {
     setSaving(true);
 
     try {
+      const method = editingId ? "PUT" : "POST";
+      const body = editingId ? { id: editingId, ...form } : form;
+
       const res = await fetch("/api/admin/konkur", {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -119,9 +147,17 @@ export default function AdminKonkurPage() {
         return;
       }
 
-      setKonkurList([data, ...konkurList]);
-      setForm(emptyForm);
-      setShowForm(false);
+      if (editingId) {
+        // ویرایش
+        setKonkurList(
+          konkurList.map((k) => (k.id === editingId ? data : k))
+        );
+      } else {
+        // جدید
+        setKonkurList([data, ...konkurList]);
+      }
+
+      handleCancel();
     } catch {
       setError("خطا در ارتباط با سرور");
     } finally {
@@ -153,7 +189,9 @@ export default function AdminKonkurPage() {
   const filtered = konkurList.filter((k) => {
     const q = search.toLowerCase();
     const matchSearch =
-      k.title.toLowerCase().includes(q) || k.field.toLowerCase().includes(q);
+      k.title.toLowerCase().includes(q) ||
+      k.field.toLowerCase().includes(q) ||
+      (k.subtitle?.toLowerCase() || "").includes(q);
     const matchYear = filterYear === "all" || k.year === filterYear;
     return matchSearch && matchYear;
   });
@@ -217,7 +255,13 @@ export default function AdminKonkurPage() {
               ← بازگشت به پنل ادمین
             </Link>
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => {
+                if (showForm) {
+                  handleCancel();
+                } else {
+                  setShowForm(true);
+                }
+              }}
               className="btn btn--primary"
             >
               {showForm ? "✕ بستن فرم" : "➕ افزودن کنکور جدید"}
@@ -232,14 +276,14 @@ export default function AdminKonkurPage() {
                 background: "var(--card)",
                 padding: "var(--sp-5)",
                 borderRadius: "var(--r-lg)",
-                border: "1px solid var(--border)",
+                border: editingId ? "2px solid #f59e0b" : "1px solid var(--border)",
                 marginBottom: "var(--sp-5)",
                 display: "grid",
                 gap: "var(--sp-3)",
               }}
             >
               <h3 style={{ fontSize: "18px", fontWeight: 700 }}>
-                ➕ افزودن کنکور جدید
+                {editingId ? "✏️ ویرایش کنکور" : "➕ افزودن کنکور جدید"}
               </h3>
 
               {error && (
@@ -268,6 +312,29 @@ export default function AdminKonkurPage() {
                   required
                   style={inputStyle}
                 />
+              </div>
+
+              <div>
+                <label style={labelStyle}>
+                  📌 زیرعنوان (نوبت / شماره دفترچه)
+                </label>
+                <input
+                  type="text"
+                  name="subtitle"
+                  value={form.subtitle}
+                  onChange={handleChange}
+                  placeholder="مثال: دفترچه ۱ - ریاضی | نوبت اول"
+                  style={inputStyle}
+                />
+                <div
+                  style={{
+                    fontSize: "11px",
+                    color: "#999",
+                    marginTop: "4px",
+                  }}
+                >
+                  این متن زیر عنوان کارت نمایش داده می‌شه
+                </div>
               </div>
 
               <div
@@ -348,14 +415,30 @@ export default function AdminKonkurPage() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={saving}
-                className="btn btn--primary"
-                style={{ width: "100%" }}
-              >
-                {saving ? "در حال ذخیره..." : "💾 ذخیره کنکور"}
-              </button>
+              <div style={{ display: "flex", gap: "12px" }}>
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="btn btn--ghost"
+                    style={{ flex: 1 }}
+                  >
+                    لغو
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn btn--primary"
+                  style={{ flex: 2 }}
+                >
+                  {saving
+                    ? "در حال ذخیره..."
+                    : editingId
+                    ? "💾 ذخیره تغییرات"
+                    : "💾 ذخیره کنکور"}
+                </button>
+              </div>
             </form>
           )}
 
@@ -370,7 +453,7 @@ export default function AdminKonkurPage() {
           >
             <input
               type="text"
-              placeholder="🔍 جستجو در عنوان یا رشته..."
+              placeholder="🔍 جستجو در عنوان، رشته یا زیرعنوان..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
@@ -468,6 +551,24 @@ export default function AdminKonkurPage() {
                     >
                       {item.title}
                     </div>
+
+                    {item.subtitle && (
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          color: "#0066cc",
+                          marginBottom: "4px",
+                          display: "inline-block",
+                          padding: "2px 8px",
+                          background: "#f0f7ff",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        📌 {item.subtitle}
+                      </div>
+                    )}
+
                     <div
                       style={{
                         fontSize: "12px",
@@ -483,23 +584,40 @@ export default function AdminKonkurPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleDelete(item.id, item.title)}
-                    style={{
-                      padding: "8px 14px",
-                      borderRadius: "8px",
-                      background: "#fee2e2",
-                      color: "#991b1b",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "13px",
-                      fontWeight: 700,
-                      fontFamily: "inherit",
-                      flexShrink: 0,
-                    }}
-                  >
-                    🗑️ حذف
-                  </button>
+                  <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                    <button
+                      onClick={() => handleEdit(item)}
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        background: "#fef3c7",
+                        color: "#92400e",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      ✏️ ویرایش
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id, item.title)}
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        background: "#fee2e2",
+                        color: "#991b1b",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      🗑️ حذف
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
