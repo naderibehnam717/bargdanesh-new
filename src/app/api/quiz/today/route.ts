@@ -4,15 +4,11 @@ import { seedQuizzes } from "@/lib/quiz-data";
 
 export const dynamic = "force-dynamic";
 
-// ─── انتخاب سوال روز (بدون تکرار تا پایان چرخه) ───
 function getTodayIndex(totalQuizzes: number): number {
   const today = new Date();
   const startOfYear = new Date(today.getFullYear(), 0, 0);
   const diff = today.getTime() - startOfYear.getTime();
   const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  // سوال امروز بر اساس روز سال
-  // چرخه‌ی کامل: هر تعداد سوال یه دور کامل
   return dayOfYear % totalQuizzes;
 }
 
@@ -46,11 +42,9 @@ export async function GET() {
       );
     }
 
-    // ۳. سوال امروز بر اساس روز سال
-    // چون تعداد سوالات زیاد می‌شه، هر روز سوال متفاوت
+    // ۳. سوال امروز
     const todayIndex = getTodayIndex(totalQuizzes);
 
-    // ۴. سوالات رو با ترتیب ثابت بگیر
     const quizzes = await prisma.quiz.findMany({
       where: { isPublished: true },
       orderBy: { createdAt: "asc" },
@@ -67,7 +61,7 @@ export async function GET() {
       );
     }
 
-    // ۵. آمار
+    // ۴. آمار
     const attempts = await prisma.quizAttempt.findMany({
       where: { quizId: quiz.id },
       select: { isCorrect: true },
@@ -88,9 +82,16 @@ export async function GET() {
       totalQuizzes,
     });
   } catch (error) {
-    console.error("Quiz today error:", error);
+    // ✅ نمایش خطای دقیق
+    const errorMessage =
+      error instanceof Error ? error.message : String(error);
+    console.error("Quiz today error:", errorMessage);
+
     return NextResponse.json(
-      { error: "خطا در دریافت سوال" },
+      {
+        error: "خطا در دریافت سوال",
+        details: errorMessage,
+      },
       { status: 500 }
     );
   }
