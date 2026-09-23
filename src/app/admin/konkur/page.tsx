@@ -15,6 +15,7 @@ interface Konkur {
   description: string | null;
   questionUrl: string | null;
   answerUrl: string | null;
+  order: number;
   createdAt: string;
 }
 
@@ -31,11 +32,12 @@ const YEARS = [1405, 1404, 1403, 1402, 1401, 1400];
 const emptyForm = {
   title: "",
   subtitle: "",
-  year: 1404,
+  year: 1405,
   field: "",
   description: "",
   questionUrl: "",
   answerUrl: "",
+  order: 0,
 };
 
 function toFa(n: number): string {
@@ -49,6 +51,7 @@ export default function AdminKonkurPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterYear, setFilterYear] = useState<number | "all">("all");
+  const [filterField, setFilterField] = useState<string>("all");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -91,10 +94,11 @@ export default function AdminKonkurPage() {
     >
   ) {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: name === "year" ? parseInt(value) : value,
-    });
+    if (name === "year" || name === "order") {
+      setForm({ ...form, [name]: value === "" ? 0 : parseInt(value) });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   }
 
   function handleEdit(item: Konkur) {
@@ -106,9 +110,11 @@ export default function AdminKonkurPage() {
       description: item.description || "",
       questionUrl: item.questionUrl || "",
       answerUrl: item.answerUrl || "",
+      order: item.order || 0,
     });
     setEditingId(item.id);
     setShowForm(true);
+    setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -148,12 +154,8 @@ export default function AdminKonkurPage() {
       }
 
       if (editingId) {
-        // ویرایش
-        setKonkurList(
-          konkurList.map((k) => (k.id === editingId ? data : k))
-        );
+        setKonkurList(konkurList.map((k) => (k.id === editingId ? data : k)));
       } else {
-        // جدید
         setKonkurList([data, ...konkurList]);
       }
 
@@ -193,7 +195,8 @@ export default function AdminKonkurPage() {
       k.field.toLowerCase().includes(q) ||
       (k.subtitle?.toLowerCase() || "").includes(q);
     const matchYear = filterYear === "all" || k.year === filterYear;
-    return matchSearch && matchYear;
+    const matchField = filterField === "all" || k.field === filterField;
+    return matchSearch && matchYear && matchField;
   });
 
   if (loading) {
@@ -268,7 +271,6 @@ export default function AdminKonkurPage() {
             </button>
           </div>
 
-          {/* فرم */}
           {showForm && (
             <form
               onSubmit={handleSubmit}
@@ -276,7 +278,9 @@ export default function AdminKonkurPage() {
                 background: "var(--card)",
                 padding: "var(--sp-5)",
                 borderRadius: "var(--r-lg)",
-                border: editingId ? "2px solid #f59e0b" : "1px solid var(--border)",
+                border: editingId
+                  ? "2px solid #f59e0b"
+                  : "1px solid var(--border)",
                 marginBottom: "var(--sp-5)",
                 display: "grid",
                 gap: "var(--sp-3)",
@@ -308,7 +312,7 @@ export default function AdminKonkurPage() {
                   name="title"
                   value={form.title}
                   onChange={handleChange}
-                  placeholder="مثال: کنکور ۱۴۰۴ - ریاضی و فنی"
+                  placeholder="مثال: کنکور ۱۴۰۵ - علوم تجربی"
                   required
                   style={inputStyle}
                 />
@@ -316,22 +320,18 @@ export default function AdminKonkurPage() {
 
               <div>
                 <label style={labelStyle}>
-                  📌 زیرعنوان (نوبت / شماره دفترچه)
+                  📌 زیرعنوان (دفترچه چندم / نوبت چندم)
                 </label>
                 <input
                   type="text"
                   name="subtitle"
                   value={form.subtitle}
                   onChange={handleChange}
-                  placeholder="مثال: دفترچه ۱ - ریاضی | نوبت اول"
+                  placeholder="مثال: دفترچه اول - نوبت اول"
                   style={inputStyle}
                 />
                 <div
-                  style={{
-                    fontSize: "11px",
-                    color: "#999",
-                    marginTop: "4px",
-                  }}
+                  style={{ fontSize: "11px", color: "#999", marginTop: "4px" }}
                 >
                   این متن زیر عنوان کارت نمایش داده می‌شه
                 </div>
@@ -380,7 +380,29 @@ export default function AdminKonkurPage() {
               </div>
 
               <div>
-                <label style={labelStyle}>لینک دفترچه سوالات (Google Drive)</label>
+                <label style={labelStyle}>
+                  🔢 ترتیب نمایش (عدد کوچک‌تر = بالاتر)
+                </label>
+                <input
+                  type="number"
+                  name="order"
+                  value={form.order}
+                  onChange={handleChange}
+                  placeholder="0"
+                  min="0"
+                  style={inputStyle}
+                />
+                <div
+                  style={{ fontSize: "11px", color: "#999", marginTop: "4px" }}
+                >
+                  مثال: دفترچه اول → ۱، دفترچه دوم → ۲
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>
+                  لینک دفترچه سوالات (Google Drive)
+                </label>
                 <input
                   type="url"
                   name="questionUrl"
@@ -446,7 +468,7 @@ export default function AdminKonkurPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "2fr 1fr",
+              gridTemplateColumns: "2fr 1fr 1fr",
               gap: "12px",
               marginBottom: "20px",
             }}
@@ -491,6 +513,27 @@ export default function AdminKonkurPage() {
                 </option>
               ))}
             </select>
+
+            <select
+              value={filterField}
+              onChange={(e) => setFilterField(e.target.value)}
+              style={{
+                padding: "10px 14px",
+                border: "1px solid #e5e5e5",
+                borderRadius: "10px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                cursor: "pointer",
+                background: "#fff",
+              }}
+            >
+              <option value="all">🎓 همه‌ی رشته‌ها</option>
+              {FIELDS.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* لیست */}
@@ -527,8 +570,7 @@ export default function AdminKonkurPage() {
                 >
                   <div
                     style={{
-                      background:
-                        "linear-gradient(135deg, #0066cc, #7c3aed)",
+                      background: "linear-gradient(135deg, #0066cc, #7c3aed)",
                       color: "#fff",
                       padding: "6px 14px",
                       borderRadius: "8px",
@@ -538,6 +580,20 @@ export default function AdminKonkurPage() {
                     }}
                   >
                     {toFa(item.year)}
+                  </div>
+
+                  <div
+                    style={{
+                      background: "#f0f7ff",
+                      color: "#0066cc",
+                      padding: "6px 12px",
+                      borderRadius: "8px",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
+                  >
+                    🔢 {toFa(item.order)}
                   </div>
 
                   <div style={{ flex: 1, minWidth: "200px" }}>

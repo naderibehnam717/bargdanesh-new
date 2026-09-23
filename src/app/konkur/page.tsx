@@ -5,14 +5,14 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "آرشیو کنکور — دفترچه سوالات و کلید پاسخ",
   description:
-    "دانلود رایگان دفترچه سوالات و کلید پاسخ کنکور سراسری سال‌های گذشته (۱۴۰۰ تا ۱۴۰۴) در تمامی رشته‌ها — ریاضی، تجربی، انسانی، هنر و زبان",
+    "دانلود رایگان دفترچه سوالات و کلید پاسخ کنکور سراسری سال‌های گذشته (۱۴۰۰ تا ۱۴۰۵) در تمامی رشته‌ها — ریاضی، تجربی، انسانی، هنر و زبان",
   keywords: [
     "آرشیو کنکور",
     "دفترچه سوالات کنکور",
     "کلید پاسخ کنکور",
     "دانلود کنکور",
+    "کنکور ۱۴۰۵",
     "کنکور ۱۴۰۴",
-    "کنکور ۱۴۰۳",
     "کنکور ریاضی",
     "کنکور تجربی",
     "کنکور انسانی",
@@ -69,16 +69,23 @@ export default async function KonkurPage({ searchParams }: PageProps) {
 
   const konkurList = await prisma.konkur.findMany({
     where,
-    orderBy: [{ year: "desc" }, { order: "asc" }],
+    orderBy: [
+      { year: "desc" },
+      { field: "asc" },
+      { order: "asc" },
+      { createdAt: "asc" },
+    ],
   });
 
-  const groupedByYear = konkurList.reduce((acc, item) => {
-    if (!acc[item.year]) acc[item.year] = [];
-    acc[item.year].push(item);
+  // ─── گروه‌بندی: سال → رشته ───
+  const groupedData = konkurList.reduce((acc, item) => {
+    if (!acc[item.year]) acc[item.year] = {};
+    if (!acc[item.year][item.field]) acc[item.year][item.field] = [];
+    acc[item.year][item.field].push(item);
     return acc;
-  }, {} as Record<number, typeof konkurList>);
+  }, {} as Record<number, Record<string, typeof konkurList>>);
 
-  const sortedYears = Object.keys(groupedByYear)
+  const sortedYears = Object.keys(groupedData)
     .map(Number)
     .sort((a, b) => b - a);
 
@@ -121,7 +128,7 @@ export default async function KonkurPage({ searchParams }: PageProps) {
             </h2>
             <p style={{ marginBottom: "12px", color: "#444" }}>
               آرشیو کامل <strong>دفترچه سوالات و کلید پاسخ کنکور سراسری</strong>{" "}
-              از سال ۱۴۰۰ تا ۱۴۰۴ در تمامی رشته‌ها (ریاضی و فنی، علوم تجربی،
+              از سال ۱۴۰۰ تا ۱۴۰۵ در تمامی رشته‌ها (ریاضی و فنی، علوم تجربی،
               علوم انسانی، هنر و زبان‌های خارجی) به‌صورت رایگان در برگ دانش
               در دسترس شماست.
             </p>
@@ -242,121 +249,220 @@ export default async function KonkurPage({ searchParams }: PageProps) {
                 margin: "0 auto",
                 display: "flex",
                 flexDirection: "column",
-                gap: "32px",
+                gap: "40px",
               }}
             >
-              {sortedYears.map((yearNum) => (
-                <div key={yearNum}>
-                  <h2
-                    style={{
-                      fontSize: "22px",
-                      fontWeight: 800,
-                      color: "#1a1a1a",
-                      marginBottom: "16px",
-                      paddingBottom: "12px",
-                      borderBottom: "2px solid #f0f0f0",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <span
+              {sortedYears.map((yearNum) => {
+                const fields = Object.keys(groupedData[yearNum]).sort();
+                const totalInYear = fields.reduce(
+                  (sum, f) => sum + groupedData[yearNum][f].length,
+                  0
+                );
+
+                return (
+                  <div key={yearNum}>
+                    {/* هدر سال */}
+                    <div
                       style={{
-                        background:
-                          "linear-gradient(135deg, #0066cc, #7c3aed)",
-                        color: "#fff",
-                        padding: "4px 12px",
-                        borderRadius: "8px",
-                        fontSize: "16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "12px",
+                        marginBottom: "20px",
+                        paddingBottom: "16px",
+                        borderBottom: "3px solid #f0f0f0",
+                        flexWrap: "wrap",
                       }}
                     >
-                      {toFa(yearNum)}
-                    </span>
-                    کنکور {toFa(yearNum)}
-                  </h2>
-
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(260px, 1fr))",
-                      gap: "12px",
-                    }}
-                  >
-                    {groupedByYear[yearNum].map((item) => {
-                      const fieldInfo = FIELDS.find(
-                        (f) => f.value === item.field
-                      );
-                      const icon = fieldInfo?.icon || "📚";
-
-                      return (
-                        <Link
-                          key={item.id}
-                          href={`/konkur/${item.slug}`}
+                      <h2
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 800,
+                          color: "#1a1a1a",
+                          margin: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        }}
+                      >
+                        <span
                           style={{
-                            display: "block",
-                            background: "#fff",
-                            padding: "16px",
-                            borderRadius: "12px",
-                            border: "1px solid #e5e5e5",
-                            textDecoration: "none",
-                            transition: "all 0.2s",
+                            background:
+                              "linear-gradient(135deg, #0066cc, #7c3aed)",
+                            color: "#fff",
+                            padding: "6px 16px",
+                            borderRadius: "10px",
+                            fontSize: "18px",
                           }}
                         >
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            <span style={{ fontSize: "24px" }}>{icon}</span>
-                            <strong
-                              style={{
-                                fontSize: "15px",
-                                color: "#1a1a1a",
-                              }}
-                            >
-                              {item.field}
-                            </strong>
-                          </div>
+                          {toFa(yearNum)}
+                        </span>
+                        کنکور {toFa(yearNum)}
+                      </h2>
+                      <span
+                        style={{
+                          fontSize: "13px",
+                          color: "#666",
+                          background: "#f0f7ff",
+                          padding: "4px 12px",
+                          borderRadius: "100px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {toFa(totalInYear)} فایل
+                      </span>
+                    </div>
 
-                          {/* ✅ subtitle */}
-                          {item.subtitle && (
+                    {/* رشته‌ها */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "24px",
+                      }}
+                    >
+                      {fields.map((fieldName) => {
+                        const fieldInfo = FIELDS.find(
+                          (f) => f.value === fieldName
+                        );
+                        const icon = fieldInfo?.icon || "📚";
+                        const items = groupedData[yearNum][fieldName];
+
+                        return (
+                          <div key={fieldName}>
+                            {/* هدر رشته */}
                             <div
                               style={{
-                                fontSize: "13px",
-                                fontWeight: 700,
-                                color: "#0066cc",
-                                marginBottom: "8px",
-                                padding: "4px 10px",
-                                background: "#f0f7ff",
-                                borderRadius: "6px",
-                                display: "inline-block",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                                marginBottom: "12px",
+                                paddingRight: "12px",
+                                borderRight: `4px solid ${
+                                  fieldInfo?.color || "#0066cc"
+                                }`,
                               }}
                             >
-                              📌 {item.subtitle}
+                              <span style={{ fontSize: "22px" }}>{icon}</span>
+                              <h3
+                                style={{
+                                  fontSize: "17px",
+                                  fontWeight: 700,
+                                  color: "#1a1a1a",
+                                  margin: 0,
+                                }}
+                              >
+                                {fieldName}
+                              </h3>
+                              <span
+                                style={{
+                                  fontSize: "12px",
+                                  color: "#999",
+                                  background: "#f8f9fa",
+                                  padding: "2px 8px",
+                                  borderRadius: "100px",
+                                }}
+                              >
+                                {toFa(items.length)}
+                              </span>
                             </div>
-                          )}
 
-                          <div
-                            style={{
-                              fontSize: "12px",
-                              color: "#666",
-                              display: "flex",
-                              gap: "12px",
-                            }}
-                          >
-                            {item.questionUrl && <span>📄 دفترچه</span>}
-                            {item.answerUrl && <span>✅ کلید</span>}
+                            {/* فایل‌ها */}
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns:
+                                  "repeat(auto-fill, minmax(240px, 1fr))",
+                                gap: "10px",
+                              }}
+                            >
+                              {items.map((item) => (
+                                <Link
+                                  key={item.id}
+                                  href={`/konkur/${item.slug}`}
+                                  style={{
+                                    display: "block",
+                                    background: "#fff",
+                                    padding: "14px",
+                                    borderRadius: "10px",
+                                    border: "1px solid #e5e5e5",
+                                    textDecoration: "none",
+                                    transition: "all 0.2s",
+                                  }}
+                                >
+                                  {item.subtitle && (
+                                    <div
+                                      style={{
+                                        fontSize: "13px",
+                                        fontWeight: 700,
+                                        color: "#0066cc",
+                                        marginBottom: "8px",
+                                        lineHeight: 1.6,
+                                      }}
+                                    >
+                                      {item.subtitle}
+                                    </div>
+                                  )}
+                                  {!item.subtitle && (
+                                    <div
+                                      style={{
+                                        fontSize: "13px",
+                                        fontWeight: 700,
+                                        color: "#1a1a1a",
+                                        marginBottom: "8px",
+                                        lineHeight: 1.6,
+                                      }}
+                                    >
+                                      {item.title}
+                                    </div>
+                                  )}
+
+                                  <div
+                                    style={{
+                                      fontSize: "11px",
+                                      color: "#666",
+                                      display: "flex",
+                                      gap: "8px",
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    {item.questionUrl && (
+                                      <span
+                                        style={{
+                                          background: "#dbeafe",
+                                          color: "#1e40af",
+                                          padding: "2px 8px",
+                                          borderRadius: "6px",
+                                          fontWeight: 600,
+                                        }}
+                                      >
+                                        📄 دفترچه
+                                      </span>
+                                    )}
+                                    {item.answerUrl && (
+                                      <span
+                                        style={{
+                                          background: "#d1fae5",
+                                          color: "#065f46",
+                                          padding: "2px 8px",
+                                          borderRadius: "6px",
+                                          fontWeight: 600,
+                                        }}
+                                      >
+                                        ✅ کلید
+                                      </span>
+                                    )}
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                        </Link>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

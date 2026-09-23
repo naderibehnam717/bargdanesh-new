@@ -22,7 +22,12 @@ export async function GET(request: Request) {
 
     const konkur = await prisma.konkur.findMany({
       where,
-      orderBy: [{ year: "desc" }, { order: "asc" }],
+      orderBy: [
+        { year: "desc" },
+        { field: "asc" },
+        { order: "asc" },
+        { createdAt: "asc" },
+      ],
     });
 
     return NextResponse.json(konkur);

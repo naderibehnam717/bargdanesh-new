@@ -13,7 +13,7 @@ async function checkAdmin() {
   return (session.user as { id?: string }).id || null;
 }
 
-// ─── GET: لیست کنکورها ───
+// ─── GET ───
 export async function GET() {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -21,13 +21,18 @@ export async function GET() {
   }
 
   const konkur = await prisma.konkur.findMany({
-    orderBy: [{ year: "desc" }, { order: "asc" }],
+    orderBy: [
+      { year: "desc" },
+      { field: "asc" },
+      { order: "asc" },
+      { createdAt: "asc" },
+    ],
   });
 
   return NextResponse.json(konkur);
 }
 
-// ─── POST: افزودن کنکور ───
+// ─── POST ───
 export async function POST(request: Request) {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -35,8 +40,16 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { title, subtitle, year, field, description, questionUrl, answerUrl } =
-    body;
+  const {
+    title,
+    subtitle,
+    year,
+    field,
+    description,
+    questionUrl,
+    answerUrl,
+    order,
+  } = body;
 
   if (!title || !year || !field) {
     return NextResponse.json(
@@ -75,6 +88,7 @@ export async function POST(request: Request) {
         description: description || null,
         questionUrl: questionUrl || null,
         answerUrl: answerUrl || null,
+        order: order ? parseInt(order) : 0,
       },
     });
 
@@ -87,6 +101,7 @@ export async function POST(request: Request) {
         title: newKonkur.title,
         year: newKonkur.year,
         field: newKonkur.field,
+        order: newKonkur.order,
       },
     });
 
@@ -99,7 +114,7 @@ export async function POST(request: Request) {
   }
 }
 
-// ─── PUT: ویرایش کنکور ───
+// ─── PUT ───
 export async function PUT(request: Request) {
   const adminId = await checkAdmin();
   if (!adminId) {
@@ -114,9 +129,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const oldKonkur = await prisma.konkur.findUnique({
-      where: { id },
-    });
+    const oldKonkur = await prisma.konkur.findUnique({ where: { id } });
 
     if (!oldKonkur) {
       return NextResponse.json({ error: "کنکور یافت نشد" }, { status: 404 });
@@ -127,7 +140,9 @@ export async function PUT(request: Request) {
       data: {
         title: data.title ?? oldKonkur.title,
         subtitle:
-          data.subtitle !== undefined ? data.subtitle || null : oldKonkur.subtitle,
+          data.subtitle !== undefined
+            ? data.subtitle || null
+            : oldKonkur.subtitle,
         year: data.year ? parseInt(data.year) : oldKonkur.year,
         field: data.field ?? oldKonkur.field,
         description:
@@ -142,6 +157,10 @@ export async function PUT(request: Request) {
           data.answerUrl !== undefined
             ? data.answerUrl || null
             : oldKonkur.answerUrl,
+        order:
+          data.order !== undefined && data.order !== ""
+            ? parseInt(data.order)
+            : oldKonkur.order,
       },
     });
 
@@ -167,7 +186,7 @@ export async function PUT(request: Request) {
   }
 }
 
-// ─── DELETE: حذف کنکور ───
+// ─── DELETE ───
 export async function DELETE(request: Request) {
   const adminId = await checkAdmin();
   if (!adminId) {
