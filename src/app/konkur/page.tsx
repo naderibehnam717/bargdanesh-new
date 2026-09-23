@@ -49,7 +49,7 @@ const FIELDS = [
   { value: "زبان‌های خارجی", icon: "🌍", color: "#e11d48" },
 ];
 
-const YEARS = [1404, 1403, 1402, 1401, 1400];
+const YEARS = [1405, 1404, 1403, 1402, 1401, 1400];
 
 interface PageProps {
   searchParams: Promise<{ year?: string; field?: string }>;

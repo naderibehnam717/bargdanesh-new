@@ -26,7 +26,7 @@ const FIELDS = [
   "زبان‌های خارجی",
 ];
 
-const YEARS = [1404, 1403, 1402, 1401, 1400];
+const YEARS = [1405, 1404, 1403, 1402, 1401, 1400];
 
 const emptyForm = {
   title: "",
