@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import FileUploader from "@/components/FileUploader";
 
 interface FileData {
   id: string;
@@ -90,8 +91,9 @@ export default function AdminFilesPage() {
       const res = await fetch("/api/admin/categories", { cache: "no-store" });
       if (!res.ok) return;
       const data = await res.json();
-      // فقط دسته‌های فعال
-      setCategories(data.filter((c: CategoryOption & { isActive: boolean }) => c.isActive));
+      setCategories(
+        data.filter((c: CategoryOption & { isActive: boolean }) => c.isActive)
+      );
     } catch {
       console.error("خطا در دریافت دسته‌ها");
     }
@@ -314,7 +316,6 @@ export default function AdminFilesPage() {
                 />
               </div>
 
-              {/* ─── دسته‌بندی: dropdown از دیتابیس ─── */}
               <div>
                 <label style={labelStyle}>دسته‌بندی *</label>
                 <select
@@ -398,30 +399,40 @@ export default function AdminFilesPage() {
                 />
               </div>
 
+              {/* ─── آپلود فایل PDF ─── */}
               <div>
-                <label style={labelStyle}>لینک مشاهده (Google Drive)</label>
-                <input
-                  name="viewUrl"
-                  value={form.viewUrl}
-                  onChange={handleChange}
-                  placeholder="https://drive.google.com/file/d/.../view"
-                  style={inputStyle}
+                <label style={labelStyle}>
+                  📄 فایل (PDF) — آپلود مستقیم یا لینک
+                </label>
+                <FileUploader
+                  accept="application/pdf"
+                  label="آپلود فایل PDF"
+                  hint="فقط PDF - حداکثر ۲۰ مگابایت"
+                  currentUrl={form.viewUrl || null}
+                  onUploadSuccess={(url) => {
+                    setForm((prev) => ({
+                      ...prev,
+                      viewUrl: url,
+                      downloadUrl: url,
+                    }));
+                  }}
                 />
+
+                <div style={{ marginTop: "10px" }}>
+                  <input
+                    name="viewUrl"
+                    value={form.viewUrl}
+                    onChange={handleChange}
+                    placeholder="یا لینک گوگل درایو را وارد کنید: https://drive.google.com/file/d/.../view"
+                    style={inputStyle}
+                  />
+                </div>
               </div>
 
               <div>
-                <label style={labelStyle}>لینک دانلود</label>
-                <input
-                  name="downloadUrl"
-                  value={form.downloadUrl}
-                  onChange={handleChange}
-                  placeholder="https://drive.google.com/uc?export=download&id=..."
-                  style={inputStyle}
-                />
-              </div>
-
-              <div>
-                <label style={labelStyle}>اسم فایل دانلود (انگلیسی)</label>
+                <label style={labelStyle}>
+                  اسم فایل دانلود (انگلیسی) — اختیاری
+                </label>
                 <input
                   name="downloadName"
                   value={form.downloadName}
