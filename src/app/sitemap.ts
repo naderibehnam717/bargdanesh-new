@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE_URL}/articles`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/employment`,
@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // ────────── 2. صفحات داینامیک دسته‌ها (از دیتابیس) ──────────
+  // ────────── 2. صفحات داینامیک دسته‌ها ──────────
   let categoryPages: MetadataRoute.Sitemap = [];
   try {
     const categories = await prisma.category.findMany({
@@ -125,5 +125,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap konkur error:", error);
   }
 
-  return [...staticPages, ...categoryPages, ...filePages, ...konkurPages];
+  // ────────── 5. صفحات داینامیک مقالات ──────────
+  let articlePages: MetadataRoute.Sitemap = [];
+  try {
+    const articles = await prisma.article.findMany({
+      where: { isPublished: true },
+      select: { slug: true, updatedAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    articlePages = articles.map((a) => ({
+      url: `${BASE_URL}/articles/${a.slug}`,
+      lastModified: a.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }));
+  } catch (error) {
+    console.error("Sitemap articles error:", error);
+  }
+
+  return [
+    ...staticPages,
+    ...categoryPages,
+    ...filePages,
+    ...konkurPages,
+    ...articlePages,
+  ];
 }

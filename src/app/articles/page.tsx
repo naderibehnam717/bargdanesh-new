@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
 
@@ -22,8 +23,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "مقالات علمی و پژوهشی | برگ دانش",
-    description:
-      "مقالات علمی، پژوهشی و آموزشی در رشته‌های مختلف دانشگاهی",
+    description: "مقالات علمی، پژوهشی و آموزشی در رشته‌های مختلف دانشگاهی",
     url: "https://www.bargdanesh.ir/articles",
     type: "website",
     locale: "fa_IR",
@@ -40,8 +40,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "مقالات علمی و پژوهشی | برگ دانش",
-    description:
-      "مقالات علمی، پژوهشی و آموزشی در رشته‌های مختلف دانشگاهی",
+    description: "مقالات علمی، پژوهشی و آموزشی در رشته‌های مختلف دانشگاهی",
     images: ["/android-chrome-512x512.png"],
   },
 };
@@ -50,7 +49,7 @@ const faqs = [
   {
     question: "مقالات برگ دانش رایگان هستند؟",
     answer:
-      "بله، تمامی مقالات موجود در برگ دانش به صورت کاملاً رایگان قابل مطالعه و دانلود هستند. برای دانلود، کافی است روی دکمه‌ی دانلود هر مقاله کلیک کنید.",
+      "بله، تمامی مقالات موجود در برگ دانش به صورت کاملاً رایگان قابل مطالعه و دانلود هستند. برای مطالعه، کافی است روی هر مقاله کلیک کنید.",
   },
   {
     question: "مقالات در چه زمینه‌هایی هستند؟",
@@ -68,7 +67,7 @@ const faqs = [
       "مقالات برگ دانش برای دانشجویان، پژوهشگران، اساتید و علاقه‌مندان به علم و پژوهش در رشته‌های مختلف مناسب هستند. این مقالات برای نوشتن پایان‌نامه، پروپوزال و مقالات علمی مفید هستند.",
   },
   {
-    question: "کی مقالات جدید اضافه می‌شود؟",
+    question: "چطور مقالات جدید اضافه می‌شوند؟",
     answer:
       "مقالات جدید به صورت مستمر به برگ دانش اضافه می‌شوند. برای اطلاع از مقالات جدید، می‌توانید از طریق ایمیل یا شبکه‌های اجتماعی برگ دانش را دنبال کنید.",
   },
@@ -79,7 +78,42 @@ const faqs = [
   },
 ];
 
-export default function ArticlesPage() {
+export default async function ArticlesPage() {
+  // ─── دریافت مقالات از دیتابیس ───
+  let articles: {
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string | null;
+    coverImage: string | null;
+    category: string | null;
+    tags: string | null;
+    author: string | null;
+    viewCount: number;
+    createdAt: Date;
+  }[] = [];
+
+  try {
+    articles = await prisma.article.findMany({
+      where: { isPublished: true },
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        coverImage: true,
+        category: true,
+        tags: true,
+        author: true,
+        viewCount: true,
+        createdAt: true,
+      },
+    });
+  } catch (error) {
+    console.error("Articles fetch error:", error);
+  }
+
   return (
     <>
       <section className="page-header">
@@ -92,7 +126,7 @@ export default function ArticlesPage() {
       </section>
 
       {/* ─────── محتوای متنی (سئو) ─────── */}
-      <section className="section">
+      <section className="section" style={{ paddingBottom: "0" }}>
         <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
           <div
             style={{
@@ -114,11 +148,10 @@ export default function ArticlesPage() {
             </h2>
 
             <p style={{ marginBottom: "16px", color: "#444" }}>
-              بخش <strong>مقالات برگ دانش</strong> به زودی مرجعی کامل از{" "}
+              بخش <strong>مقالات برگ دانش</strong> مرجعی کامل از{" "}
               <strong>مقالات علمی، پژوهشی و آموزشی</strong> در رشته‌های مختلف
-              دانشگاهی و مدرسه‌ای خواهد بود. در این بخش می‌توانید به مقالات
-              تحلیلی، ترجمه‌ی مقالات برتر و خلاصه‌ی پژوهش‌های علمی دسترسی
-              داشته باشید.
+              دانشگاهی و مدرسه‌ای است. در این بخش می‌توانید به مقالات تحلیلی،
+              ترجمه‌ی مقالات برتر و خلاصه‌ی پژوهش‌های علمی دسترسی داشته باشید.
             </p>
 
             <p style={{ marginBottom: "16px", color: "#444" }}>
@@ -129,69 +162,7 @@ export default function ArticlesPage() {
               <strong>ترویج دانش و پژوهش</strong> در بین دانشجویان ایرانی است.
             </p>
 
-            <h3
-              style={{
-                fontSize: "18px",
-                marginTop: "24px",
-                marginBottom: "12px",
-                color: "#1a1a1a",
-              }}
-            >
-              موضوعات مقالات (به‌زودی):
-            </h3>
-
-            <ul
-              style={{
-                paddingRight: "20px",
-                color: "#444",
-                marginBottom: "16px",
-              }}
-            >
-              <li>
-                <strong>مقالات روانشناسی</strong> — نظریه‌ها، پژوهش‌ها و
-                کاربردها
-              </li>
-              <li>
-                <strong>مقالات علوم تربیتی</strong> — روش‌های نوین آموزش و
-                یادگیری
-              </li>
-              <li>
-                <strong>مقالات کامپیوتر و فناوری</strong> — برنامه‌نویسی، هوش
-                مصنوعی و شبکه
-              </li>
-              <li>
-                <strong>مقالات علمی-پژوهشی</strong> — ترجمه و خلاصه مقالات
-                برتر
-              </li>
-              <li>
-                <strong>مقالات آموزشی</strong> — نکات و راهکارهای یادگیری
-                مؤثر
-              </li>
-            </ul>
-
-            <div
-              style={{
-                marginTop: "24px",
-                padding: "20px",
-                background: "#fff8e1",
-                border: "1px solid #ffe082",
-                borderRadius: "8px",
-                textAlign: "center",
-              }}
-            >
-              <p
-                style={{
-                  marginBottom: "0",
-                  color: "#856404",
-                  fontSize: "15px",
-                }}
-              >
-                📝 <strong>به‌زودی مقالات علمی و پژوهشی به این بخش اضافه
-                خواهد شد.</strong>
-              </p>
-            </div>
-
-            <p style={{ marginTop: "20px", marginBottom: "0", color: "#444" }}>
+            <p style={{ marginBottom: "0", color: "#444" }}>
               در این فاصله، می‌توانید به بخش‌های{" "}
               <Link
                 href="/university"
@@ -219,7 +190,156 @@ export default function ArticlesPage() {
         </div>
       </section>
 
-      {/* ─────── FAQ ─────── */}
+      {/* ─────── لیست مقالات ─────── */}
+      <main className="section">
+        <div className="container">
+          {articles.length === 0 ? (
+            <div
+              style={{
+                maxWidth: "800px",
+                margin: "0 auto",
+                textAlign: "center",
+                padding: "60px 20px",
+                background: "#f8f9fa",
+                borderRadius: "16px",
+                border: "1px solid #e5e5e5",
+              }}
+            >
+              <div style={{ fontSize: "48px", marginBottom: "16px" }}>📝</div>
+              <p style={{ fontSize: "16px", color: "#666", lineHeight: 1.9 }}>
+                به‌زودی مقالات علمی و پژوهشی به این بخش اضافه خواهد شد.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="section__header">
+                <h2 className="section__title">
+                  📚 همه‌ی مقالات ({articles.length})
+                </h2>
+                <p className="section__subtitle">
+                  جدیدترین مقالات برگ دانش
+                </p>
+              </div>
+
+              <div className="cards-grid">
+                {articles.map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/articles/${article.slug}`}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      background: "#fff",
+                      borderRadius: "16px",
+                      border: "1px solid #e5e5e5",
+                      overflow: "hidden",
+                      textDecoration: "none",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {article.coverImage ? (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "160px",
+                          background: `url(${article.coverImage}) center/cover`,
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "120px",
+                          background:
+                            "linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "42px",
+                        }}
+                      >
+                        📄
+                      </div>
+                    )}
+
+                    <div
+                      style={{
+                        padding: "16px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                        flex: 1,
+                      }}
+                    >
+                      {article.category && (
+                        <span
+                          style={{
+                            alignSelf: "flex-start",
+                            background: "#e0f2fe",
+                            color: "#0369a1",
+                            padding: "3px 10px",
+                            borderRadius: "100px",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {article.category}
+                        </span>
+                      )}
+
+                      <h3
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: 700,
+                          color: "#1a1a1a",
+                          margin: 0,
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {article.title}
+                      </h3>
+
+                      {article.excerpt && (
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            color: "#666",
+                            margin: 0,
+                            lineHeight: 1.8,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            flex: 1,
+                          }}
+                        >
+                          {article.excerpt}
+                        </p>
+                      )}
+
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontSize: "11px",
+                          color: "#999",
+                          paddingTop: "10px",
+                          borderTop: "1px solid #f0f0f0",
+                          marginTop: "auto",
+                        }}
+                      >
+                        {article.author && <span>✍️ {article.author}</span>}
+                        <span>👁️ {article.viewCount}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+
       <FAQ faqs={faqs} title="سوالات متداول درباره مقالات" />
       <FAQSchema faqs={faqs} />
     </>

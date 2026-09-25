@@ -22,15 +22,15 @@ export default async function AdminPage() {
   const totalQuizzes = await prisma.quiz.count();
   const totalLogs = await prisma.activityLog.count();
   const totalKonkur = await prisma.konkur.count();
+  const totalCategories = await prisma.category.count();
+  const totalArticles = await prisma.article.count();
 
   return (
     <>
       <section className="page-header">
         <div className="container page-header__inner">
           <h1 className="page-header__title">⚙️ پنل ادمین</h1>
-          <p className="page-header__subtitle">
-            مدیریت کامل سایت برگ دانش
-          </p>
+          <p className="page-header__subtitle">مدیریت کامل سایت برگ دانش</p>
         </div>
       </section>
 
@@ -65,9 +65,7 @@ export default async function AdminPage() {
             >
               <div className="feature__icon">📊</div>
               <h3 className="feature__title">آمار پیشرفته</h3>
-              <p className="feature__desc">
-                نمودارها و گزارش‌های کامل
-              </p>
+              <p className="feature__desc">نمودارها و گزارش‌های کامل</p>
             </Link>
 
             <Link
@@ -77,9 +75,7 @@ export default async function AdminPage() {
             >
               <div className="feature__icon">👥</div>
               <h3 className="feature__title">مدیریت کاربران</h3>
-              <p className="feature__desc">
-                مشاهده، ویرایش و حذف کاربران
-              </p>
+              <p className="feature__desc">مشاهده، ویرایش و حذف کاربران</p>
             </Link>
 
             <Link
@@ -89,19 +85,30 @@ export default async function AdminPage() {
             >
               <div className="feature__icon">📁</div>
               <h3 className="feature__title">مدیریت فایل‌ها</h3>
-              <p className="feature__desc">
-                اضافه، ویرایش و حذف فایل‌ها
-              </p>
+              <p className="feature__desc">اضافه، ویرایش و حذف فایل‌ها</p>
             </Link>
+
             <Link
               href="/admin/categories"
               className="feature"
               style={{ textDecoration: "none" }}
-            >  
+            >
               <div className="feature__icon">📂</div>
               <h3 className="feature__title">مدیریت دسته‌بندی‌ها</h3>
               <p className="feature__desc">
-               افزودن و ویرایش دسته‌ها
+                {totalCategories} دسته‌بندی فعال
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/articles"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="feature__icon">📄</div>
+              <h3 className="feature__title">مدیریت مقالات</h3>
+              <p className="feature__desc">
+                {totalArticles} مقاله
               </p>
             </Link>
 
@@ -160,9 +167,7 @@ export default async function AdminPage() {
             >
               <div className="feature__icon">📧</div>
               <h3 className="feature__title">ایمیل گروهی</h3>
-              <p className="feature__desc">
-                ارسال ایمیل به کاربران
-              </p>
+              <p className="feature__desc">ارسال ایمیل به کاربران</p>
             </Link>
 
             <Link
@@ -184,9 +189,7 @@ export default async function AdminPage() {
             >
               <div className="feature__icon">🔧</div>
               <h3 className="feature__title">تنظیمات سایت</h3>
-              <p className="feature__desc">
-                پیکربندی کلی سایت
-              </p>
+              <p className="feature__desc">پیکربندی کلی سایت</p>
             </Link>
           </div>
         </div>
