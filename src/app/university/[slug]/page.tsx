@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFileBySlug, getFilesByType, getAllFiles } from "@/lib/files";
+import { subjectContent, fileContent } from "@/lib/subjectContent";
 import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -93,6 +93,16 @@ export default async function UniversityDetailPage({ params }: PageProps) {
 
   const url = `https://www.bargdanesh.ir/university/${file.slug}`;
 
+  // ─── محتوا: اول مخصوص جزوه، بعد مخصوص رشته، بعد پیش‌فرض ───
+  const subjContent =
+    fileContent[file.slug] ||
+    subjectContent[file.category] || {
+      intro:
+        "این جزوه با هدف کمک به دانشجویان در درک بهتر مفاهیم درسی تهیه شده. محتواش ساده، خلاصه و نکته‌محوره.",
+      why: "استفاده از جزوه‌های خلاصه و نکته‌محور، یکی از مؤثرترین روش‌های مطالعه برای امتحانات دانشگاهیه.",
+      concerns: [],
+    };
+
   // ─── Breadcrumb items ───
   const breadcrumbItems = [
     { label: "خانه", href: "/" },
@@ -180,17 +190,77 @@ export default async function UniversityDetailPage({ params }: PageProps) {
               )}
             </dl>
 
-            <div style={{ marginBottom: "32px", lineHeight: 1.9 }}>
-              <h2 style={{ fontSize: "20px", marginBottom: "12px" }}>
-                درباره این {file.type}
+            {/* ─── معرفی ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                📖 درباره‌ی این {file.type} {file.category}
               </h2>
-              <p>{file.desc}</p>
-              <p style={{ marginTop: "12px", color: "#555" }}>
-                این {file.type} ویژه‌ی دانشجویان مقطع {file.level} تهیه شده و
-                به‌صورت رایگان از سایت برگ دانش قابل دانلود است.
-              </p>
+              <p style={{ color: "#444" }}>{subjContent.intro}</p>
+              <p style={{ color: "#444", marginTop: "12px" }}>{file.desc}</p>
             </div>
 
+            {/* ─── چرا این منبع ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                ✨ چرا این {file.type} را مطالعه کنیم؟
+              </h2>
+              <p style={{ color: "#444" }}>{subjContent.why}</p>
+            </div>
+
+            {/* ─── دغدغه‌ها ─── */}
+            {subjContent.concerns.length > 0 && (
+              <div
+                style={{
+                  marginBottom: "32px",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, #f0f7ff 0%, #f8f9fa 100%)",
+                  borderRadius: "12px",
+                  borderRight: "4px solid #0066cc",
+                  lineHeight: 2,
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "20px",
+                    marginBottom: "16px",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  💭 شاید این حس‌ها برات آشنا باشه
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {subjContent.concerns.map((concern, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "12px 16px",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        borderRight: "3px solid #7c3aed",
+                        color: "#444",
+                        fontSize: "14.5px",
+                        lineHeight: 1.9,
+                      }}
+                    >
+                      {concern}
+                    </div>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    marginTop: "16px",
+                    marginBottom: 0,
+                    color: "#0066cc",
+                    fontWeight: 600,
+                    fontSize: "14.5px",
+                  }}
+                >
+                  🌱 اگه هر کدوم از اینا برات آشناست، بدون تنها نیستی. این جزوه‌ها برای همین ساخته شدن.
+                </p>
+              </div>
+            )}
+
+            {/* ─── دانلود ─── */}
             <ProtectedDownloadButtons
               downloadUrl={file.downloadUrl}
               viewUrl={file.viewUrl}
@@ -200,7 +270,6 @@ export default async function UniversityDetailPage({ params }: PageProps) {
             />
           </div>
 
-          {/* ✅ کامنت‌ها */}
           <CommentSection fileSlug={file.slug} />
         </div>
       </main>

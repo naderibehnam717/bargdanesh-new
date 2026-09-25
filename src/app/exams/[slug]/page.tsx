@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFileBySlug, getFilesByType, getAllFiles } from "@/lib/files";
+import { subjectContent, fileContent } from "@/lib/examContent";
 import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -88,7 +88,16 @@ export default async function ExamDetailPage({ params }: PageProps) {
 
   const url = `https://www.bargdanesh.ir/exams/${file.slug}`;
 
-  // ─── Breadcrumb items ───
+  // ─── محتوا: اول مخصوص نمونه سوال، بعد مخصوص رشته ───
+  const content =
+    fileContent[file.slug] ||
+    subjectContent[file.category] || {
+      intro:
+        "این نمونه سوال با هدف کمک به دانشجویان برای آمادگی در امتحانات تهیه شده. سوالات مطابق با سرفصل‌های درسی طراحی شدن.",
+      why: "حل نمونه سوال، مؤثرترین روش برای تثبیت مطالب و آمادگی امتحانه.",
+      concerns: [],
+    };
+
   const breadcrumbItems = [
     { label: "خانه", href: "/" },
     { label: "نمونه سوال", href: "/exams" },
@@ -175,16 +184,75 @@ export default async function ExamDetailPage({ params }: PageProps) {
               )}
             </dl>
 
-            <div style={{ marginBottom: "32px", lineHeight: 1.9 }}>
-              <h2 style={{ fontSize: "20px", marginBottom: "12px" }}>
-                درباره این {file.type}
+            {/* ─── معرفی ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                📝 درباره‌ی این نمونه سوال {file.category}
               </h2>
-              <p>{file.desc}</p>
-              <p style={{ marginTop: "12px", color: "#555" }}>
-                این {file.type} به صورت رایگان از سایت برگ دانش قابل دانلود است.
-                برای دانلود، روی دکمه‌ی دانلود کلیک کنید.
-              </p>
+              <p style={{ color: "#444" }}>{content.intro}</p>
+              <p style={{ color: "#444", marginTop: "12px" }}>{file.desc}</p>
             </div>
+
+            {/* ─── چرا این نمونه سوال ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                ✨ چرا این نمونه سوال را حل کنیم؟
+              </h2>
+              <p style={{ color: "#444" }}>{content.why}</p>
+            </div>
+
+            {/* ─── دغدغه‌ها ─── */}
+            {content.concerns.length > 0 && (
+              <div
+                style={{
+                  marginBottom: "32px",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, #f0f7ff 0%, #f8f9fa 100%)",
+                  borderRadius: "12px",
+                  borderRight: "4px solid #0066cc",
+                  lineHeight: 2,
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "20px",
+                    marginBottom: "16px",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  💭 شاید این حس‌ها برات آشنا باشه
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {content.concerns.map((concern, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "12px 16px",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        borderRight: "3px solid #7c3aed",
+                        color: "#444",
+                        fontSize: "14.5px",
+                        lineHeight: 1.9,
+                      }}
+                    >
+                      {concern}
+                    </div>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    marginTop: "16px",
+                    marginBottom: 0,
+                    color: "#0066cc",
+                    fontWeight: 600,
+                    fontSize: "14.5px",
+                  }}
+                >
+                  🌱 اگه هر کدوم از اینا برات آشناست، بدون تنها نیستی. با تمرین و تکرار، همه چی درست می‌شه.
+                </p>
+              </div>
+            )}
 
             <ProtectedDownloadButtons
               downloadUrl={file.downloadUrl}
@@ -195,7 +263,6 @@ export default async function ExamDetailPage({ params }: PageProps) {
             />
           </div>
 
-          {/* ✅ کامنت‌ها */}
           <CommentSection fileSlug={file.slug} />
         </div>
       </main>

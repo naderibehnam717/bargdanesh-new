@@ -19,13 +19,12 @@ interface Konkur {
   createdAt: string;
 }
 
-const FIELDS = [
-  "ریاضی و فنی",
-  "علوم تجربی",
-  "علوم انسانی",
-  "هنر",
-  "زبان‌های خارجی",
-];
+interface KonkurField {
+  id: string;
+  slug: string;
+  title: string;
+  icon: string;
+}
 
 const YEARS = [1405, 1404, 1403, 1402, 1401, 1400];
 
@@ -48,6 +47,7 @@ export default function AdminKonkurPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [konkurList, setKonkurList] = useState<Konkur[]>([]);
+  const [konkurFields, setKonkurFields] = useState<KonkurField[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterYear, setFilterYear] = useState<number | "all">("all");
@@ -72,6 +72,7 @@ export default function AdminKonkurPage() {
     }
     if (status === "authenticated") {
       fetchKonkur();
+      fetchKonkurFields();
     }
   }, [status, session, router]);
 
@@ -85,6 +86,22 @@ export default function AdminKonkurPage() {
       // خطا
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchKonkurFields() {
+    try {
+      const res = await fetch("/api/admin/categories", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      // فقط دسته‌های گروه کنکور
+      const konkurCats = data.filter(
+        (c: { group: string; isActive: boolean }) =>
+          c.group === "konkur" && c.isActive
+      );
+      setKonkurFields(konkurCats);
+    } catch {
+      console.error("خطا در دریافت رشته‌های کنکور");
     }
   }
 
@@ -370,12 +387,24 @@ export default function AdminKonkurPage() {
                     style={inputStyle}
                   >
                     <option value="">— انتخاب کنید —</option>
-                    {FIELDS.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
+                    {konkurFields.map((f) => (
+                      <option key={f.id} value={f.title}>
+                        {f.icon} {f.title}
                       </option>
                     ))}
                   </select>
+                  <div
+                    style={{ fontSize: "11px", color: "#999", marginTop: "4px" }}
+                  >
+                    💡 رشته‌ها از{" "}
+                    <Link
+                      href="/admin/categories"
+                      style={{ color: "#0066cc", textDecoration: "underline" }}
+                    >
+                      مدیریت دسته‌بندی‌ها
+                    </Link>{" "}
+                    میان
+                  </div>
                 </div>
               </div>
 
@@ -528,9 +557,9 @@ export default function AdminKonkurPage() {
               }}
             >
               <option value="all">🎓 همه‌ی رشته‌ها</option>
-              {FIELDS.map((f) => (
-                <option key={f} value={f}>
-                  {f}
+              {konkurFields.map((f) => (
+                <option key={f.id} value={f.title}>
+                  {f.icon} {f.title}
                 </option>
               ))}
             </select>

@@ -17,6 +17,13 @@ interface Quiz {
   createdAt: string;
 }
 
+interface CategoryOption {
+  id: string;
+  slug: string;
+  title: string;
+  icon: string;
+}
+
 const emptyForm = {
   question: "",
   options: ["", "", "", ""],
@@ -26,29 +33,13 @@ const emptyForm = {
   level: "دانشگاهی",
 };
 
-const CATEGORIES = [
-  "ریاضی",
-  "فیزیک",
-  "شیمی",
-  "زیست",
-  "ادبیات",
-  "عربی",
-  "دینی",
-  "زبان انگلیسی",
-  "روانشناسی",
-  "علوم تربیتی",
-  "کامپیوتر",
-  "جامعه‌شناسی",
-  "تاریخ",
-  "جغرافیا",
-];
-
 const LEVELS = ["دانشگاهی", "مدرسه‌ای", "غیر درسی"];
 
 export default function AdminQuizzesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -70,6 +61,7 @@ export default function AdminQuizzesPage() {
     }
     if (status === "authenticated") {
       fetchQuizzes();
+      fetchCategories();
     }
   }, [status, session, router]);
 
@@ -83,6 +75,19 @@ export default function AdminQuizzesPage() {
       // خطا
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch("/api/admin/categories", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      setCategories(
+        data.filter((c: CategoryOption & { isActive: boolean }) => c.isActive)
+      );
+    } catch {
+      console.error("خطا در دریافت دسته‌ها");
     }
   }
 
@@ -230,7 +235,6 @@ export default function AdminQuizzesPage() {
             </button>
           </div>
 
-          {/* فرم */}
           {showForm && (
             <form
               onSubmit={handleSubmit}
@@ -273,9 +277,7 @@ export default function AdminQuizzesPage() {
                 style={inputStyle}
               />
 
-              <div
-                style={{ display: "grid", gap: "10px", paddingTop: "8px" }}
-              >
+              <div style={{ display: "grid", gap: "10px", paddingTop: "8px" }}>
                 <label
                   style={{
                     fontSize: "13px",
@@ -299,9 +301,7 @@ export default function AdminQuizzesPage() {
                       type="radio"
                       name="correctIdx"
                       checked={form.correctIdx === idx}
-                      onChange={() =>
-                        setForm({ ...form, correctIdx: idx })
-                      }
+                      onChange={() => setForm({ ...form, correctIdx: idx })}
                       style={{
                         width: "20px",
                         height: "20px",
@@ -316,8 +316,7 @@ export default function AdminQuizzesPage() {
                         borderRadius: "50%",
                         background:
                           form.correctIdx === idx ? "#d1fae5" : "#f0f0f0",
-                        color:
-                          form.correctIdx === idx ? "#065f46" : "#666",
+                        color: form.correctIdx === idx ? "#065f46" : "#666",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -331,9 +330,7 @@ export default function AdminQuizzesPage() {
                     <input
                       type="text"
                       value={opt}
-                      onChange={(e) =>
-                        handleOptionChange(idx, e.target.value)
-                      }
+                      onChange={(e) => handleOptionChange(idx, e.target.value)}
                       placeholder={`گزینه‌ی ${["الف", "ب", "ج", "د"][idx]}`}
                       required
                       style={inputStyle}
@@ -358,33 +355,57 @@ export default function AdminQuizzesPage() {
                   gap: "12px",
                 }}
               >
-                <select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  required
-                  style={inputStyle}
-                >
-                  <option value="">— دسته‌بندی * —</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      marginBottom: "6px",
+                    }}
+                  >
+                    دسته‌بندی *
+                  </label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    required
+                    style={inputStyle}
+                  >
+                    <option value="">— انتخاب دسته —</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.title}>
+                        {cat.icon} {cat.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                <select
-                  name="level"
-                  value={form.level}
-                  onChange={handleChange}
-                  style={inputStyle}
-                >
-                  {LEVELS.map((l) => (
-                    <option key={l} value={l}>
-                      {l}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      marginBottom: "6px",
+                    }}
+                  >
+                    سطح
+                  </label>
+                  <select
+                    name="level"
+                    value={form.level}
+                    onChange={handleChange}
+                    style={inputStyle}
+                  >
+                    {LEVELS.map((l) => (
+                      <option key={l} value={l}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <button
@@ -398,7 +419,6 @@ export default function AdminQuizzesPage() {
             </form>
           )}
 
-          {/* جستجو */}
           <div style={{ marginBottom: "20px" }}>
             <input
               type="text"
@@ -418,7 +438,6 @@ export default function AdminQuizzesPage() {
             />
           </div>
 
-          {/* لیست */}
           {filtered.length === 0 ? (
             <div
               style={{

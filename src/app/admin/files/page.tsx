@@ -21,6 +21,13 @@ interface FileData {
   createdAt?: string;
 }
 
+interface CategoryOption {
+  id: string;
+  slug: string;
+  title: string;
+  icon: string;
+}
+
 const emptyForm = {
   title: "",
   desc: "",
@@ -38,6 +45,7 @@ export default function AdminFilesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [files, setFiles] = useState<FileData[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -60,6 +68,7 @@ export default function AdminFilesPage() {
     }
     if (status === "authenticated") {
       fetchFiles();
+      fetchCategories();
     }
   }, [status, session, router]);
 
@@ -73,6 +82,18 @@ export default function AdminFilesPage() {
       console.error("خطا در دریافت فایل‌ها");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch("/api/admin/categories", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      // فقط دسته‌های فعال
+      setCategories(data.filter((c: CategoryOption & { isActive: boolean }) => c.isActive));
+    } catch {
+      console.error("خطا در دریافت دسته‌ها");
     }
   }
 
@@ -133,10 +154,8 @@ export default function AdminFilesPage() {
       }
 
       if (editingId) {
-        // ویرایش
         setFiles(files.map((f) => (f.id === editingId ? data : f)));
       } else {
-        // جدید
         setFiles([data, ...files]);
       }
 
@@ -295,16 +314,38 @@ export default function AdminFilesPage() {
                 />
               </div>
 
+              {/* ─── دسته‌بندی: dropdown از دیتابیس ─── */}
               <div>
                 <label style={labelStyle}>دسته‌بندی *</label>
-                <input
+                <select
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  placeholder="مثل: فیزیک، روانشناسی"
                   required
                   style={inputStyle}
-                />
+                >
+                  <option value="">— انتخاب دسته —</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.title}>
+                      {cat.icon} {cat.title}
+                    </option>
+                  ))}
+                </select>
+                <div
+                  style={{
+                    fontSize: "11px",
+                    color: "#999",
+                    marginTop: "4px",
+                  }}
+                >
+                  💡 برای دسته‌ی جدید، برو به{" "}
+                  <Link
+                    href="/admin/categories"
+                    style={{ color: "#0066cc", textDecoration: "underline" }}
+                  >
+                    مدیریت دسته‌بندی‌ها
+                  </Link>
+                </div>
               </div>
 
               <div
@@ -404,6 +445,8 @@ export default function AdminFilesPage() {
                   <option value="rose">قرمز</option>
                   <option value="yellow">زرد</option>
                   <option value="orange">نارنجی</option>
+                  <option value="pink">صورتی</option>
+                  <option value="black">مشکی</option>
                 </select>
               </div>
 

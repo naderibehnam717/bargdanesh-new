@@ -76,57 +76,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
-    {
-      url: `${BASE_URL}/chemistry`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/physics`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/computer`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/psychology`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/sociology`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/english`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/islamic`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/education`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
   ];
 
-  // ────────── 2. صفحات داینامیک (فایل‌ها) ──────────
+  // ────────── 2. صفحات داینامیک دسته‌ها (از دیتابیس) ──────────
+  let categoryPages: MetadataRoute.Sitemap = [];
+  try {
+    const categories = await prisma.category.findMany({
+      where: { isActive: true },
+      select: { slug: true, updatedAt: true, group: true },
+    });
+
+    categoryPages = categories.map((cat) => ({
+      url: `${BASE_URL}/subject/${cat.slug}`,
+      lastModified: cat.updatedAt,
+      changeFrequency:
+        cat.group === "university" || cat.group === "konkur"
+          ? "weekly"
+          : "monthly",
+      priority: cat.group === "university" ? 0.8 : 0.6,
+    }));
+  } catch (error) {
+    console.error("Sitemap categories error:", error);
+  }
+
+  // ────────── 3. صفحات داینامیک فایل‌ها ──────────
   const allFiles = await getAllFiles();
   const filePages: MetadataRoute.Sitemap = allFiles.map((file) => ({
     url: `${BASE_URL}${getFilePath(file)}`,
@@ -135,7 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: file.level === "دانشگاهی" ? 0.8 : 0.6,
   }));
 
-  // ────────── 3. صفحات داینامیک (کنکور) ──────────
+  // ────────── 4. صفحات داینامیک کنکور ──────────
   let konkurPages: MetadataRoute.Sitemap = [];
   try {
     const konkurList = await prisma.konkur.findMany({
@@ -152,5 +125,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap konkur error:", error);
   }
 
-  return [...staticPages, ...filePages, ...konkurPages];
+  return [...staticPages, ...categoryPages, ...filePages, ...konkurPages];
 }

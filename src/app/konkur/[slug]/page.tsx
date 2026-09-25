@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { fieldContent, yearNotes } from "@/lib/konkurContent";
 import Breadcrumb from "@/components/Breadcrumb";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 import ProtectedKonkurButtons from "@/components/ProtectedKonkurButtons";
@@ -75,6 +76,23 @@ export default async function KonkurDetailPage({ params }: PageProps) {
 
   const url = `https://www.bargdanesh.ir/konkur/${konkur.slug}`;
 
+  // ─── محتوای مخصوص رشته ───
+  const field = fieldContent[konkur.field] || {
+    intro:
+      "کنکور سراسری یکی از مهم‌ترین آزمون‌های زندگی هر دانش‌آموزه. این دفترچه بهت کمک می‌کنه با ساختار سوالات و سطح دشواری آشنا بشی.",
+    tips: [
+      "سوالات سال‌های گذشته رو با دقت تحلیل کن.",
+      "برای هر درس، زمان مشخصی تعیین کن.",
+      "بعد از هر آزمون، اشتباهاتت رو مرور کن.",
+      "نقاط ضعفت رو شناسایی و تقویت کن.",
+    ],
+    concerns: [],
+  };
+
+  // ─── یادداشت سال ───
+  const yearNote = yearNotes[konkur.year];
+
+  // ─── Breadcrumb items ───
   const breadcrumbItems = [
     { label: "خانه", href: "/" },
     { label: "آرشیو کنکور", href: "/konkur" },
@@ -135,7 +153,6 @@ export default async function KonkurDetailPage({ params }: PageProps) {
             {konkur.title}
           </h1>
 
-          {/* ✅ subtitle */}
           {konkur.subtitle && (
             <div
               style={{
@@ -201,55 +218,139 @@ export default async function KonkurDetailPage({ params }: PageProps) {
               <dd>کنکور سراسری</dd>
             </dl>
 
-            {konkur.description ? (
+            {/* ─── درباره این آزمون ─── */}
+            <div
+              style={{
+                marginBottom: "32px",
+                lineHeight: 2,
+                color: "#444",
+                textAlign: "justify",
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: "20px",
+                  marginBottom: "12px",
+                  color: "#1a1a1a",
+                }}
+              >
+                📖 درباره‌ی کنکور {konkur.field}
+              </h2>
+              <p style={{ margin: 0 }}>{field.intro}</p>
+              {konkur.description && (
+                <p style={{ marginTop: "12px" }}>{konkur.description}</p>
+              )}
+            </div>
+
+            {/* ─── نکات مخصوص رشته ─── */}
+            {field.tips.length > 0 && (
               <div
                 style={{
                   marginBottom: "32px",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, #f0f7ff 0%, #f8f9fa 100%)",
+                  borderRadius: "12px",
+                  borderRight: "4px solid #0066cc",
                   lineHeight: 2,
-                  color: "#444",
-                  textAlign: "justify",
                 }}
               >
                 <h2
                   style={{
-                    fontSize: "18px",
-                    marginBottom: "12px",
+                    fontSize: "20px",
+                    marginBottom: "16px",
                     color: "#1a1a1a",
                   }}
                 >
-                  درباره این آزمون
+                  🎯 نکات کلیدی برای کنکور {konkur.field}
                 </h2>
-                <p style={{ margin: 0 }}>{konkur.description}</p>
+                <ul
+                  style={{
+                    paddingRight: "20px",
+                    margin: 0,
+                    color: "#444",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  {field.tips.map((tip, idx) => (
+                    <li key={idx} style={{ lineHeight: 1.9 }}>
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ) : (
+            )}
+
+            {/* ─── دغدغه‌ها ─── */}
+            {field.concerns.length > 0 && (
               <div
                 style={{
                   marginBottom: "32px",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, #fef3c7 0%, #f8f9fa 100%)",
+                  borderRadius: "12px",
+                  borderRight: "4px solid #f59e0b",
                   lineHeight: 2,
-                  color: "#444",
-                  textAlign: "justify",
                 }}
               >
                 <h2
                   style={{
-                    fontSize: "18px",
-                    marginBottom: "12px",
+                    fontSize: "20px",
+                    marginBottom: "16px",
                     color: "#1a1a1a",
                   }}
                 >
-                  درباره این آزمون
+                  💭 شاید این حس‌ها برات آشنا باشه
                 </h2>
-                <p style={{ margin: 0 }}>
-                  این بخش شامل دفترچه سوالات و کلید پاسخ{" "}
-                  <strong>
-                    {konkur.subtitle
-                      ? `${konkur.title} (${konkur.subtitle})`
-                      : konkur.title}
-                  </strong>{" "}
-                  است. با دانلود و مطالعه این فایل‌ها، می‌توانید با ساختار
-                  سوالات کنکور سراسری در رشته‌ی{" "}
-                  <strong>{konkur.field}</strong> و سطح دشواری آن‌ها آشنا شوید.
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {field.concerns.map((concern, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "12px 16px",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        borderRight: "3px solid #f59e0b",
+                        color: "#444",
+                        fontSize: "14.5px",
+                        lineHeight: 1.9,
+                      }}
+                    >
+                      {concern}
+                    </div>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    marginTop: "16px",
+                    marginBottom: 0,
+                    color: "#92400e",
+                    fontWeight: 600,
+                    fontSize: "14.5px",
+                  }}
+                >
+                  🌱 اگه هر کدوم از اینا برات آشناست، بدون تنها نیستی. همه‌ی کنکوری‌ها این مسیر رو طی می‌کنن.
                 </p>
+              </div>
+            )}
+
+            {/* ─── یادداشت سال ─── */}
+            {yearNote && (
+              <div
+                style={{
+                  marginBottom: "32px",
+                  padding: "16px 20px",
+                  background: "#f8f9fa",
+                  borderRadius: "10px",
+                  borderRight: "4px solid #7c3aed",
+                  lineHeight: 1.9,
+                  color: "#444",
+                  fontSize: "14.5px",
+                }}
+              >
+                <strong style={{ color: "#7c3aed" }}>📅 نکته‌ای درباره‌ی کنکور {toFa(konkur.year)}:</strong>
+                <p style={{ margin: "8px 0 0 0" }}>{yearNote}</p>
               </div>
             )}
 
@@ -260,6 +361,7 @@ export default async function KonkurDetailPage({ params }: PageProps) {
             />
           </div>
 
+          {/* ─── چرا حل سوالات گذشته ─── */}
           <div
             style={{
               maxWidth: "800px",
@@ -302,7 +404,7 @@ export default async function KonkurDetailPage({ params }: PageProps) {
 
             <p style={{ margin: 0 }}>
               در برگ دانش، <strong>دفترچه سوالات و کلید پاسخ</strong> کنکور
-              سراسری سال‌های ۱۴۰۰ تا ۱۴۰۴ در تمامی رشته‌ها به صورت{" "}
+              سراسری سال‌های ۱۴۰۰ تا ۱۴۰۵ در تمامی رشته‌ها به صورت{" "}
               <strong>رایگان</strong> در دسترس شماست. برای مشاهده سایر آزمون‌ها
               به صفحه‌ی{" "}
               <Link
@@ -315,7 +417,6 @@ export default async function KonkurDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          {/* ✅ کامنت‌ها */}
           <CommentSection fileSlug={`konkur-${konkur.slug}`} />
         </div>
       </main>

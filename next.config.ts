@@ -6,6 +6,20 @@ const nextConfig: NextConfig = {
   compress: true,
   trailingSlash: false,
 
+  // ─── ریدایرکت صفحات قدیمی رشته‌ها به /subject/[slug] ───
+  async redirects() {
+    return [
+      { source: "/physics", destination: "/subject/physics", permanent: true },
+      { source: "/chemistry", destination: "/subject/chemistry", permanent: true },
+      { source: "/computer", destination: "/subject/computer", permanent: true },
+      { source: "/psychology", destination: "/subject/psychology", permanent: true },
+      { source: "/education", destination: "/subject/education", permanent: true },
+      { source: "/sociology", destination: "/subject/sociology", permanent: true },
+      { source: "/english", destination: "/subject/english", permanent: true },
+      { source: "/islamic", destination: "/subject/islamic", permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {

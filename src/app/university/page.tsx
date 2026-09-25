@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllFiles } from "@/lib/files";
+import { prisma } from "@/lib/prisma";
 import FAQ from "@/components/FAQ";
 import FAQSchema from "@/components/FAQSchema";
 
@@ -88,47 +89,49 @@ const faqs = [
 export default async function UniversityPage() {
   const allFiles = await getAllFiles();
   const uniFiles = allFiles.filter((f) => f.level === "دانشگاهی");
-  const categories = [...new Set(uniFiles.map((f) => f.category))];
 
-  const icons: Record<string, string> = {
-    ریاضی: "📐",
-    آمار: "📊",
-    فیزیک: "⚛️",
-    شیمی: "🧪",
-    زیست: "🧬",
-    "زیست‌شناسی": "🧬",
-    مهندسی: "⚙️",
-    کامپیوتر: "💻",
-    معارف: "📿",
-    روانشناسی: "🧠",
-    "علوم تربیتی": "🎓",
-    زبان: "🌍",
-    "زبان انگلیسی": "🌍",
-    ادبیات: "📖",
-    تاریخ: "🏛️",
-    اقتصاد: "💰",
-    حقوق: "⚖️",
-    پزشکی: "🩺",
-    مدیریت: "📋",
-    "جامعه‌شناسی": "👥",
-  };
+  // ─── دریافت دسته‌ها از دیتابیس (فقط دانشگاهی) ───
+  let dbCategories: {
+    id: string;
+    slug: string;
+    title: string;
+    icon: string;
+    color: string;
+  }[] = [];
 
-  const typeLabels: Record<string, string> = {
-    جزوه: "جزوه",
-    کتاب: "کتاب",
-    "نمونه سوال": "نمونه سوال",
-  };
+  try {
+    dbCategories = await prisma.category.findMany({
+      where: { group: "university", isActive: true },
+      orderBy: { order: "asc" },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        icon: true,
+        color: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
 
-  const categoryPages: Record<string, string> = {
-    روانشناسی: "/psychology",
-    "علوم تربیتی": "/education",
-    کامپیوتر: "/computer",
-    فیزیک: "/physics",
-    معارف: "/islamic",
-    "جامعه‌شناسی": "/sociology",
-    "زبان انگلیسی": "/english",
-    شیمی: "/chemistry",
-  };
+  // ─── آمار برای هر دسته (تعداد فایل) ───
+  const categoriesWithStats = dbCategories.map((cat) => {
+    const filesInCat = uniFiles.filter((f) => f.category === cat.title);
+    const types = [...new Set(filesInCat.map((f) => f.type))];
+    const typeLabels: Record<string, string> = {
+      جزوه: "جزوه",
+      کتاب: "کتاب",
+      "نمونه سوال": "نمونه سوال",
+    };
+    const typesText = types.map((t) => typeLabels[t] || t).join("، ");
+
+    return {
+      ...cat,
+      fileCount: filesInCat.length,
+      typesText: typesText || "بدون فایل",
+    };
+  });
 
   return (
     <>
@@ -186,53 +189,6 @@ export default async function UniversityPage() {
                 color: "#1a1a1a",
               }}
             >
-              رشته‌های موجود در این بخش:
-            </h3>
-
-            <ul
-              style={{
-                paddingRight: "20px",
-                color: "#444",
-                marginBottom: "16px",
-              }}
-            >
-              <li>
-                <strong>روانشناسی</strong> — جزوه روانشناسی عمومی، رشد، شخصیت و
-                اجتماعی
-              </li>
-              <li>
-                <strong>علوم تربیتی</strong> — روش‌های تدریس، ارزشیابی،
-                یادگیری و انگیزش
-              </li>
-              <li>
-                <strong>کامپیوتر</strong> — مبانی کامپیوتر، برنامه‌نویسی و
-                الگوریتم
-              </li>
-              <li>
-                <strong>فیزیک</strong> — فیزیک پایه، مکانیک و الکترومغناطیس
-              </li>
-              <li>
-                <strong>شیمی</strong> — شیمی آلی، معدنی و تجزیه
-              </li>
-              <li>
-                <strong>جامعه‌شناسی</strong> — مفاهیم اساسی و فرهنگ و جامعه
-              </li>
-              <li>
-                <strong>معارف</strong> — اندیشه اسلامی و معارف اسلامی
-              </li>
-              <li>
-                <strong>زبان انگلیسی</strong> — گرامر، ضمایر و ساختار جملات
-              </li>
-            </ul>
-
-            <h3
-              style={{
-                fontSize: "18px",
-                marginTop: "24px",
-                marginBottom: "12px",
-                color: "#1a1a1a",
-              }}
-            >
               چرا از برگ دانش دانلود کنیم؟
             </h3>
 
@@ -280,7 +236,7 @@ export default async function UniversityPage() {
           </div>
 
           <div className="cards-grid">
-            {categories.length === 0 ? (
+            {categoriesWithStats.length === 0 ? (
               <p
                 style={{
                   textAlign: "center",
@@ -289,33 +245,23 @@ export default async function UniversityPage() {
                   gridColumn: "1 / -1",
                 }}
               >
-                هنوز فایلی اضافه نشده است.
+                هنوز رشته‌ای اضافه نشده است.
               </p>
             ) : (
-              categories.map((cat) => {
-                const filesInCat = uniFiles.filter((f) => f.category === cat);
-                const types = [...new Set(filesInCat.map((f) => f.type))];
-                const typesText = types
-                  .map((t) => typeLabels[t] || t)
-                  .join("، ");
-                const href = categoryPages[cat] || "/notes";
-                const icon = icons[cat] || "📁";
-
-                return (
-                  <Link
-                    key={cat}
-                    href={href}
-                    className="content-card"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div className="category-card__icon">{icon}</div>
-                    <h3 className="content-card__title">{cat}</h3>
-                    <p className="content-card__desc">
-                      {filesInCat.length} فایل — {typesText}
-                    </p>
-                  </Link>
-                );
-              })
+              categoriesWithStats.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/subject/${cat.slug}`}
+                  className="content-card"
+                  style={{ textDecoration: "none" }}
+                >
+                  <div className="category-card__icon">{cat.icon}</div>
+                  <h3 className="content-card__title">{cat.title}</h3>
+                  <p className="content-card__desc">
+                    {cat.fileCount} فایل — {cat.typesText}
+                  </p>
+                </Link>
+              ))
             )}
           </div>
         </div>

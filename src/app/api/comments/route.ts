@@ -17,15 +17,23 @@ export async function GET(request: Request) {
       );
     }
 
-    // فقط کامنت‌های اصلی (بدون parent)
-    const comments = await prisma.comment.findMany({
+    // ─── کامنت‌های اصلی ───
+    const mainComments = await prisma.comment.findMany({
       where: {
         fileSlug,
         isApproved: true,
         parentId: null,
       },
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        content: true,
+        fileSlug: true,
+        isApproved: true,
+        parentId: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
         user: {
           select: {
             id: true,
@@ -33,34 +41,42 @@ export async function GET(request: Request) {
             image: true,
           },
         },
-        replies: {
-          where: { isApproved: true },
-          orderBy: { createdAt: "asc" },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-            replies: {
-              where: { isApproved: true },
-              orderBy: { createdAt: "asc" },
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                  },
-                },
-              },
-            },
+      },
+    });
+
+    // ─── همه‌ی ریپلای‌ها ───
+    const mainIds = mainComments.map((c) => c.id);
+
+    const allReplies = await prisma.comment.findMany({
+      where: {
+        parentId: { in: mainIds },
+        isApproved: true,
+      },
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        content: true,
+        fileSlug: true,
+        isApproved: true,
+        parentId: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
           },
         },
       },
     });
+
+    // ─── ریپلای‌ها رو به کامنت اصلی وصل کن ───
+    const comments = mainComments.map((c) => ({
+      ...c,
+      replies: allReplies.filter((r) => r.parentId === c.id),
+    }));
 
     return NextResponse.json(comments);
   } catch (error) {
@@ -92,7 +108,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { fileSlug, content, parentId } = body;
 
-    // اعتبارسنجی
     if (!fileSlug || !content) {
       return NextResponse.json(
         { error: "اطلاعات ناقص است" },
@@ -114,7 +129,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // اگه parentId داره، چک کن وجود داره
     if (parentId) {
       const parent = await prisma.comment.findUnique({
         where: { id: parentId },
@@ -127,7 +141,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // جلوگیری از ریپلای به ریپلای (فقط ۲ سطح)
       if (parent.parentId) {
         return NextResponse.json(
           { error: "امکان پاسخ به پاسخ وجود ندارد" },
@@ -144,7 +157,15 @@ export async function POST(request: Request) {
         isApproved: true,
         parentId: parentId || null,
       },
-      include: {
+      select: {
+        id: true,
+        content: true,
+        fileSlug: true,
+        isApproved: true,
+        parentId: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
         user: {
           select: {
             id: true,
@@ -152,21 +173,13 @@ export async function POST(request: Request) {
             image: true,
           },
         },
-        replies: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-          },
-        },
       },
     });
 
-    return NextResponse.json(comment, { status: 201 });
+    return NextResponse.json(
+      { ...comment, replies: [] },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Post comment error:", error);
     return NextResponse.json({ error: "خطا در ثبت نظر" }, { status: 500 });

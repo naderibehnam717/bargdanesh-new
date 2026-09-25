@@ -15,13 +15,13 @@ model User {
   image         String?
   password      String?
   role          String    @default("user")
-  subscribed    Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  subscribed    Boolean   @default(true)
 
-  favorites  Favorite[]
-  downloads  Download[]
   accounts   Account[]
+  downloads  Download[]
+  favorites  Favorite[]
   sessions   Session[]
   comments   Comment[]
   activities ActivityLog[]
@@ -32,8 +32,7 @@ model Favorite {
   userId    String
   fileTitle String
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Download {
@@ -41,8 +40,7 @@ model Download {
   userId    String
   fileTitle String
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -51,15 +49,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -69,7 +66,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -81,15 +78,15 @@ model VerificationToken {
 }
 
 model Setting {
-  id    String @id @default("main")
-  data  String @db.Text
+  id   String @id @default("main")
+  data String
 }
 
 model File {
   id           String   @id @default(cuid())
   slug         String   @unique
   title        String
-  desc         String   @db.Text
+  desc         String
   category     String
   type         String
   level        String
@@ -109,10 +106,10 @@ model File {
 
 model Quiz {
   id          String   @id @default(cuid())
-  question    String   @db.Text
+  question    String
   options     Json
   correctIdx  Int
-  explanation String?  @db.Text
+  explanation String?
   category    String
   level       String   @default("دانشگاهی")
   isPublished Boolean  @default(true)
@@ -133,7 +130,6 @@ model QuizAttempt {
 
   @@index([quizId])
   @@index([userId])
-  @@index([createdAt])
 }
 
 model Comment {
@@ -144,7 +140,7 @@ model Comment {
   isApproved Boolean  @default(true)
   parentId   String?
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @default(now()) @updatedAt
 
   user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
@@ -160,7 +156,7 @@ model Comment {
 model EmailLog {
   id             String   @id @default(cuid())
   subject        String
-  content        String   @db.Text
+  content        String
   recipientCount Int
   sentCount      Int      @default(0)
   failedCount    Int      @default(0)
@@ -194,14 +190,31 @@ model Konkur {
   subtitle    String?
   year        Int
   field       String
-  description String?  @db.Text
+  description String?
   questionUrl String?
   answerUrl   String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   @@index([year])
   @@index([field])
   @@index([year, field])
+}
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  icon        String   @default("📁")
+  color       String   @default("blue")
+  group       String   @default("general")
+  description String?  @db.Text
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+  @@index([group])
 }

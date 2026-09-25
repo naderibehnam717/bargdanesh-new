@@ -93,6 +93,17 @@ export default async function AdminPage() {
                 اضافه، ویرایش و حذف فایل‌ها
               </p>
             </Link>
+            <Link
+              href="/admin/categories"
+              className="feature"
+              style={{ textDecoration: "none" }}
+            >  
+              <div className="feature__icon">📂</div>
+              <h3 className="feature__title">مدیریت دسته‌بندی‌ها</h3>
+              <p className="feature__desc">
+               افزودن و ویرایش دسته‌ها
+              </p>
+            </Link>
 
             <Link
               href="/admin/konkur"

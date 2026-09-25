@@ -278,7 +278,7 @@ export default async function SchoolPage() {
 
                 let href = "/exams";
                 if (types.length === 1) {
-                  if (types[0] === "جزوه") href = "/notes";
+                  if (types[0] === "جزوه") href = "/university";
                   else if (types[0] === "کتاب") href = "/books";
                 }
 

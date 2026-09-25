@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import PdfViewer from "./PdfViewer";
 
 interface Props {
   downloadUrl?: string;
@@ -17,15 +19,31 @@ function toPreviewUrl(url: string): string {
   return url.replace("/view", "/preview");
 }
 
+// ─── تبدیل view به لینک دانلود ───
+function toDownloadUrl(url: string): string {
+  if (!url) return url;
+
+  if (url.includes("drive.google.com")) {
+    const fileId = url.match(/\/d\/([^/]+)/)?.[1];
+    if (fileId) {
+      return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    }
+  }
+
+  return url;
+}
+
 export default function ProtectedDownloadButtons({
   downloadUrl,
   viewUrl,
   downloadName,
   fileTitle,
-  fileType,
 }: Props) {
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  // ─── state برای نمایش PDF ───
+  const [viewerUrl, setViewerUrl] = useState<string | null>(null);
 
   const requireLogin = (e: React.MouseEvent) => {
     if (status === "loading") {
@@ -35,10 +53,14 @@ export default function ProtectedDownloadButtons({
     if (!session?.user) {
       e.preventDefault();
       router.push("/login");
-      return;
     }
+  };
 
-    // اگه لاگین کرد، دانلود رو ثبت کن
+  const handleDownload = async (e: React.MouseEvent) => {
+    requireLogin(e);
+    if (!session?.user) return;
+
+    // ثبت دانلود
     try {
       fetch("/api/user/downloads", {
         method: "POST",
@@ -50,43 +72,62 @@ export default function ProtectedDownloadButtons({
     }
   };
 
+  const openViewer = (e: React.MouseEvent, url: string) => {
+    requireLogin(e);
+    if (!session?.user) return;
+
+    e.preventDefault();
+    setViewerUrl(toPreviewUrl(url));
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "12px",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        paddingTop: "20px",
-        borderTop: "1px solid #eee",
-      }}
-    >
-      {downloadUrl && (
-        <a
-          href={session?.user ? downloadUrl : "/login"}
-          download={session?.user ? downloadName : undefined}
-          onClick={requireLogin}
-          className="btn btn--primary"
-        >
-          {session?.user ? `⬇️ دانلود ${fileType}` : `🔒 دانلود ${fileType}`}
-        </a>
-      )}
+    <>
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          paddingTop: "20px",
+          borderTop: "1px solid #eee",
+        }}
+      >
+        {viewUrl && (
+          <a
+            href={session?.user ? toPreviewUrl(viewUrl) : "/login"}
+            onClick={(e) => openViewer(e, viewUrl)}
+            target={session?.user ? "_blank" : undefined}
+            rel="noopener noreferrer"
+            className="btn btn--outline"
+          >
+            {session?.user ? "👁️ مشاهده آنلاین" : "🔒 مشاهده آنلاین"}
+          </a>
+        )}
 
-      {viewUrl && (
-        <a
-          href={session?.user ? toPreviewUrl(viewUrl) : "/login"}
-          target={session?.user ? "_blank" : undefined}
-          rel="noopener noreferrer"
-          onClick={requireLogin}
-          className="btn btn--outline"
-        >
-          {session?.user ? "👁️ مشاهده آنلاین" : "🔒 مشاهده آنلاین"}
-        </a>
-      )}
+        {downloadUrl && (
+          <a
+            href={session?.user ? toDownloadUrl(downloadUrl) : "/login"}
+            download={session?.user ? downloadName : undefined}
+            onClick={handleDownload}
+            className="btn btn--primary"
+          >
+            {session?.user ? "⬇️ دانلود" : "🔒 دانلود"}
+          </a>
+        )}
 
-      {status === "loading" && (
-        <p style={{ color: "#999", fontSize: "14px" }}>در حال بارگذاری...</p>
+        {status === "loading" && (
+          <p style={{ color: "#999", fontSize: "14px" }}>در حال بارگذاری...</p>
+        )}
+      </div>
+
+      {/* ─── PDF Viewer Modal ─── */}
+      {viewerUrl && (
+        <PdfViewer
+          url={viewerUrl}
+          title={fileTitle}
+          onClose={() => setViewerUrl(null)}
+        />
       )}
-    </div>
+    </>
   );
 }

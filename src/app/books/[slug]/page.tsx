@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFileBySlug, getFilesByType, getAllFiles } from "@/lib/files";
+import { categoryContent, authorBios } from "@/lib/bookContent";
 import FileCard from "@/components/FileCard";
 import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -86,6 +87,15 @@ export default async function BookDetailPage({ params }: PageProps) {
     .slice(0, 3);
 
   const url = `https://www.bargdanesh.ir/books/${file.slug}`;
+
+  // ─── محتوای داینامیک ───
+  const catContent = categoryContent[file.category] || {
+    intro:
+      "این کتاب یکی از آثار خواندنی و ارزشمند است که با قلمی روان نوشته شده و برای مطالعه‌ی آزاد مناسب می‌باشد.",
+    why: "اگر به دنبال مطالعه‌ی کتابی هستید که هم سرگرم‌کننده باشد و هم نکات ارزشمندی به شما اضافه کند، این کتاب انتخاب مناسبی است.",
+  };
+
+  const authorBio = file.author ? authorBios[file.author] : null;
 
   // ─── Breadcrumb items ───
   const breadcrumbItems = [
@@ -173,18 +183,49 @@ export default async function BookDetailPage({ params }: PageProps) {
               )}
             </dl>
 
-            <div style={{ marginBottom: "32px", lineHeight: 1.9 }}>
-              <h2 style={{ fontSize: "20px", marginBottom: "12px" }}>
-                درباره این {file.type}
+            {/* ─── معرفی کتاب ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                📖 درباره‌ی این {file.category}
               </h2>
-              <p>{file.desc}</p>
-              <p style={{ marginTop: "12px", color: "#555" }}>
-                این {file.type} به صورت رایگان از سایت برگ دانش قابل دانلود است.
-                برای دانلود، کافی است روی دکمه‌ی دانلود کلیک کنید. برای مشاهده‌ی
-                آنلاین، از دکمه‌ی مشاهده استفاده کنید.
-              </p>
+              <p style={{ color: "#444" }}>{catContent.intro}</p>
+              <p style={{ color: "#444", marginTop: "12px" }}>{file.desc}</p>
             </div>
 
+            {/* ─── چرا بخونیم ─── */}
+            <div style={{ marginBottom: "32px", lineHeight: 2 }}>
+              <h2 style={{ fontSize: "20px", marginBottom: "12px", color: "#1a1a1a" }}>
+                ✨ چرا این اثر را بخوانیم؟
+              </h2>
+              <p style={{ color: "#444" }}>{catContent.why}</p>
+            </div>
+
+            {/* ─── معرفی نویسنده ─── */}
+            {authorBio && file.author && (
+              <div
+                style={{
+                  marginBottom: "32px",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, #f0f7ff 0%, #f8f9fa 100%)",
+                  borderRadius: "12px",
+                  borderRight: "4px solid #0066cc",
+                  lineHeight: 2,
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "20px",
+                    marginBottom: "12px",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  ✍️ درباره‌ی نویسنده: {file.author}
+                </h2>
+                <p style={{ color: "#444", margin: 0 }}>{authorBio}</p>
+              </div>
+            )}
+
+            {/* ─── دانلود ─── */}
             <ProtectedDownloadButtons
               downloadUrl={file.downloadUrl}
               viewUrl={file.viewUrl}
@@ -194,7 +235,6 @@ export default async function BookDetailPage({ params }: PageProps) {
             />
           </div>
 
-          {/* ✅ کامنت‌ها */}
           <CommentSection fileSlug={file.slug} />
         </div>
       </main>

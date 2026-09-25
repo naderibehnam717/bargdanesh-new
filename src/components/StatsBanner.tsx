@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAllFiles } from "@/lib/files";
+import { prisma } from "@/lib/prisma";
 
 function toFa(n: number): string {
   return String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
@@ -7,7 +8,8 @@ function toFa(n: number): string {
 
 export default async function StatsBanner() {
   const allFiles = await getAllFiles();
-  const totalCount = allFiles.length;
+  const konkurCount = await prisma.konkur.count();
+  const totalCount = allFiles.length + konkurCount;
 
   return (
     <div
@@ -51,7 +53,7 @@ export default async function StatsBanner() {
           fontWeight: 500,
         }}
       >
-        فایل آموزشی رایگان
+        منبع آموزشی رایگان
       </div>
 
       <div
