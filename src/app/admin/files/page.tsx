@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import FileUploader from "@/components/FileUploader";
 
 interface FileData {
   id: string;
@@ -399,34 +398,38 @@ export default function AdminFilesPage() {
                 />
               </div>
 
-              {/* ─── آپلود فایل PDF ─── */}
+              {/* ─── لینک فایل ─── */}
               <div>
-                <label style={labelStyle}>
-                  📄 فایل (PDF) — آپلود مستقیم یا لینک
-                </label>
-                <FileUploader
-                  accept="application/pdf"
-                  label="آپلود فایل PDF"
-                  hint="فقط PDF - حداکثر ۲۰ مگابایت"
-                  currentUrl={form.viewUrl || null}
-                  onUploadSuccess={(url) => {
-                    setForm((prev) => ({
-                      ...prev,
-                      viewUrl: url,
-                      downloadUrl: url,
-                    }));
-                  }}
+                <label style={labelStyle}>🔗 لینک فایل (Google Drive)</label>
+                <input
+                  name="viewUrl"
+                  value={form.viewUrl}
+                  onChange={handleChange}
+                  placeholder="https://drive.google.com/file/d/.../view"
+                  style={inputStyle}
                 />
-
-                <div style={{ marginTop: "10px" }}>
-                  <input
-                    name="viewUrl"
-                    value={form.viewUrl}
-                    onChange={handleChange}
-                    placeholder="یا لینک گوگل درایو را وارد کنید: https://drive.google.com/file/d/.../view"
-                    style={inputStyle}
-                  />
+                <div
+                  style={{
+                    fontSize: "11px",
+                    color: "#999",
+                    marginTop: "4px",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  💡 فایل رو توی Google Drive آپلود کن، لینکش رو Public کن، و
+                  اینجا بذار.
                 </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>🔗 لینک دانلود مستقیم (اختیاری)</label>
+                <input
+                  name="downloadUrl"
+                  value={form.downloadUrl}
+                  onChange={handleChange}
+                  placeholder="https://drive.google.com/uc?export=download&id=..."
+                  style={inputStyle}
+                />
               </div>
 
               <div>
