@@ -66,19 +66,197 @@ const faqs = [
   },
 ];
 
+// ─── رنگ گرادیانت ───
+const BOOKS_GRADIENT = "linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #8b5cf6 100%)";
+
 export default async function BooksPage() {
   const allFiles = await getAllFiles();
   const books = allFiles.filter((f) => f.type === "منابع غیر درسی");
 
+  const categories = [...new Set(books.map((f) => f.category))];
+  const categoryCounts = categories.map((cat) => ({
+    name: cat,
+    count: books.filter((b) => b.category === cat).length,
+  }));
+
   return (
     <>
-      <section className="page-header">
-        <div className="container page-header__inner">
-          <h1 className="page-header__title">📖 منابع غیر درسی</h1>
-          <p className="page-header__subtitle">
-            کتاب، رمان، شعر و... — برای علاقه‌مندان به مطالعه
-          </p>
+      {/* ─── Hero گرادیانتی ─── */}
+      <section
+        style={{
+          position: "relative",
+          padding: "80px 0 60px",
+          background: BOOKS_GRADIENT,
+          color: "#fff",
+          overflow: "hidden",
+        }}
+      >
+        {/* ─── ذرات شناور ─── */}
+        <div
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+        >
+          {[
+            { top: "12%", right: "10%", delay: "0s", emoji: "📚" },
+            { top: "35%", right: "18%", delay: "-1.5s", emoji: "📖" },
+            { top: "65%", right: "12%", delay: "-3s", emoji: "✨" },
+            { top: "18%", left: "10%", delay: "-0.5s", emoji: "📕" },
+            { top: "50%", left: "15%", delay: "-2s", emoji: "🌿" },
+            { top: "78%", left: "20%", delay: "-3.5s", emoji: "📗" },
+          ].map((pos, i) => (
+            <span
+              key={i}
+              style={{
+                position: "absolute",
+                top: pos.top,
+                right: (pos as { right?: string }).right,
+                left: (pos as { left?: string }).left,
+                fontSize: "32px",
+                opacity: 0.5,
+                animation: `floatEmoji 6s ease-in-out infinite ${pos.delay}`,
+                filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.2))",
+              }}
+            >
+              {pos.emoji}
+            </span>
+          ))}
         </div>
+
+        <div
+          className="container"
+          style={{ position: "relative", zIndex: 1, textAlign: "center" }}
+        >
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "96px",
+              height: "96px",
+              background: "rgba(255, 255, 255, 0.2)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderRadius: "28px",
+              fontSize: "52px",
+              marginBottom: "24px",
+              boxShadow: "0 16px 40px rgba(0, 0, 0, 0.2)",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              animation:
+                "iconPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+              opacity: 0,
+            }}
+          >
+            📚
+          </div>
+
+          {/* ─── عنوان ─── */}
+          <h1
+            style={{
+              fontSize: "42px",
+              fontWeight: 900,
+              margin: "0 0 16px",
+              lineHeight: 1.3,
+              textShadow: "0 4px 12px rgba(0,0,0,0.2)",
+              opacity: 0,
+              animation: "fadeInUp 0.8s ease 0.3s forwards",
+            }}
+          >
+            منابع غیر درسی
+          </h1>
+
+          <p
+            style={{
+              fontSize: "16px",
+              opacity: 0,
+              margin: "0 0 28px",
+              lineHeight: 1.9,
+              maxWidth: "600px",
+              marginLeft: "auto",
+              marginRight: "auto",
+              animation: "fadeInUp 0.8s ease 0.5s forwards",
+              textShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            }}
+          >
+            کتاب، رمان، داستان، شعر و نمایشنامه — برای علاقه‌مندان به مطالعه
+          </p>
+
+          {/* ─── آمار ─── */}
+          <div
+            style={{
+              display: "inline-flex",
+              gap: "12px",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              padding: "14px 22px",
+              background: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderRadius: "16px",
+              border: "1px solid rgba(255, 255, 255, 0.25)",
+              opacity: 0,
+              animation: "fadeInUp 0.8s ease 0.7s forwards",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "13px",
+                fontWeight: 700,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              📚 {books.length} فایل
+            </span>
+            {categoryCounts.map((cc) => (
+  <span
+    key={cc.name}
+    style={{
+      fontSize: "13px",
+      fontWeight: 700,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px",
+      paddingRight: "12px",
+      borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+    }}
+  >
+    {cc.name === "کتاب"
+      ? "📖"
+      : cc.name === "رمان"
+      ? "🎭"
+      : cc.name === "داستان"
+      ? "✏️"
+      : cc.name === "نمایشنامه"
+      ? "🎬"
+      : cc.name === "شعر"
+      ? "🌿"
+      : "📚"}{" "}
+    {cc.count} {cc.name}
+  </span>
+))}
+          </div>
+        </div>
+
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+              @keyframes iconPop {
+                0% { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+                60% { transform: scale(1.1) rotate(5deg); }
+                100% { opacity: 1; transform: scale(1) rotate(0); }
+              }
+              @keyframes floatEmoji {
+                0%, 100% { transform: translateY(0) rotate(-5deg) scale(1); }
+                50% { transform: translateY(-18px) rotate(8deg) scale(1.15); }
+              }
+            `,
+          }}
+        />
       </section>
 
       {/* ─────── محتوای متنی (سئو) ─────── */}
@@ -120,50 +298,6 @@ export default async function BooksPage() {
               و <strong>کاترین کرسمن تیلور</strong> را به صورت رایگان دانلود
               کنید.
             </p>
-
-            <p style={{ marginBottom: "16px", color: "#444" }}>
-              همه‌ی <strong>کتاب‌ها و رمان‌های این بخش</strong> با فرمت PDF و
-              به صورت <strong>رایگان</strong> قابل دانلود هستند. برای دانلود،
-              کافی است روی هر کتاب کلیک کنید و سپس دکمه‌ی دانلود را بزنید. برای
-              مطالعه‌ی آنلاین، از دکمه‌ی «مشاهده آنلاین» استفاده کنید.
-            </p>
-
-            <h3
-              style={{
-                fontSize: "18px",
-                marginTop: "24px",
-                marginBottom: "12px",
-                color: "#1a1a1a",
-              }}
-            >
-              دسته‌بندی منابع غیر درسی:
-            </h3>
-
-            <ul
-              style={{
-                paddingRight: "20px",
-                color: "#444",
-                marginBottom: "16px",
-              }}
-            >
-              <li>
-                <strong>کتاب‌های عمومی</strong> — آثاری در زمینه‌ی روانشناسی،
-                ارتباطات و خودشناسی
-              </li>
-              <li>
-                <strong>رمان‌ها</strong> — رمان‌های کلاسیک و مدرن ایرانی و
-                خارجی
-              </li>
-              <li>
-                <strong>داستان‌های کوتاه</strong> — مجموعه داستان‌های برجسته
-              </li>
-              <li>
-                <strong>نمایشنامه‌ها</strong> — آثار نمایشی نویسندگان بزرگ
-              </li>
-              <li>
-                <strong>شعر و ادبیات</strong> — مجموعه اشعار کلاسیک و معاصر
-              </li>
-            </ul>
 
             <p style={{ marginBottom: "0", color: "#444" }}>
               اگر به دنبال <strong>جزوه‌های دانشگاهی</strong> یا{" "}

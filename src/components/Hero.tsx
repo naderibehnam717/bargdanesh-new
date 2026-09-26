@@ -35,6 +35,7 @@ function LeafSVG({ className = "" }: { className?: string }) {
         height: "1em",
         verticalAlign: "middle",
         margin: "0 0.15em",
+        filter: "drop-shadow(0 8px 24px rgba(16, 185, 129, 0.4))",
       }}
     >
       <path
@@ -97,6 +98,7 @@ export default function Hero({ files }: HeroProps) {
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchedQuery, setSearchedQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -125,7 +127,26 @@ export default function Hero({ files }: HeroProps) {
   }
 
   return (
-    <section className="hero">
+    <section className="hero" style={{ position: "relative", overflow: "hidden" }}>
+      {/* ─── درخشش پس‌زمینه ─── */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: "-20%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "800px",
+          height: "800px",
+          background:
+            "radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.08) 40%, transparent 70%)",
+          borderRadius: "50%",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
       <div className="hero-float" aria-hidden="true">
         <span className="hero-float__particle hero-float__particle--1"></span>
         <span className="hero-float__particle hero-float__particle--2"></span>
@@ -146,43 +167,126 @@ export default function Hero({ files }: HeroProps) {
         <span className="hero-float__item hero-float__item--10">🌿</span>
       </div>
 
-      <div className="container">
+      <div className="container" style={{ position: "relative", zIndex: 2 }}>
         <div className="hero__inner">
-          <span className="hero__badge">
+          {/* ─── Badge ─── */}
+          <span
+            className="hero__badge"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,247,255,0.95))",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              boxShadow:
+                "0 8px 24px rgba(37, 99, 235, 0.12), 0 2px 6px rgba(0,0,0,0.04)",
+              border: "1px solid rgba(37, 99, 235, 0.15)",
+              animation: "fadeInDown 0.6s ease",
+            }}
+          >
             <span className="hero__badge-dot"></span>
             به برگ دانش خوش آمدید
           </span>
 
-          <h1 className="hero__title">
+          {/* ─── عنوان ─── */}
+          <h1
+            className="hero__title"
+            style={{
+              animation: "fadeInUp 0.8s ease 0.1s backwards",
+            }}
+          >
             دانش، یک
-            <span className="hero__title-highlight">
+            <span
+              className="hero__title-highlight"
+              style={{
+                position: "relative",
+                display: "inline-block",
+                padding: "0 4px",
+              }}
+            >
               <LeafSVG className="hero__leaf" />
               برگ
+              {/* ─── خط زیرین با گرادیانت ─── */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  right: 0,
+                  height: "12px",
+                  background:
+                    "linear-gradient(90deg, rgba(251, 191, 36, 0.6), rgba(245, 158, 11, 0.8), rgba(251, 191, 36, 0.6))",
+                  borderRadius: "100px",
+                  zIndex: -1,
+                  filter: "blur(0.5px)",
+                }}
+              />
             </span>
             فاصله دارد
           </h1>
 
-          <p className="hero__subtitle">
+          {/* ─── زیرعنوان ─── */}
+          <p
+            className="hero__subtitle"
+            style={{
+              animation: "fadeInUp 0.8s ease 0.2s backwards",
+            }}
+          >
             جزوه، کتاب، نمونه سوال و مقاله — همه در یک جا، رایگان و مرتب.
           </p>
 
           {!session?.user && <LoginAlert />}
 
-          <form className="search" onSubmit={handleSubmit}>
+          {/* ─── کادر جستجو ─── */}
+          <form
+            className="search"
+            onSubmit={handleSubmit}
+            style={{
+              position: "relative",
+              animation: "fadeInUp 0.8s ease 0.3s backwards",
+              boxShadow: searchFocused
+                ? "0 20px 50px rgba(37, 99, 235, 0.25), 0 0 0 4px rgba(37, 99, 235, 0.1)"
+                : "0 12px 32px rgba(15, 23, 42, 0.10)",
+              transition: "box-shadow 0.3s ease",
+              borderRadius: "16px",
+            }}
+          >
             <input
               type="text"
               className="search__input"
               placeholder="چی می‌خوای پیدا کنی؟"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
             />
-            <button type="submit" className="btn btn--primary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn--primary"
+              disabled={loading}
+              style={{
+                background: loading
+                  ? "#94a3b8"
+                  : "linear-gradient(135deg, #2563eb, #7c3aed)",
+                boxShadow: loading
+                  ? "none"
+                  : "0 8px 20px rgba(37, 99, 235, 0.35)",
+                transition: "all 0.3s ease",
+              }}
+            >
               {loading ? "⏳" : "🔍"} جستجو
             </button>
           </form>
 
+          {/* ─── نتایج جستجو ─── */}
           {showResults && (
-            <div style={{ marginTop: "24px", textAlign: "right" }}>
+            <div
+              style={{
+                marginTop: "24px",
+                textAlign: "right",
+                animation: "fadeInUp 0.4s ease",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -243,7 +347,13 @@ export default function Hero({ files }: HeroProps) {
                 >
                   نتیجه‌ای پیدا نشد 🔍
                   <br />
-                  <span style={{ fontSize: "13px", marginTop: "8px", display: "inline-block" }}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      marginTop: "8px",
+                      display: "inline-block",
+                    }}
+                  >
                     یه کلمه دیگه امتحان کن یا هجی رو چک کن
                   </span>
                 </div>
@@ -251,7 +361,8 @@ export default function Hero({ files }: HeroProps) {
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(280px, 1fr))",
                     gap: "12px",
                   }}
                 >
@@ -291,12 +402,7 @@ export default function Hero({ files }: HeroProps) {
                         >
                           {item.badge}
                         </span>
-                        <span
-                          style={{
-                            fontSize: "11px",
-                            color: "#999",
-                          }}
-                        >
+                        <span style={{ fontSize: "11px", color: "#999" }}>
                           {item.category}
                         </span>
                       </div>
@@ -333,6 +439,30 @@ export default function Hero({ files }: HeroProps) {
           )}
         </div>
       </div>
+
+      {/* ─── انیمیشن‌ها ─── */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 }
