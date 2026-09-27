@@ -17,6 +17,7 @@ interface FileData {
   field?: string | null;
   author?: string | null;
   viewUrl?: string | null;
+  answerUrl?: string | null;
   downloadUrl?: string | null;
   downloadName?: string | null;
   color?: string | null;
@@ -40,6 +41,7 @@ const emptyForm = {
   field: "",
   author: "",
   viewUrl: "",
+  answerUrl: "",
   downloadUrl: "",
   downloadName: "",
   color: "blue",
@@ -121,6 +123,7 @@ export default function AdminFilesPage() {
     field: file.field || "",
     author: file.author || "",
     viewUrl: file.viewUrl || "",
+    answerUrl: file.answerUrl || "",
     downloadUrl: file.downloadUrl || "",
     downloadName: file.downloadName || "",
     color: file.color || "blue",
@@ -483,6 +486,31 @@ export default function AdminFilesPage() {
                   اینجا بذار.
                 </div>
               </div>
+              {/* ─── لینک پاسخ (اختیاری) ─── */}
+<div>
+  <label style={labelStyle}>
+    🔗 لینک پاسخ (اختیاری — برای فایل‌های سوال)
+  </label>
+  <input
+    name="answerUrl"
+    value={form.answerUrl}
+    onChange={handleChange}
+    placeholder="https://drive.google.com/file/d/.../view"
+    style={inputStyle}
+  />
+  <div
+    style={{
+      fontSize: "11px",
+      color: "#999",
+      marginTop: "4px",
+      lineHeight: 1.7,
+    }}
+  >
+    💡 اگه فایل فقط سواله و پاسخ نداره، خالی بذار. اگه پاسخ هم
+    داری، لینک پاسخ رو اینجا بذار تا توی صفحه‌ی جزئیات کنار سوال
+    نمایش داده بشه.
+  </div>
+</div>
 
               <div>
                 <label style={labelStyle}>🔗 لینک دانلود مستقیم (اختیاری)</label>

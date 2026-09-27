@@ -94,6 +94,7 @@ model File {
   field        String?
   author       String?
   viewUrl      String?
+  answerUrl    String?
   downloadUrl  String?
   downloadName String?
   color        String   @default("blue")

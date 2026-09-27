@@ -79,6 +79,7 @@ export async function POST(request: Request) {
         field: body.field || null,
         author: body.author || null,
         viewUrl: body.viewUrl || null,
+        answerUrl: body.answerUrl || null,
         downloadUrl: body.downloadUrl || null,
         downloadName: body.downloadName || null,
         color: body.color || "blue",
@@ -142,6 +143,8 @@ export async function PUT(request: Request) {
         author: data.author !== undefined ? data.author || null : oldFile.author,
         viewUrl:
           data.viewUrl !== undefined ? data.viewUrl || null : oldFile.viewUrl,
+        answerUrl:
+  data.answerUrl !== undefined ? data.answerUrl || null : oldFile.answerUrl,
         downloadUrl:
           data.downloadUrl !== undefined
             ? data.downloadUrl || null

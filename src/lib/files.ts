@@ -15,6 +15,7 @@ export interface FileItem {
   field?: string;
   author?: string;
   viewUrl?: string;
+  answerUrl?: string;
   downloadUrl?: string;
   downloadName?: string;
   color: FileColor;
@@ -494,6 +495,7 @@ interface AdminFileRow {
   field: string | null;
   author: string | null;
   viewUrl: string | null;
+  answerUrl: string | null;
   downloadUrl: string | null;
   downloadName: string | null;
   color: string;
@@ -511,6 +513,7 @@ function adminFileToFileItem(row: AdminFileRow): FileItem {
     field: row.field || undefined,
     author: row.author || undefined,
     viewUrl: row.viewUrl || undefined,
+    answerUrl: row.answerUrl || undefined,
     downloadUrl: row.downloadUrl || undefined,
     downloadName: row.downloadName || undefined,
     color: (row.color as FileColor) || "blue",
