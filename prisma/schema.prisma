@@ -86,10 +86,12 @@ model File {
   id           String   @id @default(cuid())
   slug         String   @unique
   title        String
-  desc         String
+  desc         String   @db.Text
   category     String
   type         String
   level        String
+  grade        String?
+  field        String?
   author       String?
   viewUrl      String?
   downloadUrl  String?
@@ -102,6 +104,8 @@ model File {
   @@index([type])
   @@index([level])
   @@index([category])
+  @@index([grade])
+  @@index([field])
 }
 
 model Quiz {

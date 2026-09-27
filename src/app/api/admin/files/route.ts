@@ -75,6 +75,8 @@ export async function POST(request: Request) {
         category: body.category,
         type: body.type || "جزوه",
         level: body.level || "دانشگاهی",
+        grade: body.grade || null,
+        field: body.field || null,
         author: body.author || null,
         viewUrl: body.viewUrl || null,
         downloadUrl: body.downloadUrl || null,
@@ -119,7 +121,6 @@ export async function PUT(request: Request) {
   }
 
   try {
-    // اطلاعات قدیمی
     const oldFile = await prisma.file.findUnique({
       where: { id },
     });
@@ -128,7 +129,6 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "فایل یافت نشد" }, { status: 404 });
     }
 
-    // آپدیت
     const updatedFile = await prisma.file.update({
       where: { id },
       data: {
@@ -137,6 +137,8 @@ export async function PUT(request: Request) {
         category: data.category ?? oldFile.category,
         type: data.type ?? oldFile.type,
         level: data.level ?? oldFile.level,
+        grade: data.grade !== undefined ? data.grade || null : oldFile.grade,
+        field: data.field !== undefined ? data.field || null : oldFile.field,
         author: data.author !== undefined ? data.author || null : oldFile.author,
         viewUrl:
           data.viewUrl !== undefined ? data.viewUrl || null : oldFile.viewUrl,
@@ -152,7 +154,6 @@ export async function PUT(request: Request) {
       },
     });
 
-    // ثبت فعالیت
     await logActivity({
       adminId,
       action: "update",

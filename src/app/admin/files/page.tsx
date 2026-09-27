@@ -13,6 +13,8 @@ interface FileData {
   category: string;
   type: string;
   level: string;
+  grade?: string | null;
+  field?: string | null;
   author?: string | null;
   viewUrl?: string | null;
   downloadUrl?: string | null;
@@ -34,6 +36,8 @@ const emptyForm = {
   category: "",
   type: "جزوه",
   level: "دانشگاهی",
+  grade: "",
+  field: "",
   author: "",
   viewUrl: "",
   downloadUrl: "",
@@ -107,23 +111,25 @@ export default function AdminFilesPage() {
   }
 
   function handleEdit(file: FileData) {
-    setForm({
-      title: file.title,
-      desc: file.desc,
-      category: file.category,
-      type: file.type,
-      level: file.level,
-      author: file.author || "",
-      viewUrl: file.viewUrl || "",
-      downloadUrl: file.downloadUrl || "",
-      downloadName: file.downloadName || "",
-      color: file.color || "blue",
-    });
-    setEditingId(file.id);
-    setShowForm(true);
-    setError("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  setForm({
+    title: file.title,
+    desc: file.desc,
+    category: file.category,
+    type: file.type,
+    level: file.level,
+    grade: file.grade || "",
+    field: file.field || "",
+    author: file.author || "",
+    viewUrl: file.viewUrl || "",
+    downloadUrl: file.downloadUrl || "",
+    downloadName: file.downloadName || "",
+    color: file.color || "blue",
+  });
+  setEditingId(file.id);
+  setShowForm(true);
+  setError("");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   function handleCancel() {
     setForm(emptyForm);
@@ -386,6 +392,63 @@ export default function AdminFilesPage() {
                   </select>
                 </div>
               </div>
+              {/* ─── پایه و رشته (فقط برای مدرسه‌ای) ─── */}
+{form.level === "مدرسه ای" && (
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "12px",
+      padding: "16px",
+      background: "#fef3c7",
+      borderRadius: "var(--r-md)",
+      border: "1px solid #fbbf24",
+    }}
+  >
+    <div>
+      <label style={labelStyle}>📚 پایه</label>
+      <select
+        name="grade"
+        value={form.grade}
+        onChange={handleChange}
+        style={inputStyle}
+      >
+        <option value="">— انتخاب پایه —</option>
+        <option value="دهم">دهم</option>
+        <option value="یازدهم">یازدهم</option>
+        <option value="دوازدهم">دوازدهم</option>
+      </select>
+    </div>
+
+    <div>
+      <label style={labelStyle}>🎓 رشته</label>
+      <select
+        name="field"
+        value={form.field}
+        onChange={handleChange}
+        style={inputStyle}
+      >
+        <option value="">— انتخاب رشته —</option>
+        <option value="ریاضی">ریاضی</option>
+        <option value="تجربی">تجربی</option>
+        <option value="انسانی">انسانی</option>
+        <option value="فنی و حرفه‌ای">فنی و حرفه‌ای</option>
+        <option value="کار و دانش">کار و دانش</option>
+      </select>
+    </div>
+
+    <div
+      style={{
+        gridColumn: "1 / -1",
+        fontSize: "11px",
+        color: "#92400e",
+        lineHeight: 1.7,
+      }}
+    >
+      💡 اگه فایل به همه‌ی پایه‌ها یا رشته‌ها مربوطه، خالی بذار.
+    </div>
+  </div>
+)}
 
               <div>
                 <label style={labelStyle}>نویسنده (اختیاری)</label>

@@ -11,6 +11,8 @@ export interface FileItem {
   category: string;
   type: FileType;
   level: FileLevel;
+  grade?: string;
+  field?: string;
   author?: string;
   viewUrl?: string;
   downloadUrl?: string;
@@ -488,6 +490,8 @@ interface AdminFileRow {
   category: string;
   type: string;
   level: string;
+  grade: string | null;
+  field: string | null;
   author: string | null;
   viewUrl: string | null;
   downloadUrl: string | null;
@@ -503,6 +507,8 @@ function adminFileToFileItem(row: AdminFileRow): FileItem {
     category: row.category,
     type: row.type as FileType,
     level: row.level as FileLevel,
+    grade: row.grade || undefined,
+    field: row.field || undefined,
     author: row.author || undefined,
     viewUrl: row.viewUrl || undefined,
     downloadUrl: row.downloadUrl || undefined,
