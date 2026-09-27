@@ -7,6 +7,7 @@ import ProtectedDownloadButtons from "@/components/ProtectedDownloadButtons";
 import Breadcrumb from "@/components/Breadcrumb";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 import CommentSection from "@/components/CommentSection";
+import PdfSection from "@/components/PdfSection";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -254,13 +255,36 @@ export default async function ExamDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            <ProtectedDownloadButtons
-              downloadUrl={file.downloadUrl}
-              viewUrl={file.viewUrl}
-              downloadName={file.downloadName}
-              fileTitle={file.title}
-              fileType={file.type}
-            />
+            {/* ─── بخش PDF (سوال و پاسخ) ─── */}
+{file.viewUrl && (
+  <div style={{ marginTop: "32px" }}>
+    <h2
+      style={{
+        fontSize: "20px",
+        marginBottom: "16px",
+        color: "#1a1a1a",
+      }}
+    >
+      📄 مشاهده {file.answerUrl ? "سوال و پاسخ" : "فایل"}
+    </h2>
+    <PdfSection
+      questionUrl={file.viewUrl}
+      answerUrl={file.answerUrl}
+      fileTitle={file.title}
+    />
+  </div>
+)}
+
+{/* ─── دکمه‌های دانلود ─── */}
+<div style={{ marginTop: "24px" }}>
+  <ProtectedDownloadButtons
+    downloadUrl={file.downloadUrl}
+    viewUrl={undefined}
+    downloadName={file.downloadName}
+    fileTitle={file.title}
+    fileType={file.type}
+  />
+</div>
           </div>
 
           <CommentSection fileSlug={file.slug} />
