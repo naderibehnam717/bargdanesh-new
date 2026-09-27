@@ -148,7 +148,27 @@ export default async function SubjectPage({ params }: PageProps) {
   }
 
   const allFiles = await getAllFiles();
-  const files = allFiles.filter((f) => f.category === category!.title);
+  // ─── فیلتر بر اساس گروه دسته ───
+const files = allFiles.filter((f) => {
+  // اول: دسته‌بندی باید یکی باشه
+  if (f.category !== category!.title) return false;
+
+  // دوم: سطح فایل باید با گروه دسته هم‌خوانی داشته باشه
+  if (category!.group === "university" && f.level !== "دانشگاهی") {
+    return false;
+  }
+  if (category!.group === "school" && f.level !== "مدرسه ای") {
+    return false;
+  }
+  if (category!.group === "book" && f.level !== "غیر درسی") {
+    return false;
+  }
+  if (category!.group === "konkur") {
+    return false; // کنکور جداگانه مدیریت می‌شه
+  }
+
+  return true;
+});
 
   const fileTypes = [...new Set(files.map((f) => f.type))];
   const fileTypeCounts = fileTypes.map((type) => ({
