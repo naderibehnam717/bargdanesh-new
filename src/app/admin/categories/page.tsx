@@ -11,6 +11,7 @@ interface Category {
   title: string;
   icon: string;
   color: string;
+  group: string;
   description: string | null;
   order: number;
   isActive: boolean;
@@ -48,6 +49,7 @@ const emptyForm = {
   slug: "",
   icon: "📁",
   color: "blue",
+  group: "university",
   description: "",
   order: 0,
 };
@@ -106,19 +108,20 @@ export default function AdminCategoriesPage() {
   }
 
   function handleEdit(cat: Category) {
-    setForm({
-      title: cat.title,
-      slug: cat.slug,
-      icon: cat.icon,
-      color: cat.color,
-      description: cat.description || "",
-      order: cat.order,
-    });
-    setEditingId(cat.id);
-    setShowForm(true);
-    setError("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  setForm({
+    title: cat.title,
+    slug: cat.slug,
+    icon: cat.icon,
+    color: cat.color,
+    group: (cat as { group?: string }).group || "university",
+    description: cat.description || "",
+    order: cat.order,
+  });
+  setEditingId(cat.id);
+  setShowForm(true);
+  setError("");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   function handleCancel() {
     setForm(emptyForm);
@@ -398,6 +401,30 @@ export default function AdminCategoriesPage() {
                   ))}
                 </select>
               </div>
+              <div>
+  <label style={labelStyle}>گروه *</label>
+  <select
+    name="group"
+    value={form.group}
+    onChange={handleChange}
+    style={inputStyle}
+  >
+    <option value="university">🎓 دانشگاهی</option>
+    <option value="school">🏫 مدرسه‌ای</option>
+    <option value="konkur">📚 کنکور</option>
+    <option value="book">📖 کتاب</option>
+    <option value="general">🌍 عمومی</option>
+  </select>
+  <div
+    style={{
+      fontSize: "11px",
+      color: "#999",
+      marginTop: "4px",
+    }}
+  >
+    💡 دانشگاهی → توی `/university` نمایش داده می‌شه
+  </div>
+</div>
 
               <div>
                 <label style={labelStyle}>توضیحات (اختیاری)</label>
