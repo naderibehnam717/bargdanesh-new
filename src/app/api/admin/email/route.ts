@@ -104,7 +104,7 @@ export async function POST(request: Request) {
       try {
         const emails = batch.map((user) => ({
           from: "برگ دانش <noreply@bargdanesh.ir>",
-          to: [user.email],
+          to: user.email,
           subject,
           html: `
             <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa;">
