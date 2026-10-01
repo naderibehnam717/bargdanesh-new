@@ -277,6 +277,38 @@ export default function Hero({ files }: HeroProps) {
               {loading ? "⏳" : "🔍"} جستجو
             </button>
           </form>
+          {/* ─── متن راهنما ─── */}
+<div
+  style={{
+    marginTop: "16px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "10px 18px",
+    background: "linear-gradient(135deg, #f0f7ff, #f5f3ff)",
+    border: "1px solid #dbeafe",
+    borderRadius: "100px",
+    fontSize: "13.5px",
+    fontWeight: 600,
+    color: "#1e40af",
+    lineHeight: 1.7,
+    boxShadow: "0 4px 12px rgba(37, 99, 235, 0.08)",
+    animation: "fadeInUp 0.8s ease 0.5s backwards",
+  }}
+>
+  <span
+    style={{
+      fontSize: "16px",
+      flexShrink: 0,
+    }}
+  >
+    🔍
+  </span>
+  <span>
+    دنبال یه فایل خاص می‌گردی؟ بجای اینکه کل سایت رو بگردی، فقط توی کادر
+    جستجو بنویسش — به همین راحتی!
+  </span>
+</div>
 
           {/* ─── نتایج جستجو ─── */}
           {showResults && (
