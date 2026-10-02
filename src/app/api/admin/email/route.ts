@@ -62,28 +62,47 @@ export async function POST(request: Request) {
     let users;
 
     if (recipientType === "admins") {
-      users = await prisma.user.findMany({
-        where: { role: "admin" },
-        select: { id: true, email: true, name: true },
-      });
-    } else if (recipientType === "users") {
-      users = await prisma.user.findMany({
-        where: { role: "user" },
-        select: { id: true, email: true, name: true },
-      });
-    } else {
-      users = await prisma.user.findMany({
-        where: onlySubscribed ? { subscribed: true } : undefined,
-        select: { id: true, email: true, name: true },
-      });
-    }
+  users = await prisma.user.findMany({
+    where: { role: "admin" },
+    select: { id: true, email: true, name: true },
+  });
+} else if (recipientType === "users") {
+  users = await prisma.user.findMany({
+    where: { role: "user" },
+    select: { id: true, email: true, name: true },
+  });
+} else {
+  users = await prisma.user.findMany({
+    where: onlySubscribed ? { subscribed: true } : undefined,
+    select: { id: true, email: true, name: true },
+  });
+}
 
-    if (users.length === 0) {
-      return NextResponse.json(
-        { error: "کاربری برای ارسال یافت نشد" },
-        { status: 400 }
-      );
-    }
+// ─── فیلتر ایمیل‌های معتبر ───
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const validUsers = users.filter((u) => {
+  if (!u.email || !emailRegex.test(u.email)) {
+    console.log(`❌ ایمیل نامعتبر: ${u.email} (کاربر: ${u.name || u.id})`);
+    return false;
+  }
+  return true;
+});
+
+const invalidCount = users.length - validUsers.length;
+
+console.log(
+  `📧 ایمیل‌های معتبر: ${validUsers.length} از ${users.length} (${invalidCount} نامعتبر)`
+);
+
+users = validUsers;
+
+if (users.length === 0) {
+  return NextResponse.json(
+    { error: "هیچ کاربری با ایمیل معتبر پیدا نشد" },
+    { status: 400 }
+  );
+}
 
     const log = await prisma.emailLog.create({
       data: {
@@ -104,7 +123,7 @@ export async function POST(request: Request) {
       try {
         const emails = batch.map((user) => ({
           from: "برگ دانش <noreply@bargdanesh.ir>",
-          to: user.email,
+          to: [user.email],
           subject,
           html: `
             <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa;">
